@@ -42,6 +42,7 @@ namespace Northwind
             //Console.WriteLine(twoStars);
 
             //counters.Increment("⭐⭐");
+            //counters.Increment("⭐⭐⭐", -1);
             //session.SaveChanges();
 
             #endregion
