@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Cryptography.X509Certificates;
 using Raven.Client.Documents;
 
 namespace Northwind
@@ -10,9 +9,9 @@ namespace Northwind
         {
             using var store = new DocumentStore
             {
-                Database = "demo",
+                Urls = new string[] { "https://a.d2.development.run/" },
                 Certificate = new X509Certificate2("admin.client.certificate.d2.pfx"),
-                Urls = new string[] {"https://a.d2.development.run/"}
+                Database = "demo"
             }.Initialize();
         }
     }
