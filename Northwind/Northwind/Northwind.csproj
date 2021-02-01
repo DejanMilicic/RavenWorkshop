@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="admin.client.certificate.d2.pfx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="admin.client.certificate.d2.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="RavenDB.Client" Version="5.1.3" />
   </ItemGroup>
 
