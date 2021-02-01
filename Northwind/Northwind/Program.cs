@@ -32,6 +32,19 @@ namespace Northwind
             //session.SaveChanges();
 
             #endregion
+
+            #region 3. Counters
+
+            //using var session = store.OpenSession();
+            //var counters = session.CountersFor("products/74-A");
+
+            //string twoStars = counters.Get("⭐⭐").ToString();
+            //Console.WriteLine(twoStars);
+
+            //counters.Increment("⭐⭐");
+            //session.SaveChanges();
+
+            #endregion
         }
     }
 }
