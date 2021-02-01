@@ -16,11 +16,22 @@ namespace Northwind
                 Database = "demo"
             }.Initialize();
 
-            using var session = store.OpenSession();
+            #region 1. Read entity from the database
 
-            Employee employee = session.Load<Employee>("employees/8-A");
+            //using var session = store.OpenSession();
+            //Employee employee = session.Load<Employee>("employees/8-A");
+            //Console.WriteLine(employee.FirstName);
 
-            Console.WriteLine(employee.FirstName);
+            #endregion
+
+            #region 2. Modify entity and save it to the database
+
+            //using var session = store.OpenSession();
+            //Employee employee = session.Load<Employee>("employees/8-A");
+            //employee.LastName = employee.LastName.ToUpper();
+            //session.SaveChanges();
+
+            #endregion
         }
     }
 }
