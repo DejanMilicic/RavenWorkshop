@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using Northwind.Models.Entity;
 using Raven.Client.Documents;
 
 namespace Northwind
@@ -13,6 +15,12 @@ namespace Northwind
                 Certificate = new X509Certificate2("admin.client.certificate.d2.pfx"),
                 Database = "demo"
             }.Initialize();
+
+            using var session = store.OpenSession();
+
+            Employee employee = session.Load<Employee>("employees/8-A");
+
+            Console.WriteLine(employee.FirstName);
         }
     }
 }
