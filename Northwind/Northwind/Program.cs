@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 
 namespace Northwind
@@ -93,6 +94,25 @@ namespace Northwind
             //    .Where(x => x.FirstName == "Nancy");
 
             //Console.WriteLine(employees);
+
+            #endregion
+
+            #region Orders by Employee #1
+
+            //using var session = store.OpenSession();
+            //var employeeIds = Queryable.Select(session.Query<Employee>()
+            //        .Where(x => x.FirstName == "Nancy"), x => x.Id)
+            //        .ToList();
+
+            //var orders = session.Query<Order>()
+            //    .Where(x => x.Employee.In(employeeIds));
+
+            //Console.WriteLine(orders.ToString());
+
+            //foreach (Order order in orders)
+            //{
+            //    Console.WriteLine(order.Id);
+            //}
 
             #endregion
         }
