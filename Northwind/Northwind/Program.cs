@@ -85,6 +85,16 @@ namespace Northwind
             //}
 
             #endregion
+
+            #region Filter employees by first name - get query
+
+            //using var session = store.OpenSession();
+            //var employees = session.Query<Employee>()
+            //    .Where(x => x.FirstName == "Nancy");
+
+            //Console.WriteLine(employees);
+
+            #endregion
         }
     }
 }
