@@ -71,6 +71,20 @@ namespace Northwind
             //List<Order> orders = session.Advanced.Revisions.GetFor<Order>("orders/823-A");
 
             #endregion
+
+            #region Filter employees by first name
+
+            //using var session = store.OpenSession();
+            //var employees = session.Query<Employee>()
+            //    .Where(x => x.FirstName == "Nancy")
+            //    .ToList();
+
+            //foreach (Employee employee in employees)
+            //{
+            //    Console.WriteLine(employee.LastName);
+            //}
+
+            #endregion
         }
     }
 }
