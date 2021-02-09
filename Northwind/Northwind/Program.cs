@@ -132,7 +132,28 @@ namespace Northwind
             //    Console.WriteLine(order.Id + "\t" + order.OrderedAt + "\t" + employee.FirstName);
             //}
 
-            //int requests = session.Advanced.NumberOfRequests;
+            //Console.WriteLine(session.Advanced.NumberOfRequests);
+
+            #endregion
+
+            #region Get orders by a company - v2
+
+            //using var session = store.OpenSession();
+
+            //var orders = session.Query<Order>()
+            //    .Include(order => order.Employee)
+            //    .Where(order => order.Company == "Companies/2-A")
+            //    .OrderByDescending(order => order.OrderedAt)
+            //    .Take(10)
+            //    .ToList();
+
+            //foreach (Order order in orders)
+            //{
+            //    var employee = session.Load<Employee>(order.Employee);
+            //    Console.WriteLine(order.Id + "\t" + order.OrderedAt + "\t" + employee.FirstName);
+            //}
+
+            //Console.WriteLine(session.Advanced.NumberOfRequests);
 
             #endregion
         }
