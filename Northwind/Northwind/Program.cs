@@ -115,6 +115,26 @@ namespace Northwind
             //}
 
             #endregion
+
+            #region Get orders by a company - v1
+
+            //using var session = store.OpenSession();
+
+            //var orders = session.Query<Order>()
+            //    .Where(order => order.Company == "Companies/2-A")
+            //    .OrderByDescending(order => order.OrderedAt)
+            //    .Take(10)
+            //    .ToList();
+
+            //foreach (Order order in orders)
+            //{
+            //    var employee = session.Load<Employee>(order.Employee);
+            //    Console.WriteLine(order.Id + "\t" + order.OrderedAt + "\t" + employee.FirstName);
+            //}
+
+            //int requests = session.Advanced.NumberOfRequests;
+
+            #endregion
         }
     }
 }
