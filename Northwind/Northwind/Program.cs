@@ -156,6 +156,26 @@ namespace Northwind
             //Console.WriteLine(session.Advanced.NumberOfRequests);
 
             #endregion
+
+            #region Get orders by a employee (excedding number of requests limit)
+
+            //using var session = store.OpenSession();
+
+            //var orders = session.Query<Order>()
+            //    .Where(order => order.Employee == "Employees/1-A")
+            //    .OrderByDescending(order => order.OrderedAt)
+            //    .Take(25) //
+            //    .ToList();
+
+            //foreach (Order order in orders)
+            //{
+            //    var c = session.Load<Company>(order.Company);
+            //    Console.WriteLine(order.Id + "\t" + order.OrderedAt + "\t" + c.Name);
+            //}
+
+            //Console.WriteLine(session.Advanced.NumberOfRequests);
+
+            #endregion
         }
     }
 }
