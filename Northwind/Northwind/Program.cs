@@ -198,6 +198,24 @@ namespace Northwind
             //}
 
             #endregion
+
+            #region All Companies with a contact named Karl
+
+            ////from Companies
+            ////where search(Contact.Name, "Karl")
+
+            //using var session = store.OpenSession();
+
+            //var companies = session.Query<Company>()
+            //    .Search(x => x.Contact.Name, "Karl")
+            //    .ToList();
+
+            //foreach (Company company in companies)
+            //{
+            //    Console.WriteLine(company.Name);
+            //}
+
+            #endregion
         }
     }
 }
