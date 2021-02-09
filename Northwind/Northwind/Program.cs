@@ -160,11 +160,12 @@ namespace Northwind
             #region Get orders by a employee (excedding number of requests limit)
 
             //using var session = store.OpenSession();
+            ////session.Advanced.MaxNumberOfRequestsPerSession = 100;
 
             //var orders = session.Query<Order>()
             //    .Where(order => order.Employee == "Employees/1-A")
             //    .OrderByDescending(order => order.OrderedAt)
-            //    .Take(25) //
+            //    //.Take(25)
             //    .ToList();
 
             //foreach (Order order in orders)
