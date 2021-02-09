@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
@@ -159,13 +160,14 @@ namespace Northwind
 
             #region Get orders by a employee (excedding number of requests limit)
 
+            //var sp = Stopwatch.StartNew();
             //using var session = store.OpenSession();
             ////session.Advanced.MaxNumberOfRequestsPerSession = 100;
 
             //var orders = session.Query<Order>()
             //    .Where(order => order.Employee == "Employees/1-A")
             //    .OrderByDescending(order => order.OrderedAt)
-            //    //.Take(25)
+            //    .Take(25)
             //    .ToList();
 
             //foreach (Order order in orders)
@@ -175,6 +177,7 @@ namespace Northwind
             //}
 
             //Console.WriteLine(session.Advanced.NumberOfRequests);
+            //Console.WriteLine(sp.Elapsed);
 
             #endregion
         }
