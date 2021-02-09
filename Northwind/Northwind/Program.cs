@@ -183,19 +183,19 @@ namespace Northwind
 
             #region All Employees in London
 
-            //from Employees
-            //where Address.City = "London"
+            ////from Employees
+            ////where Address.City = "London"
 
-            using var session = store.OpenSession();
+            //using var session = store.OpenSession();
 
-            var employees = session.Query<Employee>()
-                .Where(x => x.Address.City == "London")
-                .ToList();
+            //var employees = session.Query<Employee>()
+            //    .Where(x => x.Address.City == "London")
+            //    .ToList();
 
-            foreach (Employee employee in employees)
-            {
-                Console.WriteLine(employee.FirstName + " " + employee.LastName);
-            }
+            //foreach (Employee employee in employees)
+            //{
+            //    Console.WriteLine(employee.FirstName + " " + employee.LastName);
+            //}
 
             #endregion
         }
