@@ -3,17 +3,29 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Northwind.Features.Indexes;
+using Northwind.Features.Subscriptions;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 
 namespace Northwind
 {
+    public class Res
+    {
+        public string ProductId { get; set; }
+
+        public string CompanyId { get; set; }
+    }
+
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             using var store = new DocumentStore
             {
@@ -21,6 +33,7 @@ namespace Northwind
                 Certificate = new X509Certificate2("admin.client.certificate.d2.pfx"),
                 Database = "demo"
             }.Initialize();
+            await IndexCreation.CreateIndexesAsync(typeof(Program).Assembly, store);
 
             #region Read entity from the database
 
@@ -213,6 +226,33 @@ namespace Northwind
             //foreach (Company company in companies)
             //{
             //    Console.WriteLine(company.Name);
+            //}
+
+            #endregion
+
+            #region Search products that company purchased
+
+            //string searchTerm = "*a*";
+            //string company = "companies/5-a";
+
+            //using var session = store.OpenSession();
+            //var results = session.Query<Products_ByCompany.Entry, Products_ByCompany>()
+            //    .Search(x => x.Query, searchTerm)
+            //    .Where(x => x.Company == company)
+            //    .ProjectInto<Products_ByCompany.Entry>()
+            //    .Select(x => new Res
+            //    {
+            //        CompanyId = x.Company,
+            //        ProductId = x.Product
+            //    })
+            //    .Include(x => x.ProductId)
+            //    .Distinct()
+            //    .ToList();
+
+            //foreach (Res res in results)
+            //{
+            //    Product p = session.Load<Product>(res.ProductId);
+            //    Console.WriteLine($"Company: {res.CompanyId}, Product: {p.Id} {p.Name}");
             //}
 
             #endregion
