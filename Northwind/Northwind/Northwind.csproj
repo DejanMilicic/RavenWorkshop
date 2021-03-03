@@ -10,13 +10,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="admin.client.certificate.d2.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <PackageReference Include="RavenDB.Client" Version="5.1.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="RavenDB.Client" Version="5.1.3" />
+    <None Update="free.dejanmilicic.client.certificate.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
