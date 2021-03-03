@@ -29,10 +29,11 @@ namespace Northwind
         {
             using var store = new DocumentStore
             {
-                Urls = new string[] { "https://a.d2.development.run/" },
-                Certificate = new X509Certificate2("admin.client.certificate.d2.pfx"),
+                Urls = new string[] { "https://a.free.dejanmilicic.ravendb.cloud/" },
+                Certificate = new X509Certificate2("free.dejanmilicic.client.certificate.pfx"),
                 Database = "demo"
             }.Initialize();
+
             await IndexCreation.CreateIndexesAsync(typeof(Program).Assembly, store);
 
             #region Read entity from the database
