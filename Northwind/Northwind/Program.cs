@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Northwind.Features.Indexes;
 using Northwind.Features.Subscriptions;
 using Northwind.Models.Entity;
@@ -255,6 +256,22 @@ namespace Northwind
             //    Product p = session.Load<Product>(res.ProductId);
             //    Console.WriteLine($"Company: {res.CompanyId}, Product: {p.Id} {p.Name}");
             //}
+
+            #endregion
+
+            #region Graph Query
+
+//            using var session = store.OpenSession();
+//            var result = session.Advanced.RawQuery<JObject>(@"
+//match
+//    (Products as products)-
+//    [Category as category]->
+//    (Categories as categories 
+//        where Name=""Confections"" 
+//            or Name = ""Condiments"")
+//").ToArray();
+
+//            Console.WriteLine(result[0]);
 
             #endregion
         }
