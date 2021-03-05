@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Session.Loaders;
 
 namespace Northwind.Features
@@ -83,6 +86,61 @@ namespace Northwind.Features
             Console.WriteLine($"Order: {order.Id} \t {order.OrderedAt} \t via {employee.FirstName} \t for {company.Name}");
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
+        public void SecondLevelIncludes()
+        {
+            using var session = store.OpenSession();
+
+            string query = @"
+declare function output(o) {
+    var lines = o.Lines;
+    var products = [];
+    var suppliers = [];
+    lines.forEach(line => {
+        var product = load(line.Product);
+        if (product) {
+            products.push(product);
+            var supplier = load(product.Supplier);
+            if (supplier) {
+                suppliers.push(supplier);
+            }
+        }
+    });
+	return {
+	    Order: o,
+	    Products: products,
+	    Suppliers: suppliers
+	}
+}
+from Orders as o
+select output(o)
+";
+            var r = session.Advanced.RawQuery<Result>(query).ToList();
+
+            var orders = r.Select(x => x.Order).ToDictionary(x => x.Id, x => x);
+            var products = r.SelectMany(x => x.Products)
+                .GroupBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+            var suppliers = r.SelectMany(x => x.Suppliers)
+                .GroupBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+            foreach (Supplier supplier in suppliers.Values)
+            { 
+                Console.WriteLine($"Supplier: \t {supplier.Name}");
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
+        public class Result
+        {
+            public Order Order { get; set; }
+
+            public List<Product> Products { get; set; }
+
+            public List<Supplier> Suppliers { get; set; }
         }
     }
 }
