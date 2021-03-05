@@ -134,6 +134,28 @@ select output(o)
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
+        public void SecondLevelInclude()
+        {
+            using var session = store.OpenSession();
+
+            string query = @"
+declare function output(o) {
+    o.Lines.forEach(line => {
+        include(line.Product)
+        var product = load(line.Product);
+        include(product.Supplier);
+    });
+	return o
+}
+
+from Orders as o
+select output(o)
+";
+            var r = session.Advanced.RawQuery<Order>(query).ToList();
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
         public class Result
         {
             public Order Order { get; set; }
