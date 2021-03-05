@@ -2,6 +2,7 @@
 using System.Linq;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Session.Loaders;
 
 namespace Northwind.Features
 {
@@ -50,6 +51,36 @@ namespace Northwind.Features
                 var company = session.Load<Company>(order.Company);
                 Console.WriteLine($"Order: {order.Id} \t {order.OrderedAt} \t via {employee.FirstName} \t for {company.Name}");
             }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
+        public void LoadAndIncludeViaPathList(string[] includes)
+        {
+            var session = store.OpenSession();
+
+            Order order;
+
+            if (includes.Any())
+            {
+                ILoaderWithInclude<object> loader = session.Include(includes.First());
+
+                foreach (string include in includes.Skip(1))
+                {
+                    loader = loader.Include(include);
+                }
+
+                order = loader.Load<Order>("Orders/61-A");
+            }
+            else
+            {
+                order = session.Load<Order>("Orders/61-A");
+            }
+            
+            var employee = session.Load<Employee>(order.Employee);
+            var company = session.Load<Company>(order.Company);
+
+            Console.WriteLine($"Order: {order.Id} \t {order.OrderedAt} \t via {employee.FirstName} \t for {company.Name}");
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
