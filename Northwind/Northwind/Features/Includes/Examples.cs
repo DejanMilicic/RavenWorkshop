@@ -57,7 +57,7 @@ namespace Northwind.Features
 
         public void LoadAndIncludeViaPathList(string[] includes)
         {
-            var session = store.OpenSession();
+            using var session = store.OpenSession();
 
             Order order;
 
