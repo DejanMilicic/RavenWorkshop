@@ -151,7 +151,18 @@ declare function output(o) {
 from Orders as o
 select output(o)
 ";
-            var r = session.Advanced.RawQuery<Order>(query).ToList();
+            var orders = session.Advanced.RawQuery<Order>(query).ToList();
+
+            foreach (Order order in orders)
+            {
+                var products = session.Load<Product>(order.Lines.Select(x => x.Product));
+
+                foreach (Product product in products.Values)
+                {
+                    var supplier = session.Load<Supplier>(product.Supplier);
+                    Console.WriteLine($"Order: {order.Id} \t {order.OrderedAt} \t via {supplier.Name}");
+                }
+            }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
