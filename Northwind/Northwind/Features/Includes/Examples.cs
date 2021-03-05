@@ -88,7 +88,7 @@ namespace Northwind.Features
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public void SecondLevelIncludes()
+        public void ProjectionViaJS()
         {
             using var session = store.OpenSession();
 
