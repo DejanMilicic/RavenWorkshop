@@ -232,7 +232,6 @@ select output(o)
                     Order = RavenQuery.Load<Order>(x.Id),
                     Employee = RavenQuery.Load<Employee>(x.Employee),
                     Boss = RavenQuery.Load<Employee>(x.Boss)
-
                 })
                 .ToList();
 
