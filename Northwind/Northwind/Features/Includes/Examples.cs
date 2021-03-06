@@ -255,14 +255,17 @@ select output(o)
                           select new 
                             {
                                 OrderFreight = order.Freight,
-                                Employee = employee.FirstName + " " + employee.LastName,
+                                Employee = new { 
+                                    First = employee.FirstName,
+                                    Last = employee.LastName
+                                },
                                 Boss = boss != null ? (boss.FirstName + " " + boss.LastName) : "Himself :)"
                             })
                     .ToList();
 
             foreach (var entry in entries)
             {
-                Console.WriteLine($"{entry.OrderFreight} by {entry.Employee} who reports to {entry.Boss}");
+                Console.WriteLine($"{entry.OrderFreight} by {entry.Employee.First + " " + entry.Employee.Last} who reports to {entry.Boss}");
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
