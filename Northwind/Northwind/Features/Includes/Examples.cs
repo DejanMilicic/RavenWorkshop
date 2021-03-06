@@ -229,7 +229,7 @@ select output(o)
                 .ProjectInto<Orders_ByCompany.Entry>()
                 .Select(x => 
                     new { 
-                    Id = x.Id,
+                    Order = RavenQuery.Load<Order>(x.Id),
                     Employee = RavenQuery.Load<Employee>(x.Employee),
                     Boss = RavenQuery.Load<Employee>(x.Boss)
 
@@ -238,7 +238,7 @@ select output(o)
 
             foreach (var entry in entries)
             {
-                Console.WriteLine($"{entry.Id} by {entry.Employee.FirstName} who reports to {entry.Boss?.FirstName ?? "None"}");
+                Console.WriteLine($"{entry.Order.Id} by {entry.Employee.FirstName} who reports to {entry.Boss?.FirstName ?? "None"}");
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
@@ -251,6 +251,7 @@ select output(o)
             var entries = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
                 .Where(x => x.CompanyName == companyName)
                 .ProjectInto<Orders_ByCompany.Entry>()
+                .Include(x => x.Id)
                 .Include(x => x.Employee)
                 .Include(x => x.Boss)
                 .ToList();
@@ -259,8 +260,9 @@ select output(o)
             {
                 Employee employee = session.Load<Employee>(entry.Employee);
                 Employee boss = session.Load<Employee>(employee.ReportsTo);
+                Order order = session.Load<Order>(entry.Id);
 
-                Console.WriteLine($"{entry.Id} by {employee.FirstName} who reports to {boss?.FirstName ?? "None"}");
+                Console.WriteLine($"{order.Id} by {employee.FirstName} who reports to {boss?.FirstName ?? "None"}");
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
