@@ -118,6 +118,28 @@ select output(o)
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
+        public void SecondLevelProjection()
+        {
+            using var session = store.OpenSession();
+
+            var results = (from o in session.Query<Order>()
+                let e = RavenQuery.Load<Employee>(o.Employee)
+                let r = RavenQuery.Load<Employee>(e.ReportsTo)
+                select new
+                {
+                    Order = o,
+                    Employee = e,
+                    ReportsTo = r
+                }).ToList();
+
+            foreach (var entry in results)
+            {
+                Console.WriteLine($"Order: {entry.Order.Id} \t {entry.Order.OrderedAt} \t via {entry.Employee.FirstName} \t reports to {entry.ReportsTo?.FirstName}");
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
         public void ProjectionViaJS()
         {
             using var session = store.OpenSession();
