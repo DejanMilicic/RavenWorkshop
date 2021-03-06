@@ -8,6 +8,8 @@ namespace Northwind.Features.Indexes
     {
         public class Entry
         {
+            public string Id { get; set; }
+
             public string CompanyName { get; set; }
 
             public string Employee { get; set; }
@@ -20,16 +22,19 @@ namespace Northwind.Features.Indexes
         public Orders_ByCompany()
         {
             Map = orders => from order in orders
-                            from orderLine in order.Lines
                             let employee = LoadDocument<Employee>(order.Employee)
                             let company = LoadDocument<Company>(order.Company)
                             select new Entry
                             {
                                 CompanyName = company.Name,
                                 Freight = order.Freight,
-                                Employee = order.Employee,
+                                Employee = employee.Id,
                                 Boss = employee.ReportsTo
                             };
+
+            Stores.Add(x => x.CompanyName, FieldStorage.Yes);
+            Stores.Add(x => x.Employee, FieldStorage.Yes);
+            Stores.Add(x => x.Boss, FieldStorage.Yes);
         }
     }
 }

@@ -224,19 +224,21 @@ select output(o)
         {
             using var session = store.OpenSession();
 
-            var orders = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
-                .Where(x => x.CompanyName == companyName && x.Freight < 15)
-                .Include(x => x.Employee)
-                .Include(x => x.Boss)
-                .OfType<Order>()
+            var entries = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
+                .Where(x => x.CompanyName == companyName)
+                .ProjectInto<Orders_ByCompany.Entry>()
+                .Select(x => 
+                    new { 
+                    Id = x.Id,
+                    Employee = RavenQuery.Load<Employee>(x.Employee),
+                    Boss = RavenQuery.Load<Employee>(x.Boss)
+
+                })
                 .ToList();
 
-            foreach (Order order in orders)
+            foreach (var entry in entries)
             {
-                var employee = session.Load<Employee>(order.Employee);
-                var boss = session.Load<Employee>(employee.ReportsTo);
-
-                Console.WriteLine($"Order: {order.Id} \t emp: {employee.FirstName} \t boss: {boss?.FirstName}");
+                Console.WriteLine($"{entry.Id} by {entry.Employee.FirstName} who reports to {entry.Boss?.FirstName ?? "None"}");
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
