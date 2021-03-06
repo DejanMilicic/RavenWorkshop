@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using Northwind.Features.Indexes;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Queries;
@@ -214,6 +215,28 @@ select output(o)
                     var supplier = session.Load<Supplier>(product.Supplier);
                     Console.WriteLine($"Order: {order.Id} \t {order.OrderedAt} \t via {supplier.Name}");
                 }
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
+        public void OrdersInclude(string companyName)
+        {
+            using var session = store.OpenSession();
+
+            var orders = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
+                .Where(x => x.CompanyName == companyName && x.Freight < 15)
+                .Include(x => x.Employee)
+                .Include(x => x.Boss)
+                .OfType<Order>()
+                .ToList();
+
+            foreach (Order order in orders)
+            {
+                var employee = session.Load<Employee>(order.Employee);
+                var boss = session.Load<Employee>(employee.ReportsTo);
+
+                Console.WriteLine($"Order: {order.Id} \t emp: {employee.FirstName} \t boss: {boss?.FirstName}");
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
