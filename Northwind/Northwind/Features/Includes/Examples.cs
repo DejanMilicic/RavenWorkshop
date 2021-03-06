@@ -88,6 +88,36 @@ namespace Northwind.Features
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
+        public void SecondLevelInclude2()
+        {
+            using var session = store.OpenSession();
+
+            string query = @"
+declare function output(o) {
+    include(o.Employee);
+    var emp = load(o.Employee);
+    include(emp.ReportsTo);
+
+	return o
+}
+
+from Orders as o
+where o.Company = 'Companies/2-A'
+select output(o)
+";
+
+            var orders = session.Advanced.RawQuery<Order>(query).ToList();
+
+            foreach (Order order in orders)
+            {
+                var employee = session.Load<Employee>(order.Employee);
+                var reportsTo = session.Load<Employee>(employee.ReportsTo);
+                Console.WriteLine($"Order: {order.Id} \t {order.OrderedAt} \t via {employee.FirstName} \t reports to {reportsTo.FirstName}");
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
         public void ProjectionViaJS()
         {
             using var session = store.OpenSession();
