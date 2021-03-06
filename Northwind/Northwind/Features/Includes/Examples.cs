@@ -244,6 +244,28 @@ select output(o)
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
+        public void OrdersInclude(string companyName)
+        {
+            using var session = store.OpenSession();
+
+            var entries = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
+                .Where(x => x.CompanyName == companyName)
+                .ProjectInto<Orders_ByCompany.Entry>()
+                .Include(x => x.Employee)
+                .Include(x => x.Boss)
+                .ToList();
+
+            foreach (var entry in entries)
+            {
+                Employee employee = session.Load<Employee>(entry.Employee);
+                Employee boss = session.Load<Employee>(employee.ReportsTo);
+
+                Console.WriteLine($"{entry.Id} by {employee.FirstName} who reports to {boss?.FirstName ?? "None"}");
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
         public class Result
         {
             public Order Order { get; set; }
