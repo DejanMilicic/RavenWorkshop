@@ -220,7 +220,7 @@ select output(o)
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public void OrdersInclude(string companyName)
+        public void OrdersProjection(string companyName)
         {
             using var session = store.OpenSession();
 
