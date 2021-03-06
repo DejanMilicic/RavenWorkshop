@@ -8,7 +8,7 @@ namespace Northwind.Features.Indexes
     {
         public class Entry
         {
-            public string Id { get; set; }
+            public string OrderId { get; set; }
 
             public string CompanyName { get; set; }
 
@@ -26,12 +26,14 @@ namespace Northwind.Features.Indexes
                             let company = LoadDocument<Company>(order.Company)
                             select new Entry
                             {
+                                OrderId = order.Id,
                                 CompanyName = company.Name,
                                 Freight = order.Freight,
                                 Employee = employee.Id,
                                 Boss = employee.ReportsTo
                             };
 
+            Stores.Add(x => x.OrderId, FieldStorage.Yes);
             Stores.Add(x => x.CompanyName, FieldStorage.Yes);
             Stores.Add(x => x.Employee, FieldStorage.Yes);
             Stores.Add(x => x.Boss, FieldStorage.Yes);

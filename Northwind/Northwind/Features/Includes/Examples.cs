@@ -229,7 +229,7 @@ select output(o)
                 .ProjectInto<Orders_ByCompany.Entry>()
                 .Select(x => 
                     new { 
-                    Order = RavenQuery.Load<Order>(x.Id),
+                    Order = RavenQuery.Load<Order>(x.OrderId),
                     Employee = RavenQuery.Load<Employee>(x.Employee),
                     Boss = RavenQuery.Load<Employee>(x.Boss)
                 })
@@ -243,6 +243,31 @@ select output(o)
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
+        public void OrdersProjectionJustFields(string companyName)
+        {
+            using var session = store.OpenSession();
+
+            var entries = (from entry in session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
+                          where entry.CompanyName == companyName
+                          let order = RavenQuery.Load<Order>(entry.OrderId)
+                          let employee = RavenQuery.Load<Employee>(entry.Employee)
+                          let boss = RavenQuery.Load<Employee>(entry.Boss)
+                          select new 
+                            {
+                                OrderFreight = order.Freight,
+                                Employee = employee.FirstName + " " + employee.LastName,
+                                Boss = boss != null ? (boss.FirstName + " " + boss.LastName) : "Himself :)"
+                            })
+                    .ToList();
+
+            foreach (var entry in entries)
+            {
+                Console.WriteLine($"{entry.OrderFreight} by {entry.Employee} who reports to {entry.Boss}");
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
         public void OrdersInclude(string companyName)
         {
             using var session = store.OpenSession();
@@ -250,7 +275,7 @@ select output(o)
             var entries = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
                 .Where(x => x.CompanyName == companyName)
                 .ProjectInto<Orders_ByCompany.Entry>()
-                .Include(x => x.Id)
+                .Include(x => x.OrderId)
                 .Include(x => x.Employee)
                 .Include(x => x.Boss)
                 .ToList();
@@ -259,7 +284,7 @@ select output(o)
             {
                 Employee employee = session.Load<Employee>(entry.Employee);
                 Employee boss = session.Load<Employee>(employee.ReportsTo);
-                Order order = session.Load<Order>(entry.Id);
+                Order order = session.Load<Order>(entry.OrderId);
 
                 Console.WriteLine($"{order.Id} by {employee.FirstName} who reports to {boss?.FirstName ?? "None"}");
             }
