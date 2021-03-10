@@ -34,6 +34,6 @@ namespace Northwind.Features.Misc
     public class Company
     {
         public string Id { get; set; } = "INITIAL";
-        public string Name { get; set; }
+        public string Name { get; set; } = "INITIAL";
     }
 }
