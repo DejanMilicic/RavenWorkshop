@@ -1,7 +1,6 @@
 ﻿using Northwind.Models.Entity;
 using Raven.Client.Documents.Indexes;
 using System.Linq;
-using Raven.Client.Documents.Queries;
 
 namespace Northwind.Features.Indexes
 {
