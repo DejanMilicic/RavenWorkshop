@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -65,20 +65,6 @@ namespace Northwind
             //DocumentsChanges[] employeeChanges = changes["employees/8-A"];
             //DocumentsChanges change1 = employeeChanges[0];
             //DocumentsChanges change2 = employeeChanges[1];
-
-            #endregion
-
-            #region Counters
-
-            //using var session = store.OpenSession();
-            //var counters = session.CountersFor("products/74-A");
-
-            //string twoStars = counters.Get("⭐⭐").ToString();
-            //Console.WriteLine(twoStars);
-
-            //counters.Increment("⭐⭐");
-            //counters.Increment("⭐⭐⭐", -1);
-            //session.SaveChanges();
 
             #endregion
 
