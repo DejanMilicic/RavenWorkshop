@@ -13,9 +13,15 @@ namespace Northwind.Features
             var employee = session.Load<Employee>("employees/8-A");
             var attNames = session.Advanced.Attachments.GetNames(employee);
 
-            foreach (AttachmentName attName in attNames)
+            AttachmentName[] attachmentNames = session.Advanced.Attachments.GetNames(employee);
+            foreach (AttachmentName attachmentName in attachmentNames)
             {
-                Console.WriteLine(attName.Name);
+                string name = attachmentName.Name;
+                string contentType = attachmentName.ContentType;
+                string hash = attachmentName.Hash;
+                long size = attachmentName.Size;
+
+                Console.WriteLine($"{name} \t {contentType} \t {hash} \t {size}");
             }
         }
     }
