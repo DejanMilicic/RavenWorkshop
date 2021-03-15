@@ -1,4 +1,5 @@
 ﻿using System;
+using Northwind.Models.Entity;
 using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.Counters
@@ -28,6 +29,13 @@ namespace Northwind.Features.Counters
             session.SaveChanges();
         }
 
-        // var employee = session.Load<Employee>("employees/8-A");
+        public void CreateCounter()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            session.CountersFor("employees/8-A").Increment("Likes", 1);
+            
+            session.SaveChanges();
+        }
     }
 }
