@@ -9,18 +9,25 @@ namespace Northwind.Features.Counters
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            ISessionDocumentCounters counters = session.CountersFor("products/74-A");
+            ISessionDocumentCounters counters = session.CountersFor("products/77-A");
 
             string twoStars = counters.Get("⭐⭐").ToString();
             
             Console.WriteLine(twoStars);
         }
 
+        public void UpdateCounters()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
 
+            ISessionDocumentCounters counters = session.CountersFor("products/77-A");
 
+            counters.Increment("⭐⭐");
+            counters.Increment("⭐⭐⭐", -1);
+            
+            session.SaveChanges();
+        }
 
-        //counters.Increment("⭐⭐");
-        //counters.Increment("⭐⭐⭐", -1);
-        //session.SaveChanges();
+        // var employee = session.Load<Employee>("employees/8-A");
     }
 }
