@@ -45,5 +45,24 @@ namespace Northwind.Features
 
             Console.WriteLine($"{ms.Length} \t {name} \t {contentType} \t {hash} \t {size} \t {documentId} \t {changeVector}");
         }
+
+        public void StoreAttachment()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+            using FileStream file1 = File.Open("./Features/Attachments/att1.txt", FileMode.Open);
+            using FileStream file2 = File.Open("./Features/Attachments/att2.txt", FileMode.Open);
+
+            var emp = new Employee()
+            {
+                FirstName = "Jonathan",
+                LastName = "Doe"
+            };
+            session.Store(emp);
+
+            session.Advanced.Attachments.Store(emp.Id, "att1.txt", file1, "text/plain");
+            session.Advanced.Attachments.Store(emp.Id, "att2.txt", file2, "text/plain");
+
+            session.SaveChanges();
+        }
     }
 }
