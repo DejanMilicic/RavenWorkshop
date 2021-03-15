@@ -14,6 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Features\Attachments\att1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Features\Attachments\att2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="free.dejanmilicic.client.certificate.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
