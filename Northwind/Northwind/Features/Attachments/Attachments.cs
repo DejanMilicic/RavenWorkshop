@@ -3,7 +3,7 @@ using System.IO;
 using Northwind.Models.Entity;
 using Raven.Client.Documents.Operations.Attachments;
 
-namespace Northwind.Features
+namespace Northwind.Features.Attachments
 {
     public class Attachments
     {
