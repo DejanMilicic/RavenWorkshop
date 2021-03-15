@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Northwind.Models.Entity;
 using Raven.Client.Documents.Operations.Attachments;
 
@@ -23,6 +24,26 @@ namespace Northwind.Features
 
                 Console.WriteLine($"{name} \t {contentType} \t {hash} \t {size}");
             }
+        }
+        public void GetAttachmentContent()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+            
+            using AttachmentResult photo = session.Advanced.Attachments.Get("employees/8-A", "photo.jpg");
+            
+            Stream stream = photo.Stream;
+            var ms = new MemoryStream();
+            stream.CopyTo(ms);
+
+            AttachmentDetails attachmentDetails = photo.Details;
+            string name = attachmentDetails.Name;
+            string contentType = attachmentDetails.ContentType;
+            string hash = attachmentDetails.Hash;
+            long size = attachmentDetails.Size;
+            string documentId = attachmentDetails.DocumentId;
+            string changeVector = attachmentDetails.ChangeVector;
+
+            Console.WriteLine($"{ms.Length} \t {name} \t {contentType} \t {hash} \t {size} \t {documentId} \t {changeVector}");
         }
     }
 }
