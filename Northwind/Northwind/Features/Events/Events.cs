@@ -18,6 +18,12 @@ namespace Northwind.Features.Events
             session.Store(emp);
             session.SaveChanges();
         }
+
+        // Hands On 1 : Add the client ID of the user before storing the user
+        public void HandsOn1()
+        {
+
+        }
     }
 
     public static class Dsh
@@ -31,17 +37,25 @@ namespace Northwind.Features.Events
                     Database = "demo"
                 };
 
-                store.OnBeforeConversionToDocument += (sender, eventArgs) =>
-                {
-                    if (eventArgs.Entity is Employee employee)
-                        employee.FirstName = employee.FirstName + "_2";
-                };
+                //store.OnBeforeConversionToDocument += (sender, eventArgs) =>
+                //{
+                //    if (eventArgs.Entity is Employee employee)
+                //        employee.FirstName = employee.FirstName + "_2";
+                //};
 
-                store.OnBeforeStore += (sender, eventArgs) =>
+                //store.OnBeforeStore += (sender, eventArgs) =>
+                //{
+                //    if (eventArgs.Entity is Employee employee)
+                //        if (employee.HiredAt == default)
+                //            employee.HiredAt = DateTime.UtcNow;
+                //};
+
+                // Hands On 1 : Add the client ID of the user before storing the user
+                store.OnBeforeStore += (sender, e) =>
                 {
-                    if (eventArgs.Entity is Employee employee)
-                        if (employee.HiredAt == default)
-                            employee.HiredAt = DateTime.UtcNow;
+                    if (e.Session.GetChangeVectorFor(e.Entity) == null)
+                        e.DocumentMetadata["Created-By"] = "currentUser";
+                    e.DocumentMetadata["Modified-By"] = "currentUser";
                 };
 
                 store.Initialize();
