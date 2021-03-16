@@ -29,7 +29,7 @@ namespace Northwind.Features.Revisions
             session.SaveChanges();
         }
 
-        public void GetRevisions()
+        public void GetRevisionsForEmployee()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -38,6 +38,18 @@ namespace Northwind.Features.Revisions
             foreach (Employee revision in revisions)
             {
                 Console.WriteLine(revision);
+            }
+        }
+
+        public void GetRevisionsForOrder()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            List<Order> orderRevisions = session.Advanced.Revisions.GetFor<Order>("orders/823-A");
+
+            foreach (Order revision in orderRevisions)
+            {
+                Console.WriteLine(revision.Lines.Count);
             }
         }
     }
