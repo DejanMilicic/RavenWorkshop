@@ -1,8 +1,9 @@
-﻿using Raven.Client.Documents;
+﻿using Northwind.Models.Entity;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
-using System;
-using Northwind.Models.Entity;
 using Raven.Client.Documents.Session;
+using System;
+using System.Linq;
 
 namespace Northwind.Features.Events
 {
@@ -19,13 +20,22 @@ namespace Northwind.Features.Events
             session.Store(emp);
             session.SaveChanges();
         }
-        
+
         public void Delete()
         {
             using var session = Dsh.Store.OpenSession();
 
             session.Delete("employees/6-A");
             session.SaveChanges();
+        }
+
+        public void Query()
+        {
+            using var session = Dsh.Store.OpenSession();
+
+            var employees = session.Query<Employee>().ToList();
+
+            Console.WriteLine(employees.Count);
         }
     }
 
@@ -66,6 +76,14 @@ namespace Northwind.Features.Events
                 {
                     if (e.Entity is Employee)
                         throw new InvalidOperationException();
+                };
+
+                store.OnBeforeQuery += (sender, e) =>
+                {
+                    if (e.QueryCustomization is IDocumentQuery<Employee> qe)
+                    {
+                        qe.AndAlso().WhereEquals("Address.City", "London");
+                    }
                 };
 
                 store.Initialize();
