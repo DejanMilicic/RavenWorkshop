@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Northwind.Features.Indexes;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
 
-namespace Northwind.Features
+namespace Northwind.Features.Search
 {
-    public partial class Examples
+    public class Search
     {
-        public void SearchOrderLines(string term)
+        public void SearchOrderLines()
         {
-            using var session = store.OpenSession();
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            string term = "apples";
 
             var res = session.Query<Orders_Search.Entry, Orders_Search>()
                 .Search(x => x.Query, term)
@@ -22,7 +21,7 @@ namespace Northwind.Features
 
             foreach (Order order in res)
             {
-                Console.WriteLine($"{order.Id}");
+                Console.WriteLine($"Order {order.Id} contains {term}");
             }
         }
     }
