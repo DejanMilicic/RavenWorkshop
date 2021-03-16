@@ -10,6 +10,19 @@ namespace Northwind.Features.Includes
 {
     public class Includes
     {
+        public void LoadWithInclude()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            var order = session
+                .Include<Order>(x => x.Company)
+                .Load("orders/1-A");
+
+            var company = session.Load<Company>(order.Company);
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
         public void ManyCalls()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
