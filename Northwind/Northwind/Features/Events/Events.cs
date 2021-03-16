@@ -96,6 +96,11 @@ namespace Northwind.Features.Events
                     }
                 };
 
+                store.OnSessionCreated += (sender, e) =>
+                {
+                    e.Session.UseOptimisticConcurrency = true;
+                };
+
                 store.Initialize();
 
                 IndexCreation.CreateIndexes(typeof(Program).Assembly, store);
