@@ -37,6 +37,16 @@ namespace Northwind.Features.Events
 
             Console.WriteLine(employees.Count);
         }
+
+        public void Query3()
+        {
+            using var session = Dsh.Store.OpenSession();
+            //session.Advanced.OnBeforeStore +=
+
+            var employees = session.Query<Employee>().ToList();
+
+            Console.WriteLine(employees.Count);
+        }
     }
 
     public static class Dsh
