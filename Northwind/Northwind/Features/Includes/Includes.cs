@@ -28,7 +28,7 @@ namespace Northwind.Features.Includes
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public void ManyCallsOptimized()
+        public void ManyCallsOptimizedViaInclude()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
