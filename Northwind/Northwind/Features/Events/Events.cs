@@ -37,6 +37,13 @@ namespace Northwind.Features.Events
                         employee.FirstName = employee.FirstName + "_2";
                 };
 
+                store.OnBeforeStore += (sender, eventArgs) =>
+                {
+                    if (eventArgs.Entity is Employee employee)
+                        if (employee.HiredAt == default)
+                            employee.HiredAt = DateTime.UtcNow;
+                };
+
                 store.Initialize();
 
                 IndexCreation.CreateIndexes(typeof(Program).Assembly, store);
