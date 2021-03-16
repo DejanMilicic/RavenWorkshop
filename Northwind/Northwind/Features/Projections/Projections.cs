@@ -82,5 +82,33 @@ namespace Northwind.Features.Projections
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
+
+        public void Projection4()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            var projectionResults = from order in session.Query<Order>()
+                where order.ShipTo.City == "London"
+                let company = RavenQuery.Load<Company>(order.Company)
+                let employee = RavenQuery.Load<Employee>(order.Employee)
+                let fullName =
+                    new Func<Employee, string>(e => e.FirstName + " " + e.LastName)
+                select new
+                {
+                    company.Name,
+                    order.ShipTo.City,
+                    Employee = fullName(employee)
+                };
+
+
+            var results = projectionResults.ToList();
+
+            foreach (var result in results)
+            {
+                Console.WriteLine($"Company {result.Name} from {result.City} via {result.Employee}");
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
     }
 }
