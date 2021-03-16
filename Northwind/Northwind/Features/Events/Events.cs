@@ -2,12 +2,13 @@
 using Raven.Client.Documents.Indexes;
 using System;
 using Northwind.Models.Entity;
+using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.Events
 {
     public class Events
     {
-        public void Demo1()
+        public void Create()
         {
             using var session = Dsh.Store.OpenSession();
 
@@ -18,11 +19,13 @@ namespace Northwind.Features.Events
             session.Store(emp);
             session.SaveChanges();
         }
-
-        // Hands On 1 : Add the client ID of the user before storing the user
-        public void HandsOn1()
+        
+        public void Delete()
         {
+            using var session = Dsh.Store.OpenSession();
 
+            session.Delete("employees/6-A");
+            session.SaveChanges();
         }
     }
 
@@ -56,6 +59,13 @@ namespace Northwind.Features.Events
                     if (e.Session.GetChangeVectorFor(e.Entity) == null)
                         e.DocumentMetadata["Created-By"] = "currentUser";
                     e.DocumentMetadata["Modified-By"] = "currentUser";
+                };
+
+                // Hands On 2 : Prevent deletion of Employees with a specific name
+                store.OnBeforeDelete += (sender, e) =>
+                {
+                    if (e.Entity is Employee)
+                        throw new InvalidOperationException();
                 };
 
                 store.Initialize();
