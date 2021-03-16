@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Northwind.Models.Entity;
 using Raven.Client.Documents.Session;
 
@@ -36,6 +37,19 @@ namespace Northwind.Features.Counters
             session.CountersFor("employees/8-A").Increment("Likes", 1);
             
             session.SaveChanges();
+        }
+
+        public async Task ConcurrentUpdates()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                await Task.Factory.StartNew(async () =>
+                  {
+                      using var session = DocumentStoreHolder.Store.OpenAsyncSession();
+                      session.CountersFor("employees/8-A").Increment("Likes");
+                      await session.SaveChangesAsync();
+                  });
+            }
         }
     }
 }
