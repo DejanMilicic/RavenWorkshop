@@ -1,5 +1,4 @@
 ﻿using System;
-using Raven.Client.Documents;
 using Raven.Client.Documents.Subscriptions;
 using System.Threading.Tasks;
 using Northwind.Models.Entity;
@@ -11,27 +10,21 @@ namespace Northwind.Features.Subscriptions
     {
         public async Task Consume()
         {
-            var store = new DocumentStore
-            {
-                Urls = new[] { "http://live-test.ravendb.net" },
-                Database = "demo",
-            };
-            store.Initialize();
-
             try
             {
-                await store.Subscriptions.GetSubscriptionStateAsync("LondonEmployees");
+                await DocumentStoreHolder.Store.Subscriptions.GetSubscriptionStateAsync("LondonEmployees");
             }
             catch (SubscriptionDoesNotExistException)
             {
-                await store.Subscriptions.CreateAsync(new SubscriptionCreationOptions<Employee>
+                await DocumentStoreHolder.Store.Subscriptions.CreateAsync(new SubscriptionCreationOptions<Employee>
                 {
                     Name = "LondonEmployees",
                     Filter = employee => employee.Address.City == "London"
                 });
             }
 
-            var subscription = store.Subscriptions.GetSubscriptionWorker<Employee>(new SubscriptionWorkerOptions("LondonEmployees"));
+            var subscription = DocumentStoreHolder.Store.Subscriptions.GetSubscriptionWorker<Employee>(
+                new SubscriptionWorkerOptions("LondonEmployees"));
             await subscription.Run(batch =>
             {
                 foreach (var item in batch.Items)
