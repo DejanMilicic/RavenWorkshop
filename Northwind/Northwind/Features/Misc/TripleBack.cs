@@ -20,16 +20,22 @@ namespace Northwind.Features.Misc
         {
             var session = DocumentStoreHolder.Store.OpenSession();
 
-            var res = session.Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
-                .Where(x => x.Supplier == "suppliers/7-A")
-                .ProjectInto<Orders_ByProduct_BySupplier.Entry>()
-                .ToList();
+            var res = (from entry in session.Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
+                      where entry.Supplier == "suppliers/7-A"
+                      select new
+                          {
+                            Supplier = entry.Supplier,
+                            Product = entry.Product,
+                            Order = entry.Id
+                          })
+                      .ToList();
 
             foreach (var r in res)
             {
-                Console.WriteLine($"{r.Supplier} -> {r.Product} -> {r.Id}");
+                Console.WriteLine($"{r.Supplier} -> {r.Product} -> {r.Order}");
             }
 
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
     }
 
