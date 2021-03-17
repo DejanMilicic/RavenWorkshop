@@ -35,6 +35,22 @@ namespace Northwind.Features.Caching
                 Console.ReadLine();
             }
         }
+
+        public void AggressiveCaching()
+        {
+            while (true)
+            {
+                using (Dsh.Store.OpenSession().Advanced.DocumentStore.AggressivelyCache())
+                {
+                    using var session = Dsh.Store.OpenSession();
+                    session.Query<Order>()
+                        .Where(x => x.OrderedAt < DateTime.Today)
+                        .ToList();
+                }
+
+                Console.ReadLine();
+            }
+        }
     }
 
     public static class Dsh
