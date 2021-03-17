@@ -99,5 +99,24 @@ namespace Northwind.Features.Identifiers
             session.Store(emp);
             session.SaveChanges();
         }
+
+        //http://127.0.0.1:8080/debug/routes
+
+        //http://127.0.0.1:8080/databases/demo/debug/storage/btree-structure?name=Docs
+        
+        // example: fragmentation of B+Tree
+        //from Orders
+        //update {
+        //    for (var i=0; i< 100; i++) {
+        //        put("", this)
+        //    }
+        //}
+        
+        //from Orders
+        //update {
+        //    for (var i=0; i< 100; i++) {
+        //        put("orders/", this)
+        //    }
+        //}
     }
 }
