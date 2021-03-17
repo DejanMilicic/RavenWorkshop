@@ -26,19 +26,23 @@ namespace Northwind.Features.Misc
                       .ToList();
 
             var x = res
-                .GroupBy(x => x.Product.Id)
-                .Select(g => new
-                {
-                    Product = g.Key,
-                    Orders = g.Select(o => o.Order.Id)
-                }).ToList();
-            
+                .GroupBy(x => x.Product.Id, 
+                    (key, value) => new {
+                        ProductId = key,
+                        Product = value.ToList().Select(x => x.Product).ToList(),
+                        Orders = value.ToList().Select(x => x.Order).ToList()
+                    })
+                .ToList();
+
             foreach (var entry in x)
             {
-                Console.WriteLine(entry.Product);
-                foreach (var order in entry.Orders)
+                Product product = entry.Product.First();
+
+                Console.WriteLine($"[{product.Id}] {product.Name}");
+                
+                foreach (Order order in entry.Orders)
                 {
-                    Console.WriteLine($"\t {order}");
+                    Console.WriteLine($"\t {order.Id}");
                 }
             }
 
