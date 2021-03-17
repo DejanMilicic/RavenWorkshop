@@ -15,13 +15,11 @@ namespace Northwind.Features.Misc
             var res = (from entry in session.Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
                        where entry.Supplier == "suppliers/7-A"
 
-                       let supplier = RavenQuery.Load<Supplier>(entry.Supplier)
                        let product = RavenQuery.Load<Product>(entry.Product)
                        let order = RavenQuery.Load<Order>(entry.Id) // ?
 
                        select new
                        {
-                           Supplier = supplier.Name,
                            Product = product.Name,
                            Order = entry.Id // order.Id ??
                        })
@@ -29,7 +27,7 @@ namespace Northwind.Features.Misc
 
             foreach (var r in res)
             {
-                Console.WriteLine($"{r.Supplier} -> {r.Product} -> {r.Order}");
+                Console.WriteLine($"{r.Product} \t {r.Order}");
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
