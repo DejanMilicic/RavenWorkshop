@@ -24,8 +24,8 @@ namespace Northwind.Features.Events
         public void Delete()
         {
             using var session = Dsh.Store.OpenSession();
-
-            session.Delete("employees/6-A");
+            var emp = session.Load<Employee>("employees/8-A");
+            session.Delete(emp);
             session.SaveChanges();
         }
 
