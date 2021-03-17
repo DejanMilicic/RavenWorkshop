@@ -16,18 +16,19 @@ namespace Northwind.Features.Misc
                        where entry.Supplier == "suppliers/7-A"
 
                        let product = RavenQuery.Load<Product>(entry.Product)
-                       let order = RavenQuery.Load<Order>(entry.Id) // ?
+                       let order = RavenQuery.Load<Order>(entry.Order) // ?
 
                        select new
                        {
                            Product = product.Name,
-                           Order = entry.Id // order.Id ??
+                           OrderId = order.Id,
+                           Order = order
                        })
                       .ToList();
 
             foreach (var r in res)
             {
-                Console.WriteLine($"{r.Product} \t {r.Order}");
+                Console.WriteLine($"{r.Product} \t {r.OrderId} \t {r.Order.Id}");
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
@@ -38,7 +39,7 @@ namespace Northwind.Features.Misc
     {
         public class Entry
         {
-            public string Id { get; set; }
+            public string Order { get; set; }
 
             public string Product { get; set; }
 
@@ -53,12 +54,14 @@ namespace Northwind.Features.Misc
                             let s = LoadDocument<Supplier>(p.Supplier)
                             select new Entry
                             {
+                                Order = order.Id,
                                 Product = p.Id,
                                 Supplier = s.Id
                             };
 
             Stores.Add(x => x.Product, FieldStorage.Yes);
             Stores.Add(x => x.Supplier, FieldStorage.Yes);
+            Stores.Add(x => x.Order, FieldStorage.Yes);
         }
     }
 }
