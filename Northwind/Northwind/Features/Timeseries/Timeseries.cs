@@ -19,7 +19,7 @@ namespace Northwind.Features.Timeseries
             {
                 using var ts = bulk.TimeSeriesFor($"employees/{i}-A", "Audits");
 
-                for (int j = 0; j < 10_000; j++)
+                for (int j = 0; j < 100_000; j++)
                 {
                     time = time.AddHours(random.Next(6, 24));
                     ts.Append(time, 1, "Login");
