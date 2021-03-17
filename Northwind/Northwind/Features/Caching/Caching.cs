@@ -43,9 +43,11 @@ namespace Northwind.Features.Caching
                 using (Dsh.Store.OpenSession().Advanced.DocumentStore.AggressivelyCache())
                 {
                     using var session = Dsh.Store.OpenSession();
-                    session.Query<Order>()
+                    var orders = session.Query<Order>()
                         .Where(x => x.OrderedAt < DateTime.Today)
                         .ToList();
+
+                    Console.WriteLine(orders.Count);
                 }
 
                 Console.ReadLine();
