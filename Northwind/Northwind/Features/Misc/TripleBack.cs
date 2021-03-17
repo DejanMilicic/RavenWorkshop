@@ -37,13 +37,10 @@ namespace Northwind.Features.Misc
             foreach (var entry in x)
             {
                 Product product = entry.Product.First();
-
                 Console.WriteLine($"[{product.Id}] {product.Name}");
                 
                 foreach (Order order in entry.Orders)
-                {
                     Console.WriteLine($"\t {order.Id}");
-                }
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
