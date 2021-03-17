@@ -12,12 +12,25 @@ namespace Northwind.Features.Caching
 {
     public class Caching
     {
-        public void Do()
+        public void DocumentCaching()
         {
             while (true)
             {
                 using var session = Dsh.Store.OpenSession();
                 session.Load<Employee>("employees/2-a");
+
+                Console.ReadLine();
+            }
+        }
+
+        public void QueryCaching()
+        {
+            while (true)
+            {
+                using var session = Dsh.Store.OpenSession();
+                session.Query<Order>()
+                    .Where(x => x.OrderedAt < DateTime.Today)
+                    .ToList();
 
                 Console.ReadLine();
             }
