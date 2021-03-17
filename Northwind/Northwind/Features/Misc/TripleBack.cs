@@ -20,15 +20,22 @@ namespace Northwind.Features.Misc
 
                        select new
                        {
-                           Product = product.Name,
-                           OrderId = order.Id,
-                           Order = order
+                           Product = product.Id,
+                           Order = order.Id
                        })
                       .ToList();
 
-            foreach (var r in res)
+            var x = from r in res
+                group r by r.Product into g
+                select new { P = g.Key, O = g };
+
+            foreach (var entry in x)
             {
-                Console.WriteLine($"{r.Product} \t {r.OrderId} \t {r.Order.Id}");
+                Console.WriteLine(entry.P);
+                foreach (var order in entry.O.Select(x => x.Order))
+                {
+                    Console.WriteLine($"\t {order}");
+                }
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
