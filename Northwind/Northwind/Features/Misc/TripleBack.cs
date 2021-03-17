@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Northwind.Models.Entity;
-using Raven.Client.Documents;
+﻿using Northwind.Models.Entity;
 using Raven.Client.Documents.Indexes;
+using Raven.Client.Documents.Queries;
+using System;
+using System.Linq;
 
 namespace Northwind.Features.Misc
 {
-    public class ViewModel
-    {
-
-    }
-
     public class TripleBack
     {
         public void Do()
@@ -21,13 +13,18 @@ namespace Northwind.Features.Misc
             var session = DocumentStoreHolder.Store.OpenSession();
 
             var res = (from entry in session.Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
-                      where entry.Supplier == "suppliers/7-A"
-                      select new
-                          {
-                            Supplier = entry.Supplier,
-                            Product = entry.Product,
-                            Order = entry.Id
-                          })
+                       where entry.Supplier == "suppliers/7-A"
+
+                       let supplier = RavenQuery.Load<Supplier>(entry.Supplier)
+                       let product = RavenQuery.Load<Product>(entry.Product)
+                       let order = RavenQuery.Load<Order>(entry.Id) // ?
+
+                       select new
+                       {
+                           Supplier = supplier.Name,
+                           Product = product.Name,
+                           Order = entry.Id // order.Id ??
+                       })
                       .ToList();
 
             foreach (var r in res)
