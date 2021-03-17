@@ -25,16 +25,20 @@ namespace Northwind.Features.Misc
                        })
                       .ToList();
 
-            var x = from r in res
-                group r by r.Product.Id into g
-                select new { P = g.Key, O = g };
-
+            var x = res
+                .GroupBy(x => x.Product.Id)
+                .Select(g => new
+                {
+                    Product = g.Key,
+                    Orders = g.Select(o => o.Order.Id)
+                }).ToList();
+            
             foreach (var entry in x)
             {
-                Console.WriteLine(entry.P);
-                foreach (var order in entry.O.Select(x => x.Order))
+                Console.WriteLine(entry.Product);
+                foreach (var order in entry.Orders)
                 {
-                    Console.WriteLine($"\t {order.Id}");
+                    Console.WriteLine($"\t {order}");
                 }
             }
 
