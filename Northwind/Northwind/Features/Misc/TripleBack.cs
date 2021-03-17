@@ -20,13 +20,13 @@ namespace Northwind.Features.Misc
 
                        select new
                        {
-                           Product = product.Id,
-                           Order = order.Id
+                           Product = product,
+                           Order = order
                        })
                       .ToList();
 
             var x = from r in res
-                group r by r.Product into g
+                group r by r.Product.Id into g
                 select new { P = g.Key, O = g };
 
             foreach (var entry in x)
@@ -34,7 +34,7 @@ namespace Northwind.Features.Misc
                 Console.WriteLine(entry.P);
                 foreach (var order in entry.O.Select(x => x.Order))
                 {
-                    Console.WriteLine($"\t {order}");
+                    Console.WriteLine($"\t {order.Id}");
                 }
             }
 
