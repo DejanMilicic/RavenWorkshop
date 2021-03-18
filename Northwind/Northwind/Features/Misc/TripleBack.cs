@@ -73,7 +73,7 @@ namespace Northwind.Features.Misc
             {
                 foreach (var supplierEntry in supplierEntries)
                 {
-                    Console.WriteLine($"Supplier: {supplierEntry.Supplier.Id}");
+                    Console.WriteLine($"Supplier: {supplierEntry.Supplier.Id} {supplierEntry.Supplier.Name}");
 
                     foreach (var productEntry in supplierEntry.ProductEntries)
                     {
@@ -127,9 +127,9 @@ namespace Northwind.Features.Misc
             //List<string> suppliers = new List<string> { "", "suppliers/5-a" };
 
             List<Supplier> suppliers = new List<Supplier>();
-            suppliers.Add(session.Load<Supplier>("suppliers/4-a"));
+            suppliers.AddRange(session.Query<Supplier>().Where(x => x.Id.In(new string[] {"suppliers/4-a", "Suppliers/0000000000000008434-A"})));
+            //suppliers.AddRange((IEnumerable<Supplier>)session.Load<Supplier>());
             //var suppliers = session.Query<Supplier>().Skip(2).Take(5).ToList();
-
             result.Add(suppliers);
 
             var allproducts = session.Query<Product>()
@@ -157,7 +157,6 @@ namespace Northwind.Features.Misc
                            Product = product,
                            Order = order
                        })
-
                 .ToList();
 
             var x = res
