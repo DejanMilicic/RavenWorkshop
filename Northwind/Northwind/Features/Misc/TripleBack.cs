@@ -20,11 +20,27 @@ namespace Northwind.Features.Misc
                     Add(supplier);
             }
 
-            public void AddEntry(Supplier supplier, Product product, List<Order> orders)
+            public void Add(Supplier supplier, Product product, List<Order> orders)
             {
                 var s = Add(supplier);
                 var p = Add(s, product);
                 p.Orders.AddRange(orders);
+            }
+
+            public void Add(Supplier supplier, IEnumerable<Product> products)
+            {
+                var s = Add(supplier);
+
+                foreach (Product product in products)
+                {
+                    Add(s, product);
+                }
+            }
+
+            public void Add(Supplier supplier, Product product)
+            {
+                var s = Add(supplier);
+                Add(s, product);
             }
 
             public SupplierEntry Add(Supplier supplier)
@@ -61,7 +77,7 @@ namespace Northwind.Features.Misc
 
                     foreach (var productEntry in supplierEntry.ProductEntries)
                     {
-                        Console.WriteLine($"\t Product: {productEntry.Product.Id}");
+                        Console.WriteLine($"\t Product: [{productEntry.Product.Id}] {productEntry.Product.Name}");
 
                         foreach (var order in productEntry.Orders)
                         {
@@ -108,11 +124,24 @@ namespace Northwind.Features.Misc
 
             QueryTimings timings = new QueryTimings();
 
-            //List<string> suppliers = new List<string> { "suppliers/4-a", "suppliers/5-a" };
+            //List<string> suppliers = new List<string> { "", "suppliers/5-a" };
 
-            var suppliers = session.Query<Supplier>().Skip(2).Take(5).ToList();
+            List<Supplier> suppliers = new List<Supplier>();
+            suppliers.Add(session.Load<Supplier>("suppliers/4-a"));
+            //var suppliers = session.Query<Supplier>().Skip(2).Take(5).ToList();
+
             result.Add(suppliers);
 
+            var allproducts = session.Query<Product>()
+                .Where(x => x.Supplier.In(suppliers.Select(x => x.Id)))
+                .ToList();
+
+            foreach (Product product in allproducts)
+            {
+                Supplier supplier = session.Load<Supplier>(product.Supplier);
+                result.Add(supplier, product);
+            }
+            
             var res = (from entry in session
                         .Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
                         .Customize(x => x.Timings(out timings))
@@ -145,7 +174,7 @@ namespace Northwind.Features.Misc
 
             foreach (Row row in x)
             {
-                result.AddEntry(row.Suppliers.First(), row.Products.First(), row.Orders);
+                result.Add(row.Suppliers.First(), row.Products.First(), row.Orders);
             }
             result.Print();
 
