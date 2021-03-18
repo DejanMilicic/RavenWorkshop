@@ -54,6 +54,51 @@ namespace Northwind.Features.Misc
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
             Console.WriteLine($"Total execution time: {timings.DurationInMs}ms");
         }
+
+        public void Do2()
+        {
+            var session = DocumentStoreHolder.Store.OpenSession();
+
+            QueryTimings timings = new QueryTimings();
+
+            var res = (from entry in session
+                        .Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
+                        .Customize(x => x.Timings(out timings))
+
+                       where entry.Supplier == "suppliers/7-A"
+
+                       let product = RavenQuery.Load<Product>(entry.Product)
+                       let order = RavenQuery.Load<Order>(entry.Order) // ?
+
+                       select new
+                       {
+                           Product = product,
+                           Order = order
+                       })
+                
+                .ToList();
+
+            var x = res
+                .GroupBy(x => x.Product.Id, 
+                    (key, value) => new {
+                        ProductId = key,
+                        Product = value.ToList().Select(x => x.Product).ToList(),
+                        Orders = value.ToList().Select(x => x.Order).ToList()
+                    })
+                .ToList();
+
+            foreach (var entry in x)
+            {
+                Product product = entry.Product.First();
+                Console.WriteLine($"[{product.Id}] {product.Name}");
+                
+                foreach (Order order in entry.Orders)
+                    Console.WriteLine($"\t {order.Id}");
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+            Console.WriteLine($"Total execution time: {timings.DurationInMs}ms");
+        }
     }
 
     public class Orders_ByProduct_BySupplier : AbstractIndexCreationTask<Order, Orders_ByProduct_BySupplier.Entry>
