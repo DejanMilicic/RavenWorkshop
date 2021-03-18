@@ -3,6 +3,8 @@ using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Queries;
 using System;
 using System.Linq;
+using Raven.Client.Documents.Queries.Timings;
+using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.Misc
 {
@@ -12,7 +14,12 @@ namespace Northwind.Features.Misc
         {
             var session = DocumentStoreHolder.Store.OpenSession();
 
-            var res = (from entry in session.Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
+            QueryTimings timings = new QueryTimings();
+
+            var res = (from entry in session
+                        .Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
+                        .Customize(x => x.Timings(out timings))
+
                        where entry.Supplier == "suppliers/7-A"
 
                        let product = RavenQuery.Load<Product>(entry.Product)
@@ -23,7 +30,8 @@ namespace Northwind.Features.Misc
                            Product = product,
                            Order = order
                        })
-                      .ToList();
+                
+                .ToList();
 
             var x = res
                 .GroupBy(x => x.Product.Id, 
@@ -44,6 +52,7 @@ namespace Northwind.Features.Misc
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+            Console.WriteLine($"Total execution time: {timings.DurationInMs}ms");
         }
     }
 
