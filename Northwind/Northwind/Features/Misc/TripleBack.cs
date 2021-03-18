@@ -6,6 +6,7 @@ using Raven.Client.Documents.Queries.Timings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Raven.Client.Documents;
 
 namespace Northwind.Features.Misc
 {
@@ -13,10 +14,21 @@ namespace Northwind.Features.Misc
     {
         public class Result
         {
+            public void Add(IEnumerable<Supplier> suppliers)
+            {
+                foreach (Supplier supplier in suppliers)
+                    Add(supplier);
+            }
+
             public void AddEntry(Supplier supplier, Product product, List<Order> orders)
             {
-                //if orders.Any()
+                var s = Add(supplier);
+                var p = Add(s, product);
+                p.Orders.AddRange(orders);
+            }
 
+            public SupplierEntry Add(Supplier supplier)
+            {
                 var s = supplierEntries.FirstOrDefault(x => x.Supplier.Id == supplier.Id);
                 if (s == null)
                 {
@@ -25,15 +37,20 @@ namespace Northwind.Features.Misc
                     supplierEntries.Add(s);
                 }
 
+                return s;
+            }
+
+            public ProductEntry Add(SupplierEntry s, Product product)
+            {
                 var p = s.ProductEntries.FirstOrDefault(x => x.Product.Id == product.Id);
                 if (p == null)
                 {
-                    p = new SupplierEntry.ProductEntry();
+                    p = new ProductEntry();
                     p.Product = product;
                     s.ProductEntries.Add(p);
                 }
 
-                p.Orders.AddRange(orders);
+                return p;
             }
 
             public void Print()
@@ -64,13 +81,13 @@ namespace Northwind.Features.Misc
                 public Supplier Supplier { get; set; }
 
                 public List<ProductEntry> ProductEntries { get; set; } = new List<ProductEntry>();
+            }
 
-                public class ProductEntry
-                {
-                    public Product Product { get; set; }
+            public class ProductEntry
+            {
+                public Product Product { get; set; }
 
-                    public List<Order> Orders { get; set; } = new List<Order>();
-                }
+                public List<Order> Orders { get; set; } = new List<Order>();
             }
         }
 
@@ -85,16 +102,21 @@ namespace Northwind.Features.Misc
 
         public void Do()
         {
+            Result result = new Result();
+
             var session = DocumentStoreHolder.Store.OpenSession();
 
             QueryTimings timings = new QueryTimings();
 
-            List<string> suppliers = new List<string> { "suppliers/4-a", "suppliers/5-a" };
+            //List<string> suppliers = new List<string> { "suppliers/4-a", "suppliers/5-a" };
+
+            var suppliers = session.Query<Supplier>().Skip(2).Take(5).ToList();
+            result.Add(suppliers);
 
             var res = (from entry in session
                         .Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
                         .Customize(x => x.Timings(out timings))
-                        .Where(x => x.Supplier.In(suppliers))
+                        .Where(x => x.Supplier.In(suppliers.Select(x => x.Id)))
 
                        let supplier = RavenQuery.Load<Supplier>(entry.Supplier)
                        let product = RavenQuery.Load<Product>(entry.Product)
@@ -121,7 +143,6 @@ namespace Northwind.Features.Misc
                     })
                 .ToList();
 
-            Result result = new Result();
             foreach (Row row in x)
             {
                 result.AddEntry(row.Suppliers.First(), row.Products.First(), row.Orders);
