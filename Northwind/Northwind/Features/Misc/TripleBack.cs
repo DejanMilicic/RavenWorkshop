@@ -124,6 +124,25 @@ namespace Northwind.Features.Misc
 
             QueryTimings timings = new QueryTimings();
 
+
+
+
+
+
+            result.Print();
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+            Console.WriteLine($"Total execution time: {timings.DurationInMs}ms");
+        }
+
+        public void Do3()
+        {
+            Result result = new Result();
+
+            var session = DocumentStoreHolder.Store.OpenSession();
+
+            QueryTimings timings = new QueryTimings();
+
             //List<string> suppliers = new List<string> { "", "suppliers/5-a" };
 
             List<Supplier> suppliers = new List<Supplier>();
@@ -257,4 +276,56 @@ namespace Northwind.Features.Misc
             Stores.Add(x => x.Order, FieldStorage.Yes);
         }
     }
+
+    public class Products_BySupplier_ByOrder : AbstractMultiMapIndexCreationTask
+    {
+        public class Entry
+        {
+            public string Order { get; set; }
+
+            public string Product { get; set; }
+
+            public string Supplier { get; set; }
+        }
+
+        public Products_BySupplier_ByOrder()
+        {
+            //AddMap<Order>(
+                
+            //    );
+        }
+    }
 }
+
+/*
+  
+from order in docs.Orders
+let items = order.Lines.Select(ol => LoadDocument(ol.Product, "Products")).Select(p => new { P = p, S = LoadDocument(p.Supplier, "Suppliers")})
+from kvp in items
+select new
+{
+    Product = kvp.P.Id,
+    Supplier = kvp.S.Id,
+    Count = 1,
+    OrderIds = new [] { order.Id }
+}  
+
+from p in docs.Products
+let s = LoadDocument(p.Supplier, "Suppliers")
+select new {
+    Product = p.Id,
+    Supplier = s.Id,
+    Count = 0,
+    OrderIds = new string[0]
+}
+
+from result in results
+group result by new { result.Product, result.Supplier } into g
+select new {
+    Product = g.Key.Product,
+    Supplier = g.Key.Supplier,
+    Count = g.Sum(x => x.Count),
+    OrderIds = g.SelectMany(x => x.OrderIds)
+}
+
+ */
