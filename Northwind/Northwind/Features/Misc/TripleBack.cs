@@ -1,5 +1,4 @@
 ﻿using Northwind.Models.Entity;
-using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Queries;
@@ -14,33 +13,17 @@ namespace Northwind.Features.Misc
     {
         public class Result
         {
-            public void Add(IEnumerable<Supplier> suppliers)
-            {
-                foreach (Supplier supplier in suppliers)
-                    Add(supplier);
-            }
-
             public void Add(Supplier supplier, Product product, List<Order> orders)
             {
                 var s = Add(supplier);
-                var p = Add(s, product);
-                p.Orders.AddRange(orders);
-            }
 
-            public void Add(Supplier supplier, IEnumerable<Product> products)
-            {
-                var s = Add(supplier);
-
-                foreach (Product product in products)
+                if (product.Id != null)
                 {
-                    Add(s, product);
-                }
-            }
+                    var p = Add(s, product);
 
-            public void Add(Supplier supplier, Product product)
-            {
-                var s = Add(supplier);
-                Add(s, product);
+                    if (orders.Any())
+                        p.Orders.AddRange(orders);
+                }
             }
 
             public SupplierEntry Add(Supplier supplier)
@@ -90,6 +73,23 @@ namespace Northwind.Features.Misc
                 Console.WriteLine();
             }
 
+            public void Print2()
+            {
+                foreach (var supplierEntry in supplierEntries)
+                {
+                    Console.WriteLine($"Supplier: {supplierEntry.Supplier.Id} {supplierEntry.Supplier.Name}");
+
+                    foreach (var productEntry in supplierEntry.ProductEntries)
+                    {
+                        Console.WriteLine($"\t Product: [{productEntry.Product.Id}] {productEntry.Product.Name}");
+                        Console.WriteLine($"\t\t Orders: {productEntry.Orders.Count}");
+                    }
+                }
+
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+
             public List<SupplierEntry> supplierEntries { get; set; } = new List<SupplierEntry>();
 
             public class SupplierEntry
@@ -111,8 +111,8 @@ namespace Northwind.Features.Misc
         {
             public string SupplierId { get; set; }
             public string ProductId { get; set; }
-            public List<Supplier> Suppliers { get; set; }
-            public List<Product> Products { get; set; }
+            public Supplier Supplier { get; set; }
+            public Product Product { get; set; }
             public List<Order> Orders { get; set; }
         }
 
@@ -124,17 +124,46 @@ namespace Northwind.Features.Misc
 
             QueryTimings timings = new QueryTimings();
 
+            var res = (from entry in session
+                .Query<Products_BySupplier_ByOrder.Entry, Products_BySupplier_ByOrder>()
+                .Customize(x => x.Timings(out timings))
+                       let supplier = RavenQuery.Load<Supplier>(entry.Supplier)
+                       let product = RavenQuery.Load<Product>(entry.Product)
+                       let orders = RavenQuery.Load<Order>(entry.OrderIds).ToList()
 
+                       select new
+                       {
+                           Supplier = supplier,
+                           Product = product,
+                           Order = orders,
+                           OrderIds = entry.OrderIds
+                       })
+                .ToList();
 
+            var x = res
+                .GroupBy(x => new { SupplierId = x.Supplier.Id, ProductId = x.Product.Id },
+                    (key, value) => new Row
+                    {
+                        SupplierId = key.SupplierId,
+                        ProductId = key.ProductId,
+                        Supplier = value.First().Supplier,
+                        Product = value.First().Product,
+                        Orders = value.ToList().SelectMany(x => x.Order).ToList()
+                    })
+                .ToList();
 
+            foreach (Row row in x)
+            {
+                result.Add(row.Supplier, row.Product, row.Orders);
+            }
 
-
-            result.Print();
+            result.Print2();
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
             Console.WriteLine($"Total execution time: {timings.DurationInMs}ms");
         }
 
+        /*
         public void Do3()
         {
             Result result = new Result();
@@ -247,6 +276,7 @@ namespace Northwind.Features.Misc
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
             Console.WriteLine($"Total execution time: {timings.DurationInMs}ms");
         }
+        */
     }
 
     public class Orders_ByProduct_BySupplier : AbstractIndexCreationTask<Order, Orders_ByProduct_BySupplier.Entry>
@@ -263,15 +293,15 @@ namespace Northwind.Features.Misc
         public Orders_ByProduct_BySupplier()
         {
             Map = orders => from order in orders
-                from orderLine in order.Lines
-                let p = LoadDocument<Product>(orderLine.Product)
-                let s = LoadDocument<Supplier>(p.Supplier)
-                select new Entry
-                {
-                    Order = order.Id,
-                    Product = p.Id,
-                    Supplier = s.Id
-                };
+                            from orderLine in order.Lines
+                            let p = LoadDocument<Product>(orderLine.Product)
+                            let s = LoadDocument<Supplier>(p.Supplier)
+                            select new Entry
+                            {
+                                Order = order.Id,
+                                Product = p.Id,
+                                Supplier = s.Id
+                            };
 
             Stores.Add(x => x.Product, FieldStorage.Yes);
             Stores.Add(x => x.Supplier, FieldStorage.Yes);
@@ -295,14 +325,14 @@ namespace Northwind.Features.Misc
                 from order in orders
                 let items = order.Lines
                     .Select(ol => LoadDocument<Product>(ol.Product))
-                    .Select(p => new {P = p, S = LoadDocument<Supplier>(p.Supplier)})
+                    .Select(p => new { P = p, S = LoadDocument<Supplier>(p.Supplier) })
                 from kvp in items
                 select new Entry
                 {
                     Product = kvp.P.Id,
                     Supplier = kvp.S.Id,
                     Count = 1,
-                    OrderIds = new[] {order.Id}
+                    OrderIds = new[] { order.Id }
                 });
 
             AddMap<Product>(products =>
@@ -327,15 +357,19 @@ namespace Northwind.Features.Misc
                 });
 
             Reduce = results => from result in results
-                group result by new {result.Product, result.Supplier}
+                                group result by new { result.Product, result.Supplier }
                 into g
-                select new
-                {
-                    Product = g.Key.Product,
-                    Supplier = g.Key.Supplier,
-                    Count = g.Sum(x => x.Count),
-                    OrderIds = g.SelectMany(x => x.OrderIds)
-                };
+                                select new
+                                {
+                                    Product = g.Key.Product,
+                                    Supplier = g.Key.Supplier,
+                                    Count = g.Sum(x => x.Count),
+                                    OrderIds = g.SelectMany(x => x.OrderIds)
+                                };
+
+            Stores.Add(x => x.Product, FieldStorage.Yes);
+            Stores.Add(x => x.Supplier, FieldStorage.Yes);
+            Stores.Add(x => x.OrderIds, FieldStorage.Yes);
         }
     }
 }
