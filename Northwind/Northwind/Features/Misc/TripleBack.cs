@@ -225,6 +225,10 @@ namespace Northwind.Features.Misc
             Stores.Add(x => x.Product, FieldStorage.Yes);
             Stores.Add(x => x.Supplier, FieldStorage.Yes);
             Stores.Add(x => x.OrderIds, FieldStorage.Yes);
+
+            OutputReduceToCollection = "SupplierProductSales";
+            //PatternReferencesCollectionName = "SupplierProductSales/References";
+            //PatternForOutputReduceToCollectionReferences = x => $"{x.Supplier}/{x.Product}";
         }
     }
 }
