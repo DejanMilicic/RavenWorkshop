@@ -316,6 +316,16 @@ namespace Northwind.Features.Misc
                     OrderIds = new string[0]
                 });
 
+            AddMap<Supplier>(suppliers =>
+                from s in suppliers
+                select new Entry
+                {
+                    Product = "",
+                    Supplier = s.Id,
+                    Count = 0,
+                    OrderIds = new string[0]
+                });
+
             Reduce = results => from result in results
                 group result by new {result.Product, result.Supplier}
                 into g
@@ -330,7 +340,6 @@ namespace Northwind.Features.Misc
     }
 }
 /*
-  
 from order in docs.Orders
 let items = order.Lines.Select(ol => LoadDocument(ol.Product, "Products")).Select(p => new { P = p, S = LoadDocument(p.Supplier, "Suppliers")})
 from kvp in items
@@ -359,5 +368,4 @@ select new {
     Count = g.Sum(x => x.Count),
     OrderIds = g.SelectMany(x => x.OrderIds)
 }
-
- */
+*/
