@@ -1,4 +1,5 @@
 ﻿using Northwind.Models.Entity;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Queries;
@@ -6,7 +7,6 @@ using Raven.Client.Documents.Queries.Timings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Raven.Client.Documents;
 
 namespace Northwind.Features.Misc
 {
@@ -146,7 +146,8 @@ namespace Northwind.Features.Misc
             //List<string> suppliers = new List<string> { "", "suppliers/5-a" };
 
             List<Supplier> suppliers = new List<Supplier>();
-            suppliers.AddRange(session.Query<Supplier>().Where(x => x.Id.In(new string[] {"suppliers/4-a", "Suppliers/0000000000000008434-A"})));
+            suppliers.AddRange(session.Query<Supplier>()
+                .Where(x => x.Id.In(new string[] {"suppliers/4-a", "Suppliers/0000000000000008434-A"})));
             //suppliers.AddRange((IEnumerable<Supplier>)session.Load<Supplier>());
             //var suppliers = session.Query<Supplier>().Skip(2).Take(5).ToList();
             result.Add(suppliers);
@@ -160,26 +161,26 @@ namespace Northwind.Features.Misc
                 Supplier supplier = session.Load<Supplier>(product.Supplier);
                 result.Add(supplier, product);
             }
-            
+
             var res = (from entry in session
                         .Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
                         .Customize(x => x.Timings(out timings))
                         .Where(x => x.Supplier.In(suppliers.Select(x => x.Id)))
 
-                       let supplier = RavenQuery.Load<Supplier>(entry.Supplier)
-                       let product = RavenQuery.Load<Product>(entry.Product)
-                       let order = RavenQuery.Load<Order>(entry.Order)
+                    let supplier = RavenQuery.Load<Supplier>(entry.Supplier)
+                    let product = RavenQuery.Load<Product>(entry.Product)
+                    let order = RavenQuery.Load<Order>(entry.Order)
 
-                       select new
-                       {
-                           Supplier = supplier,
-                           Product = product,
-                           Order = order
-                       })
+                    select new
+                    {
+                        Supplier = supplier,
+                        Product = product,
+                        Order = order
+                    })
                 .ToList();
 
             var x = res
-                .GroupBy(x => new { SupplierId = x.Supplier.Id, ProductId = x.Product.Id },
+                .GroupBy(x => new {SupplierId = x.Supplier.Id, ProductId = x.Product.Id},
                     (key, value) => new Row
                     {
                         SupplierId = key.SupplierId,
@@ -194,6 +195,7 @@ namespace Northwind.Features.Misc
             {
                 result.Add(row.Suppliers.First(), row.Products.First(), row.Orders);
             }
+
             result.Print();
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
@@ -210,16 +212,16 @@ namespace Northwind.Features.Misc
                         .Query<Orders_ByProduct_BySupplier.Entry, Orders_ByProduct_BySupplier>()
                         .Customize(x => x.Timings(out timings))
 
-                       where entry.Supplier == "suppliers/7-A"
+                    where entry.Supplier == "suppliers/7-A"
 
-                       let product = RavenQuery.Load<Product>(entry.Product)
-                       let order = RavenQuery.Load<Order>(entry.Order) // ?
+                    let product = RavenQuery.Load<Product>(entry.Product)
+                    let order = RavenQuery.Load<Order>(entry.Order) // ?
 
-                       select new
-                       {
-                           Product = product,
-                           Order = order
-                       })
+                    select new
+                    {
+                        Product = product,
+                        Order = order
+                    })
 
                 .ToList();
 
@@ -261,15 +263,15 @@ namespace Northwind.Features.Misc
         public Orders_ByProduct_BySupplier()
         {
             Map = orders => from order in orders
-                            from orderLine in order.Lines
-                            let p = LoadDocument<Product>(orderLine.Product)
-                            let s = LoadDocument<Supplier>(p.Supplier)
-                            select new Entry
-                            {
-                                Order = order.Id,
-                                Product = p.Id,
-                                Supplier = s.Id
-                            };
+                from orderLine in order.Lines
+                let p = LoadDocument<Product>(orderLine.Product)
+                let s = LoadDocument<Supplier>(p.Supplier)
+                select new Entry
+                {
+                    Order = order.Id,
+                    Product = p.Id,
+                    Supplier = s.Id
+                };
 
             Stores.Add(x => x.Product, FieldStorage.Yes);
             Stores.Add(x => x.Supplier, FieldStorage.Yes);
@@ -277,26 +279,56 @@ namespace Northwind.Features.Misc
         }
     }
 
-    public class Products_BySupplier_ByOrder : AbstractMultiMapIndexCreationTask
+    public class Products_BySupplier_ByOrder : AbstractMultiMapIndexCreationTask<Products_BySupplier_ByOrder.Entry>
     {
         public class Entry
         {
-            public string Order { get; set; }
-
             public string Product { get; set; }
-
             public string Supplier { get; set; }
+            public int Count { get; set; }
+            public string[] OrderIds { get; set; }
         }
 
         public Products_BySupplier_ByOrder()
         {
-            //AddMap<Order>(
-                
-            //    );
+            AddMap<Order>(orders =>
+                from order in orders
+                let items = order.Lines
+                    .Select(ol => LoadDocument<Product>(ol.Product))
+                    .Select(p => new {P = p, S = LoadDocument<Supplier>(p.Supplier)})
+                from kvp in items
+                select new Entry
+                {
+                    Product = kvp.P.Id,
+                    Supplier = kvp.S.Id,
+                    Count = 1,
+                    OrderIds = new[] {order.Id}
+                });
+
+            AddMap<Product>(products =>
+                from p in products
+                let s = LoadDocument<Supplier>(p.Supplier)
+                select new Entry
+                {
+                    Product = p.Id,
+                    Supplier = s.Id,
+                    Count = 0,
+                    OrderIds = new string[0]
+                });
+
+            Reduce = results => from result in results
+                group result by new {result.Product, result.Supplier}
+                into g
+                select new
+                {
+                    Product = g.Key.Product,
+                    Supplier = g.Key.Supplier,
+                    Count = g.Sum(x => x.Count),
+                    OrderIds = g.SelectMany(x => x.OrderIds)
+                };
         }
     }
 }
-
 /*
   
 from order in docs.Orders
