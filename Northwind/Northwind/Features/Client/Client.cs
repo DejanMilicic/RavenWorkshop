@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
@@ -11,11 +13,25 @@ namespace Northwind.Features.Client
     {
         public void Do()
         {
-            using var session = Dsh.Store.OpenSession();
+            //using var session = Dsh.Store.OpenSession();
 
-            var employees = session.Query<Employee>().Count();
+            //var employees = session.Query<Employee>().Count();
 
-            Console.WriteLine($"Total employees: {employees}");
+            //Console.WriteLine($"Total employees: {employees}");
+
+            while (true)
+            {
+                var sp = Stopwatch.StartNew();
+
+                using (var session = Dsh.Store.OpenSession())
+                {
+                    session.Store(new Employee());
+                    Thread.Sleep(1000);
+                    session.SaveChanges();
+                }
+                
+                Console.WriteLine(sp.Elapsed);
+            }
         }
     }
 
