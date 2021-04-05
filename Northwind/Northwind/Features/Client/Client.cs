@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Northwind.Models.Entity;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexes;
+using Raven.Client.Documents.Operations.CompareExchange;
+using Raven.Client.Http;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Northwind.Models.Entity;
-using Raven.Client.Documents;
-using Raven.Client.Documents.Indexes;
-using Raven.Client.Documents.Operations.CompareExchange;
-using Raven.Client.Documents.Session;
-using Raven.Client.Http;
 
 namespace Northwind.Features.Client
 {
@@ -83,7 +82,37 @@ namespace Northwind.Features.Client
 
             CompareExchangeResult<string> result = Dsh.Store.Operations.Send(operation);
             Console.WriteLine(result.Successful);
+
+            var val = Dsh.Store.Operations.Send(
+                new GetCompareExchangeValueOperation<string>("dejan@ravendb.net"));
         }
+
+        public void CompareExchange2()
+        {
+            using var session = Dsh.Store.OpenSession();
+
+            var user = new User
+            {
+
+                Email = "dejan@ravendb.net"
+            };
+
+            session.Store(user);
+
+            var cmpXchgResult = Dsh.Store.Operations.Send(
+                    new PutCompareExchangeValueOperation<string>("emails/" + user.Email, user.Id, 0));
+
+            if (cmpXchgResult.Successful == false)
+                throw new Exception("Email is already in use");
+
+            session.SaveChanges();
+        }
+    }
+
+    public class User
+    {
+        public string Id { get; set; }
+        public string Email { get; set; }
     }
 
     public static class Dsh
