@@ -6,6 +6,7 @@ using System.Threading;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
+using Raven.Client.Documents.Session;
 using Raven.Client.Http;
 
 namespace Northwind.Features.Client
@@ -51,6 +52,27 @@ namespace Northwind.Features.Client
 
                     Console.ReadLine();
                 }
+            }
+        }
+
+        public void SessionContext()
+        {
+            string ctx = "1";
+
+            while (true)
+            {
+                using (var session = Dsh.Store.OpenSession())
+                {
+                    session.Advanced.SessionInfo.SetContext(ctx);
+
+                    session.Query<Employee>().Where(x => x.FirstName == "Roger").ToList();
+
+                    session.Store(new { });
+                    session.SaveChanges();
+                }
+
+                ctx = Console.ReadLine() ?? "1";
+                if (string.IsNullOrWhiteSpace(ctx)) ctx = "1";
             }
         }
     }
