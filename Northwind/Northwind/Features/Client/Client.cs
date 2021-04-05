@@ -6,6 +6,7 @@ using System.Threading;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
+using Raven.Client.Http;
 
 namespace Northwind.Features.Client
 {
@@ -42,7 +43,7 @@ namespace Northwind.Features.Client
 
                     var order = session.Load<Order>($"orders/{id}-A");
 
-                    Thread.Sleep(1000);
+                    Console.ReadLine();
                 }
             }
 
@@ -65,6 +66,13 @@ namespace Northwind.Features.Client
                     Certificate = new X509Certificate2(@"C:\temp\ravendb\admin.client.certificate.dejan.pfx"),
                     Database = "demo"
                 };
+
+                store.OnBeforeRequest += (sender, args) =>
+                {
+                    Console.WriteLine(args.Url);
+                };
+
+                store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.RoundRobin;
 
                 store.Initialize();
 
