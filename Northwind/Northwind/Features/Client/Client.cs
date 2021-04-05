@@ -19,19 +19,33 @@ namespace Northwind.Features.Client
 
             //Console.WriteLine($"Total employees: {employees}");
 
+            //while (true)
+            //{
+            //    var sp = Stopwatch.StartNew();
+
+            //    using (var session = Dsh.Store.OpenSession())
+            //    {
+            //        session.Store(new Employee());
+            //        Thread.Sleep(1000);
+            //        session.SaveChanges();
+            //    }
+
+            //    Console.WriteLine(sp.Elapsed);
+            //}
+
+            Random r = new Random();
             while (true)
             {
-                var sp = Stopwatch.StartNew();
-
                 using (var session = Dsh.Store.OpenSession())
                 {
-                    session.Store(new Employee());
+                    int id = r.Next(1, 830);
+
+                    var order = session.Load<Order>($"orders/{id}-A");
+
                     Thread.Sleep(1000);
-                    session.SaveChanges();
                 }
-                
-                Console.WriteLine(sp.Elapsed);
             }
+
         }
     }
 
