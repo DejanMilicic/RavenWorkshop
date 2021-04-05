@@ -12,28 +12,34 @@ namespace Northwind.Features.Client
 {
     public class Client
     {
-        public void Do()
+        public void ClientFailover()
         {
-            //using var session = Dsh.Store.OpenSession();
+            using var session = Dsh.Store.OpenSession();
 
-            //var employees = session.Query<Employee>().Count();
+            var employees = session.Query<Employee>().Count();
 
-            //Console.WriteLine($"Total employees: {employees}");
+            Console.WriteLine($"Total employees: {employees}");
+        }
 
-            //while (true)
-            //{
-            //    var sp = Stopwatch.StartNew();
+        public void ClientFailover2()
+        {
+            while (true)
+            {
+                var sp = Stopwatch.StartNew();
 
-            //    using (var session = Dsh.Store.OpenSession())
-            //    {
-            //        session.Store(new Employee());
-            //        Thread.Sleep(1000);
-            //        session.SaveChanges();
-            //    }
+                using (var session = Dsh.Store.OpenSession())
+                {
+                    session.Store(new Employee());
+                    Thread.Sleep(1000);
+                    session.SaveChanges();
+                }
 
-            //    Console.WriteLine(sp.Elapsed);
-            //}
+                Console.WriteLine(sp.Elapsed);
+            }
+        }
 
+        public void RoundRobinFastestNodeDemo()
+        {
             Random r = new Random();
             while (true)
             {
@@ -46,7 +52,6 @@ namespace Northwind.Features.Client
                     Console.ReadLine();
                 }
             }
-
         }
     }
 
