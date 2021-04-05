@@ -6,6 +6,7 @@ using System.Threading;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
+using Raven.Client.Documents.Operations.CompareExchange;
 using Raven.Client.Documents.Session;
 using Raven.Client.Http;
 
@@ -74,6 +75,13 @@ namespace Northwind.Features.Client
                 ctx = Console.ReadLine() ?? "1";
                 if (string.IsNullOrWhiteSpace(ctx)) ctx = "1";
             }
+        }
+
+        public void CompareExchange()
+        {
+            var operation = new PutCompareExchangeValueOperation<string>("dejan@ravendb.net", "users/1-A", 0);
+
+            Dsh.Store.Operations.Send(operation);
         }
     }
 
