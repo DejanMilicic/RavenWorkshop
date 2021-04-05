@@ -81,7 +81,8 @@ namespace Northwind.Features.Client
         {
             var operation = new PutCompareExchangeValueOperation<string>("dejan@ravendb.net", "users/1-A", 0);
 
-            Dsh.Store.Operations.Send(operation);
+            CompareExchangeResult<string> result = Dsh.Store.Operations.Send(operation);
+            Console.WriteLine(result.Successful);
         }
     }
 
