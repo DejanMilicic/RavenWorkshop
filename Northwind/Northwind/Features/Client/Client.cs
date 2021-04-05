@@ -105,10 +105,24 @@ namespace Northwind.Features.Client
             if (cmpXchgResult.Successful == false)
                 throw new Exception("Email is already in use");
 
+            // this code is not safe... what happens if execution never reaches next line?
+            // "reserved" email will be still reserved, and document will not be created
+
             session.SaveChanges();
 
             // from Users as u
             // include CmpXchg(u.Email)
+
+            // from Users
+            // where id() = CmpXchg("dejan@ravendb.net")
+
+            // from @all_docs 
+            // where id() = CmpXchg("dejan@ravendb.net")
+        }
+
+        public void ClusterWideTransaction()
+        {
+
         }
     }
 
