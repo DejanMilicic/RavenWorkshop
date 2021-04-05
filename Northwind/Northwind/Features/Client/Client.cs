@@ -100,12 +100,15 @@ namespace Northwind.Features.Client
             session.Store(user);
 
             var cmpXchgResult = Dsh.Store.Operations.Send(
-                    new PutCompareExchangeValueOperation<string>("emails/" + user.Email, user.Id, 0));
+                    new PutCompareExchangeValueOperation<string>(user.Email, user.Id, 0));
 
             if (cmpXchgResult.Successful == false)
                 throw new Exception("Email is already in use");
 
             session.SaveChanges();
+
+            // from Users as u
+            // include CmpXchg(u.Email)
         }
     }
 
