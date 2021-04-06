@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.Client
 {
@@ -122,7 +123,40 @@ namespace Northwind.Features.Client
 
         public void ClusterWideTransaction()
         {
+            using (var session = Dsh.Store.OpenSession(new SessionOptions
+            {
+                //default is:     TransactionMode.SingleNode
+                TransactionMode = TransactionMode.ClusterWide
+            }))
+            {
+                var user = new Employee
+                {
+                    FirstName = "John",
+                    LastName = "Doe"
+                };
+                session.Store(user);
 
+                // this transaction is now conditional on this being 
+                // successfully created (so, no other users with this name)
+                // it also creates an association to the new user's id
+                session.Advanced.ClusterTransaction
+                    .CreateCompareExchangeValue("usernames/John", user.Id);
+
+                session.SaveChanges();
+            }
+        }
+
+        public void ClusterWideTransaction2()
+        {
+            using var session = Dsh.Store.OpenSession(new SessionOptions
+            {
+                TransactionMode = TransactionMode.ClusterWide
+            });
+
+            var user = new Employee { FirstName = "Dejan" };
+            session.Store(user); // hilo
+            session.Advanced.ClusterTransaction.CreateCompareExchangeValue("dejan@ravendb.net", user.Id);
+            session.SaveChanges();
         }
     }
 
