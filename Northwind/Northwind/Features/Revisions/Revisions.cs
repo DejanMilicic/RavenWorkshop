@@ -65,8 +65,8 @@ namespace Northwind.Features.Revisions
             using (var session = DocumentStoreHolder.Store.OpenSession())
             {
                 var revisions = session.Advanced.Revisions.GetFor<Employee>(employeeId);
-                var firstEmployeeRevision = revisions.Skip(1).First();
-                session.Store(firstEmployeeRevision);
+                var undo = revisions.Skip(1).First();
+                session.Store(undo);
                 session.SaveChanges();
             }
         }
