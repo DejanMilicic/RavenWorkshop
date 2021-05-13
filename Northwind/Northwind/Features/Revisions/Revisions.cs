@@ -29,6 +29,48 @@ namespace Northwind.Features.Revisions
             session.SaveChanges();
         }
 
+        public void UndoRedoSim()
+        {
+            string employeeId;
+            Employee employee;
+
+            using (var session = DocumentStoreHolder.Store.OpenSession())
+            {
+                // create new employee
+                employee = new Employee();
+                employee.FirstName = "First";
+                session.Store(employee);
+                employeeId = employee.Id;
+                session.SaveChanges();
+
+                // turn revisions on
+                session.Advanced.Revisions.ForceRevisionCreationFor(employee);
+                session.SaveChanges();
+            }
+
+            using (var session = DocumentStoreHolder.Store.OpenSession())
+            {
+                employee = session.Load<Employee>(employeeId);
+                employee.FirstName = "Second";
+                session.SaveChanges();
+            }
+
+            using (var session = DocumentStoreHolder.Store.OpenSession())
+            {
+                employee = session.Load<Employee>(employeeId);
+                employee.FirstName = "Third";
+                session.SaveChanges();
+            }
+
+            using (var session = DocumentStoreHolder.Store.OpenSession())
+            {
+                var revisions = session.Advanced.Revisions.GetFor<Employee>(employeeId);
+                var firstEmployeeRevision = revisions.Skip(1).First();
+                session.Store(firstEmployeeRevision);
+                session.SaveChanges();
+            }
+        }
+
         public void GetRevisionsForEmployee()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
