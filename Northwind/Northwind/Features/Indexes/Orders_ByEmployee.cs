@@ -41,3 +41,13 @@ namespace Northwind.Features.Indexes
         }
     }
 }
+
+// special effects:
+
+// declare function Projection(orders)
+// {
+//     return load(orders);
+// }
+//
+// from index 'Orders/ByEmployee' as i
+// select Projection(Orders)
