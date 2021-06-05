@@ -7,7 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Northwind.Features.Client;
 using Northwind.Features.Indexes;
+using Northwind.Features.Paging;
+using Northwind.Features.Revisions;
+using Northwind.Features.Session;
 using Northwind.Features.Subscriptions;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
@@ -28,14 +32,16 @@ namespace Northwind
     {
         static async Task Main(string[] args)
         {
-            using var store = new DocumentStore
-            {
-                Urls = new string[] { "https://a.free.dejanmilicic.ravendb.cloud/" },
-                Certificate = new X509Certificate2("free.dejanmilicic.client.certificate.pfx"),
-                Database = "demo"
-            }.Initialize();
+            new Revisions().UndoRedoSim();
 
-            await IndexCreation.CreateIndexesAsync(typeof(Program).Assembly, store);
+            //using var store = new DocumentStore
+            //{
+            //    Urls = new string[] { "https://a.free.dejanmilicic.ravendb.cloud/" },
+            //    Certificate = new X509Certificate2("free.dejanmilicic.client.certificate.pfx"),
+            //    Database = "demo"
+            //}.Initialize();
+
+            //await IndexCreation.CreateIndexesAsync(typeof(Program).Assembly, store);
 
             #region Read entity from the database
 
