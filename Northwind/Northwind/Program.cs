@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Northwind.Features.Client;
 using Northwind.Features.Indexes;
+using Northwind.Features.Lazy;
 using Northwind.Features.Paging;
 using Northwind.Features.Revisions;
 using Northwind.Features.Session;
@@ -32,7 +33,9 @@ namespace Northwind
     {
         static async Task Main(string[] args)
         {
-            new Revisions().UndoRedoSim();
+            DocumentStoreHolder.Store.OpenSession();
+
+            //new Lazy().ManyCallsOptimizedViaLazily();
 
             //using var store = new DocumentStore
             //{
