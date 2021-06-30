@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Northwind.Models.Entity;
 
 namespace Northwind.Features.Revisions
@@ -93,6 +94,19 @@ namespace Northwind.Features.Revisions
             {
                 Console.WriteLine(revision.Lines.Count);
             }
+        }
+
+        public void ExtractChanges()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            Order order = session.Load<Order>("orders/823-A");
+            Order revision = session.Advanced.Revisions.GetFor<Order>("orders/823-A").Skip(2).First();
+
+            JsonConvert.PopulateObject(JsonConvert.SerializeObject(revision), order,
+                new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+
+            var changes = session.Advanced.WhatChanged();
         }
     }
 }
