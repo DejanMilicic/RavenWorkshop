@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Northwind.Features.Indexes;
 using Northwind.Models.Entity;
@@ -54,6 +55,25 @@ namespace Northwind.Features.Search
                 .ToList();
 
             Console.WriteLine($"{res.Count} orders returned when searching for {term}");
+        }
+
+        public void Omnisearch()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            IList<Omnisearch.Projection> results = session
+                .Query< Omnisearch.Entry, Omnisearch> ()
+                .Search(x => x.Content, "Lau*")
+                .ProjectInto<Omnisearch.Projection>()
+                .ToList();
+
+            foreach (Omnisearch.Projection result in results)
+            {
+                Console.WriteLine($"{result.Collection}: {result.DisplayName} [{result.Id}]");
+                // Companies: Laughing Bacchus Wine Cellars
+                // Products: Laughing Lumberjack Lager
+                // Employees: Laura Callahan
+            }
         }
     }
 }
