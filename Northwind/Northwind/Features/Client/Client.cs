@@ -14,8 +14,11 @@ namespace Northwind.Features.Client
 {
     public class Client
     {
-        public void ClientFailover()
+        public void PreferredNode()
         {
+            // showcase preferred node getting hits
+            // showcase round robin / fastest node
+
             using var session = Dsh.Store.OpenSession();
 
             var employees = session.Query<Employee>().Count();
@@ -175,11 +178,11 @@ namespace Northwind.Features.Client
                 {
                     Urls = new[]
                     {
-                        "https://a.dejan.development.run/",
-                        "https://b.dejan.development.run/",
-                        "https://c.dejan.development.run/"
+                        "https://a.dmm.development.run/",
+                        "https://b.dmm.development.run/",
+                        "https://c.dmm.development.run/"
                     },
-                    Certificate = new X509Certificate2(@"C:\temp\ravendb\admin.client.certificate.dejan.pfx"),
+                    Certificate = new X509Certificate2(@"C:\temp\ravendb\admin.client.certificate.dmm.pfx"),
                     Database = "demo"
                 };
 
@@ -188,7 +191,7 @@ namespace Northwind.Features.Client
                     Console.WriteLine(args.Url);
                 };
 
-                store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.RoundRobin;
+                //store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.None;
 
                 store.Initialize();
 
