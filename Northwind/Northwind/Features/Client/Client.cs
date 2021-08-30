@@ -26,6 +26,25 @@ namespace Northwind.Features.Client
             Console.WriteLine($"Total employees: {employees}");
         }
 
+        public void ClientFailoverRead()
+        {
+            // showcase what happens when you kill preferred node
+            // showcase round robin
+
+            while (true)
+            {
+                var sp = Stopwatch.StartNew();
+
+                using (var session = Dsh.Store.OpenSession())
+                {
+                    session.Load<Order>("orders/1-A");
+                    Thread.Sleep(1000);
+                }
+
+                Console.WriteLine(sp.Elapsed);
+            }
+        }
+
         public void ClientFailover2()
         {
             while (true)
@@ -191,7 +210,7 @@ namespace Northwind.Features.Client
                     Console.WriteLine(args.Url);
                 };
 
-                //store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.None;
+                //store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.RoundRobin;
 
                 store.Initialize();
 
