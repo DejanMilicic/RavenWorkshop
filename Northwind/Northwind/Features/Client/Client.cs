@@ -45,7 +45,7 @@ namespace Northwind.Features.Client
             }
         }
 
-        public void ClientFailover2()
+        public void ClientFailoverWrite()
         {
             while (true)
             {
