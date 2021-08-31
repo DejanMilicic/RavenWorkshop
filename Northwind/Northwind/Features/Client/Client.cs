@@ -179,6 +179,19 @@ namespace Northwind.Features.Client
             session.Advanced.ClusterTransaction.CreateCompareExchangeValue("dejan@ravendb.net", user.Id);
             session.SaveChanges();
         }
+
+        public void ClusterWideTransactionRavenDb_5_2_plus()
+        {
+            using var session = Dsh.Store.OpenSession(new SessionOptions
+            {
+                TransactionMode = TransactionMode.ClusterWide
+            });
+
+            var user = new Employee { FirstName = "Dejan" };
+            session.Store(user);
+            session.Store(new { ReservedFor = user.Id }, "Employees/dejan@ravendb.net");
+            session.SaveChanges();
+        }
     }
 
     public class User
