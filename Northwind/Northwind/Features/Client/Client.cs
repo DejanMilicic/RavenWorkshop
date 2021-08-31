@@ -104,7 +104,7 @@ namespace Northwind.Features.Client
             var operation = new PutCompareExchangeValueOperation<string>("dejan@ravendb.net", "users/1-A", 0);
 
             CompareExchangeResult<string> result = Dsh.Store.Operations.Send(operation);
-            Console.WriteLine(result.Successful);
+            Console.WriteLine($"Compare Exchange creation: {result.Successful}");
 
             var val = Dsh.Store.Operations.Send(
                 new GetCompareExchangeValueOperation<string>("dejan@ravendb.net"));
@@ -116,7 +116,6 @@ namespace Northwind.Features.Client
 
             var user = new User
             {
-
                 Email = "dejan@ravendb.net"
             };
 
@@ -214,7 +213,7 @@ namespace Northwind.Features.Client
 
                 store.Initialize();
 
-                IndexCreation.CreateIndexes(typeof(Program).Assembly, store);
+                //IndexCreation.CreateIndexes(typeof(Program).Assembly, store);
 
                 return store;
             });
