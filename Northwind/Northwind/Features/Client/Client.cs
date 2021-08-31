@@ -175,7 +175,7 @@ namespace Northwind.Features.Client
             });
 
             var user = new Employee { FirstName = "Dejan" };
-            session.Store(user); // hilo
+            session.Store(user); // hilo-powered node-bound id generated
             session.Advanced.ClusterTransaction.CreateCompareExchangeValue("dejan@ravendb.net", user.Id);
             session.SaveChanges();
         }
@@ -188,7 +188,7 @@ namespace Northwind.Features.Client
             });
 
             var user = new Employee { FirstName = "Dejan" };
-            session.Store(user);
+            session.Store(user); // hilo-powered node-bound id generated
             session.Store(new { ReservedFor = user.Id }, "Employees/dejan@ravendb.net");
             session.SaveChanges();
         }
