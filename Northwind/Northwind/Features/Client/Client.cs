@@ -145,27 +145,27 @@ namespace Northwind.Features.Client
 
         public void ClusterWideTransaction()
         {
-            using (var session = Dsh.Store.OpenSession(new SessionOptions
+            using var session = Dsh.Store.OpenSession(new SessionOptions
             {
                 //default is:     TransactionMode.SingleNode
                 TransactionMode = TransactionMode.ClusterWide
-            }))
+            });
+
+            var user = new Employee
             {
-                var user = new Employee
-                {
-                    FirstName = "John",
-                    LastName = "Doe"
-                };
-                session.Store(user);
+                FirstName = "John",
+                LastName = "Doe"
+            };
+            
+            session.Store(user);
 
-                // this transaction is now conditional on this being 
-                // successfully created (so, no other users with this name)
-                // it also creates an association to the new user's id
-                session.Advanced.ClusterTransaction
-                    .CreateCompareExchangeValue("usernames/John", user.Id);
+            // this transaction is now conditional on this being 
+            // successfully created (so, no other users with this name)
+            // it also creates an association to the new user's id
+            session.Advanced.ClusterTransaction
+                .CreateCompareExchangeValue("usernames/John", user.Id);
 
-                session.SaveChanges();
-            }
+            session.SaveChanges();
         }
 
         public void ClusterWideTransaction2()
