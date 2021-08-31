@@ -110,5 +110,42 @@ namespace Northwind.Features.Projections
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
+
+        public class OrderViewModel
+        {
+            public string OrderId { get; set; }
+            public string Company { get; set; }
+            public string Employee { get; set; }
+            public string ShippingCity { get; set; }
+        }
+
+        public void ProjectionWithPermissions()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            bool isAdmin = false; // try changing to true and observing result
+
+            List<OrderViewModel> londonOrders = (
+                    from order in session.Query<Order>()
+                    where order.ShipTo.City == "London"
+                    let company = RavenQuery.Load<Company>(order.Company)
+                    let employee = RavenQuery.Load<Employee>(order.Employee)
+                    select new OrderViewModel
+                    {
+                        OrderId = order.Id,
+                        Company = isAdmin ? company.Name : "[REDACTED]",
+                        Employee = employee.FirstName + " " + employee.LastName,
+                        ShippingCity = order.ShipTo.City
+                    }
+                    ).ToList();
+
+            foreach (var order in londonOrders)
+            {
+                Console.WriteLine($"Company {order.Company} from {order.ShippingCity} via {order.Employee}");
+            }
+
+            Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
     }
 }
