@@ -10,6 +10,7 @@ namespace Northwind.Features.Subscriptions
     {
         public async Task Consume()
         {
+            // create subscription if it does not exist
             try
             {
                 await DocumentStoreHolder.Store.Subscriptions.GetSubscriptionStateAsync("LondonEmployees");
@@ -23,6 +24,7 @@ namespace Northwind.Features.Subscriptions
                 });
             }
 
+            // consume subscription
             var subscription = DocumentStoreHolder.Store.Subscriptions.GetSubscriptionWorker<Employee>(
                 new SubscriptionWorkerOptions("LondonEmployees"));
             await subscription.Run(batch =>
