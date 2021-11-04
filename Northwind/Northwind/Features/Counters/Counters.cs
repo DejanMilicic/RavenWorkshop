@@ -24,7 +24,8 @@ namespace Northwind.Features.Counters
 
             ISessionDocumentCounters counters = session.CountersFor("products/77-A");
 
-            counters.Increment("⭐⭐");
+            counters.Increment("⭐"); // 1 is default delta
+            counters.Increment("⭐⭐", 100);
             counters.Increment("⭐⭐⭐", -1);
             
             session.SaveChanges();
