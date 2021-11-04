@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Northwind.Models.Entity;
 using Raven.Client.Documents.Indexes;
-using System.Linq;
 
-namespace Northwind.Features.Indexes
+namespace Northwind.Features.AdditionalSources
 {
+    // todo: rename the file
+
     public class Employees_Specials : AbstractIndexCreationTask<Employee, Employees_Specials.Entry>
     {
         public class Entry
