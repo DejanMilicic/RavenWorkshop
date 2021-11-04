@@ -24,6 +24,7 @@ using Northwind.Features.Paging;
 using Northwind.Features.Projections;
 using Northwind.Features.Refresh;
 using Northwind.Features.Revisions;
+using Northwind.Features.Search;
 using Northwind.Features.Session;
 using Northwind.Features.Spatial;
 using Northwind.Features.Subscriptions;
