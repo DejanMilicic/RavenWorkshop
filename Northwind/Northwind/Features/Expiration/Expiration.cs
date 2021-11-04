@@ -3,6 +3,9 @@ using Northwind.Models.Entity;
 
 namespace Northwind.Features.Expiration
 {
+    // todo : add example of log entries 
+    // different life based on the logging level
+
     public class Expiration
     {
         public void SetExpiration()
