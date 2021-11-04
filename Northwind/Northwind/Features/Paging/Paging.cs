@@ -16,14 +16,24 @@ namespace Northwind.Features.Paging
             int pageSize = 10;
 
             var pagedResults = session.Query<Order>()
-                .Statistics(out QueryStatistics stats) //this is optional
+                .Statistics(out QueryStatistics stats) // statistics are optional
                 .Skip(page * pageSize)
                 .Take(pageSize)
                 .ToList();
 
             int totalResults = stats.TotalResults;
 
-            Console.WriteLine($"Showing orders {page * pageSize + 1} to {(page + 1) * pageSize} of {stats.TotalResults} total");
+            Console.WriteLine("OrderId \tFreight \tDestination");
+            Console.WriteLine("--------\t--------\t-----------");
+
+            foreach (Order order in pagedResults)
+            {
+                Console.WriteLine($"{order.Id} \t{order.Freight} lbs \t{order.ShipTo.City}");
+            }
+            
+            Console.WriteLine();
+            Console.WriteLine($"Showing orders {page * pageSize + 1} to {(page + 1) * pageSize} " +
+                              $"of {stats.TotalResults} total in {stats.DurationInMs} ms");
         }
     }
 }
