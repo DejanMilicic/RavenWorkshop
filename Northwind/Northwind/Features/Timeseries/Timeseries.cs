@@ -13,6 +13,9 @@ namespace Northwind.Features.Timeseries
     {
         public void Insert()
         {
+            // todo : add timer
+            // todo : correct dates (year 3000)
+
             using var bulk = DocumentStoreHolder.Store.BulkInsert();
             var random = new Random();
             var time = DateTime.Today.AddDays(-30);
