@@ -13,7 +13,7 @@ namespace Northwind.Features.Spatial
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            var orders = session.Advanced.RawQuery<Order>(@"
+            List<Order> orders = session.Advanced.RawQuery<Order>(@"
                 from index 'Orders/ByShipment/Location'
                 where spatial.within(ShipmentLocation, spatial.circle(10, 48.8566, 2.3522))
             ").ToList();
