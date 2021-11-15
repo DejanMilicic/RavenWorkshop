@@ -21,6 +21,7 @@ using Northwind.Features.Lazy;
 using Northwind.Features.Metadata;
 using Northwind.Features.OptimisticConcurrency;
 using Northwind.Features.Paging;
+using Northwind.Features.Polymorphism;
 using Northwind.Features.Projections;
 using Northwind.Features.Refresh;
 using Northwind.Features.Revisions;
