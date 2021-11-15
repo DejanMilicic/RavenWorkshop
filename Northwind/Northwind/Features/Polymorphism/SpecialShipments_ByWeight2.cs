@@ -28,7 +28,7 @@ namespace Northwind.Features.Polymorphism
             // car
             AddMap<SpecialShipment>(ss =>
                 from s in ss
-                where AsJson(s.Item)["$type"] == "Northwind.Features.Polymorphism.Car, Northwind"
+                    where AsJson(s.Item)["$type"] == "Northwind.Features.Polymorphism.Car, Northwind"
                 select new Entry
                 {
                     TotalWeight = 555
