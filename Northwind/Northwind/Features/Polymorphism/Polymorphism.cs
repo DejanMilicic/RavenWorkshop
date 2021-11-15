@@ -19,5 +19,28 @@ namespace Northwind.Features.Polymorphism
             session.Store(shipment);
             session.SaveChanges();
         }
+
+        public void SeedSpecial()
+        {
+            SpecialShipment ss1 = new SpecialShipment
+            {
+                Id = "Car",
+                Item = new Car()
+            };
+
+            SpecialShipment ss2 = new SpecialShipment
+            {
+                Id = "Crate",
+                Item = new Crate
+                {
+                    Weight = 101.00
+                }
+            };
+
+            using var session = DocumentStoreHolder.Store.OpenSession();
+            session.Store(ss1);
+            session.Store(ss2);
+            session.SaveChanges();
+        }
     }
 }

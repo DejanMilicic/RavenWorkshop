@@ -26,4 +26,11 @@ namespace Northwind.Features.Polymorphism
 
         public List<ShipmentItem> Items { get; set; } = new List<ShipmentItem>();
     }
+
+    public class SpecialShipment
+    {
+        public string Id { get; set; }
+
+        public ShipmentItem Item { get; set; }
+    }
 }
