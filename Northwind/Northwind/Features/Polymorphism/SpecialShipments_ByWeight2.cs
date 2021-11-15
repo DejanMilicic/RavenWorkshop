@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Sockets;
 using Raven.Client.Documents.Indexes;
-using Raven.Client.Documents.Linq.Indexing;
 
 namespace Northwind.Features.Polymorphism
 {
+    /// <summary>
+    /// In this version, we are using $type implicit discriminator generated
+    /// by Json.NET - hence c# client specific
+    /// </summary>
     public class SpecialShipments_ByWeight2 : 
         AbstractMultiMapIndexCreationTask<SpecialShipment>
     {

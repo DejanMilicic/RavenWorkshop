@@ -1,9 +1,12 @@
 ﻿using System.Linq;
 using Raven.Client.Documents.Indexes;
-using Raven.Client.Documents.Linq.Indexing;
 
 namespace Northwind.Features.Polymorphism
 {
+    /// <summary>
+    /// Attempt at reading specific property from Crate is used
+    /// to determine type
+    /// </summary>
     public class SpecialShipments_ByWeight : AbstractIndexCreationTask<SpecialShipment, SpecialShipments_ByWeight.Entry>
     {
         public class Entry

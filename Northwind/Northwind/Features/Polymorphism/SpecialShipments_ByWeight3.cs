@@ -1,10 +1,12 @@
 ﻿using System.Linq;
-using System.Net.Sockets;
 using Raven.Client.Documents.Indexes;
-using Raven.Client.Documents.Linq.Indexing;
 
 namespace Northwind.Features.Polymorphism
 {
+    /// <summary>
+    /// Here we are using Discriminator property introduced on a base class
+    /// This is most elegant solution, and it is universal for all RavenDB clients
+    /// </summary>
     public class SpecialShipments_ByWeight3 : 
         AbstractMultiMapIndexCreationTask<SpecialShipment>
     {
