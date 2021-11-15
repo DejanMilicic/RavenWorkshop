@@ -18,7 +18,7 @@ namespace Northwind.Features.Polymorphism
             // crate
             AddMap<SpecialShipment>(ss => 
                 from s in ss 
-                    where AsJson(s.Item)["Discriminator"].ToString() == nameof(Crate)
+                    where s.Item.Discriminator == nameof(Crate)
                 select new Entry
                 {
                     TotalWeight = ((Crate)s.Item).Weight
@@ -28,7 +28,7 @@ namespace Northwind.Features.Polymorphism
             // car
             AddMap<SpecialShipment>(ss =>
                 from s in ss
-                    where AsJson(s.Item)["Discriminator"].ToString() == nameof(Car)
+                    where s.Item.Discriminator == nameof(Car)
                 select new Entry
                 {
                     TotalWeight = 555

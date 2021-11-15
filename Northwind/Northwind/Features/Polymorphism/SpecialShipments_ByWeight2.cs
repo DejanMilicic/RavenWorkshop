@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Sockets;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq.Indexing;
@@ -18,7 +19,9 @@ namespace Northwind.Features.Polymorphism
             // crate
             AddMap<SpecialShipment>(ss => 
                 from s in ss 
-                    where AsJson(s.Item)["$type"] == "Northwind.Features.Polymorphism.Crate, Northwind"
+                where AsJson(s.Item)["$type"].ToString()
+                    .Split(',', StringSplitOptions.None).First()
+                    .Split('.', StringSplitOptions.None).Last() == nameof(Crate)
                 select new Entry
                 {
                     TotalWeight = ((Crate)s.Item).Weight
@@ -28,7 +31,9 @@ namespace Northwind.Features.Polymorphism
             // car
             AddMap<SpecialShipment>(ss =>
                 from s in ss
-                    where AsJson(s.Item)["$type"] == "Northwind.Features.Polymorphism.Car, Northwind"
+                where AsJson(s.Item)["$type"].ToString()
+                    .Split(',', StringSplitOptions.None).First()
+                    .Split('.', StringSplitOptions.None).Last() == nameof(Car)
                 select new Entry
                 {
                     TotalWeight = 555
