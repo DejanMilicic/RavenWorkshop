@@ -8,6 +8,8 @@ namespace Northwind.Features.Polymorphism
 {
     public abstract class ShipmentItem
     {
+        // alternative solution : use it instead of $type
+        public string Discriminator => GetType().Name; 
     }
 
     public class Crate : ShipmentItem
