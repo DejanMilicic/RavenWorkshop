@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices.ComTypes;
-using Northwind.Features.Sorting;
+﻿using System.Collections.Generic;
 using Raven.Client.Documents.Indexes;
-using Raven.Client.Documents.Linq.Indexing;
 
-namespace Northwind.Features.Polymorphism
+namespace Northwind.Features.Sorting
 {
     public class Candidates_ByEducation : AbstractJavaScriptIndexCreationTask
     {
