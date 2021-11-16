@@ -52,7 +52,7 @@ namespace Northwind
         {
             DocumentStoreHolder.Store.OpenSession();
 
-            //new Lazy().ManyCallsOptimizedViaLazily();
+            new Sorting().Seed();
 
             //using var store = new DocumentStore
             //{
