@@ -101,9 +101,9 @@ namespace Northwind.Features.ClusterWideTransactions
             }
 
             // Cluster-Wide transaction will always result in the creation
-            // of "shadow" CMPXCHG, in this case entry with key
-            // rvn-atomic/employees/john (rvn-atomic/[id])
-            // As a result, attempt to create document with same ID
+            // of "shadow" CMPXCHG entry with key rvn-atomic/[id]
+            // in this case entry with key "rvn-atomic/employees/john"
+            // As a result, attempt to create document with an existing ID
             // will produce CMPXCHG with an existing ID, which will throw ConcurrencyException
         }
     }
