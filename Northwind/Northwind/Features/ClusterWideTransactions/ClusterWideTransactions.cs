@@ -73,5 +73,38 @@ namespace Northwind.Features.ClusterWideTransactions
             // RAFT:5-vgzU78+OUUCbw9JaV2OB5g,TRXN:636-1Yq/AQoPXEyGqFRmhLn9RA
             // RAFT:6-vgzU78+OUUCbw9JaV2OB5g,TRXN:636-1Yq/AQoPXEyGqFRmhLn9RA
         }
+
+        // ensure there is just one user with first name John
+        // execute this method once and inspect database
+        // execute it one more time to get exception
+        public void ClusterWideTransaction_Without_Reservation()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession(
+                new SessionOptions { TransactionMode = TransactionMode.ClusterWide });
+
+            Employee emp = new Employee
+            {
+                Id = "Employees/John", // unique name can be used as a unique ID
+                FirstName = "John",
+                LastName = "Smith"
+            };
+
+            session.Store(emp);
+
+            try
+            {
+                session.SaveChanges();
+            }
+            catch (ConcurrencyException)
+            {
+                Console.WriteLine($"User with first name {emp.FirstName} already exists in the database");
+            }
+
+            // Cluster-Wide transaction will always result in the creation
+            // of "shadow" CMPXCHG, in this case entry with key
+            // rvn-atomic/employees/john (rvn-atomic/[id])
+            // As a result, attempt to create document with same ID
+            // will produce CMPXCHG with an existing ID, which will throw ConcurrencyException
+        }
     }
 }
