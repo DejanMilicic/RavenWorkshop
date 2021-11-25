@@ -192,6 +192,23 @@ namespace Northwind.Features.Client
             session.Store(new { ReservedFor = user.Id }, "Employees/dejan@ravendb.net");
             session.SaveChanges();
         }
+
+        public void SaveSameDocumentAgain()
+        {
+            using var session = Dsh.Store.OpenSession();
+
+            var user = new Employee { Id = "Employees/Marco", FirstName = "Marco" };
+            session.Store(user);
+            Console.WriteLine(user.Id);
+            session.SaveChanges();
+
+            session.Advanced.Clear();
+
+            var user2 = new Employee { Id = "Employees/Marco", FirstName = "Marco 2" };
+            session.Store(user2);
+            Console.WriteLine(user2.Id);
+            session.SaveChanges();
+        }
     }
 
     public class User
@@ -209,20 +226,20 @@ namespace Northwind.Features.Client
                 {
                     Urls = new[]
                     {
-                        "https://a.dmm.development.run/",
-                        "https://b.dmm.development.run/",
-                        "https://c.dmm.development.run/"
+                        "https://a.wrk20211125.development.run/",
+                        "https://b.wrk20211125.development.run/",
+                        "https://c.wrk20211125.development.run/"
                     },
-                    Certificate = new X509Certificate2(@"C:\temp\ravendb\admin.client.certificate.dmm.pfx"),
+                    Certificate = new X509Certificate2(@"C:\dev\wrk\wrk20211125.Cluster.Settings\admin.client.certificate.wrk20211125.pfx"),
                     Database = "demo"
                 };
 
-                store.OnBeforeRequest += (sender, args) =>
-                {
-                    Console.WriteLine(args.Url);
-                };
+                //store.OnBeforeRequest += (sender, args) =>
+                //{
+                //    Console.WriteLine(args.Url);
+                //};
 
-                //store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.RoundRobin;
+                //store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.FastestNode;
 
                 store.Initialize();
 
