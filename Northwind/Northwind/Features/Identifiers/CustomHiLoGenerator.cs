@@ -1,0 +1,81 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Identity;
+
+namespace Northwind.Features.Identifiers
+{
+    public class User
+    {
+        public string Id { get; set; }
+
+        public string Name { get; set; }
+    }
+
+    public class CustomHiLoGenerator
+    {
+        public void Do()
+        {
+            #region Customize Store
+
+            var store = (DocumentStore)DocumentStoreHolder.GetStore();
+
+            var gen = new SingleNodeAsyncMultiDatabaseHiLoIdGenerator(store);
+            store.Conventions.AsyncDocumentIdGenerator = gen.GenerateDocumentIdAsync;
+
+            store.Initialize();
+
+            #endregion
+
+            User user = new User { Name = "John" };
+
+            using (var session = store.OpenSession())
+            {
+                session.Store(user);
+                session.SaveChanges();
+            }
+
+            Console.WriteLine(user.Id);
+        }
+    }
+
+    public class SingleNodeAsyncMultiDatabaseHiLoIdGenerator : AsyncMultiDatabaseHiLoIdGenerator
+    {
+        public SingleNodeAsyncMultiDatabaseHiLoIdGenerator(DocumentStore store) : base(store)
+        {
+        }
+
+        public override AsyncMultiTypeHiLoIdGenerator GenerateAsyncMultiTypeHiLoFunc(string dbName)
+        {
+            return new SingleNodeAsyncMultiTypeHiLoIdGenerator(Store, dbName);
+        }
+
+        public class SingleNodeAsyncMultiTypeHiLoIdGenerator : AsyncMultiTypeHiLoIdGenerator
+        {
+            public SingleNodeAsyncMultiTypeHiLoIdGenerator(DocumentStore store, string dbName) : base(store, dbName)
+            {
+            }
+
+            protected override AsyncHiLoIdGenerator CreateGeneratorFor(string tag)
+            {
+                return new SingleNodeAsyncHiLoIdGenerator(tag, Store, DbName, Conventions.IdentityPartsSeparator);
+            }
+
+            public class SingleNodeAsyncHiLoIdGenerator : AsyncHiLoIdGenerator
+            {
+                public SingleNodeAsyncHiLoIdGenerator(string tag, DocumentStore store, string dbName, char identityPartsSeparator) : base(tag, store, dbName,
+                    identityPartsSeparator)
+                {
+                }
+
+                protected override string GetDocumentIdFromId(long nextId)
+                {
+                    return $"{Prefix}{nextId}";
+                }
+            }
+        }
+    }
+}
