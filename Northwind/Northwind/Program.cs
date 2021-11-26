@@ -12,6 +12,7 @@ using Northwind.Features.BulkInsert;
 using Northwind.Features.Caching;
 using Northwind.Features.Changes;
 using Northwind.Features.Client;
+using Northwind.Features.ClusterWideTransactions;
 using Northwind.Features.Counters;
 using Northwind.Features.Events;
 using Northwind.Features.Expiration;

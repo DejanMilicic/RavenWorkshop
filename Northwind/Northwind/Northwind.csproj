@@ -10,7 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NUlid" Version="1.5.0" />
     <PackageReference Include="RavenDB.Client" Version="5.2.2" />
+    <PackageReference Include="RT.Comb" Version="3.0.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 
