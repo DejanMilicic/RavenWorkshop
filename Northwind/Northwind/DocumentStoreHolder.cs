@@ -13,6 +13,7 @@ namespace Northwind
             {
                 Urls = new[] { "http://127.0.0.1:8080" },
                 Database = "demo"
+                //Certificate = new X509Certificate2(@"...\cert.pfx"),
             };
         }
 
