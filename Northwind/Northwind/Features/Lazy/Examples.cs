@@ -9,6 +9,8 @@ namespace Northwind.Features
     {
         public void LazyExample(string[] includes)
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             var order = session.Advanced.Lazily.Load<Order>("Orders/61-A");

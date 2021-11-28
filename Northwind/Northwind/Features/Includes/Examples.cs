@@ -14,6 +14,8 @@ namespace Northwind.Features
     {
         public void IncludeViaPath()
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             var orders = session.Query<Order>()
@@ -36,6 +38,8 @@ namespace Northwind.Features
 
         public void IncludeViaPathList(string[] includes)
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             var query = session.Query<Order>();
@@ -61,6 +65,8 @@ namespace Northwind.Features
 
         public void LoadAndIncludeViaPathList(string[] includes)
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             Order order;
@@ -91,6 +97,8 @@ namespace Northwind.Features
 
         public void SecondLevelInclude2()
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             string query = @"
@@ -121,6 +129,8 @@ select output(o)
 
         public void SecondLevelProjection()
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             var results = (from o in session.Query<Order>()
@@ -143,6 +153,8 @@ select output(o)
 
         public void ProjectionViaJS()
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             string query = @"
@@ -189,6 +201,8 @@ select output(o)
 
         public void SecondLevelInclude()
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             string query = @"
@@ -222,6 +236,8 @@ select output(o)
 
         public void OrdersProjection(string companyName)
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             var entries = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
@@ -245,6 +261,8 @@ select output(o)
 
         public void OrdersProjectionJustFields(string companyName)
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             var entries = (from entry in session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
@@ -273,6 +291,8 @@ select output(o)
 
         public void OrdersInclude(string companyName)
         {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
             using var session = store.OpenSession();
 
             var entries = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
