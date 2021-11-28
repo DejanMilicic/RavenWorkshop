@@ -8,7 +8,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using System.Transactions;
 using Raven.Client.Documents.Session;
+using Raven.Client.Exceptions;
 
 namespace Northwind.Features.Client
 {
@@ -208,6 +210,34 @@ namespace Northwind.Features.Client
             session.Store(user2);
             Console.WriteLine(user2.Id);
             session.SaveChanges();
+        }
+
+        public void SaveSameDocumentAgainWithOptimisticConcurrency()
+        {
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
+            using var session = store.OpenSession();
+
+            session.Advanced.UseOptimisticConcurrency = true;
+
+            var user = new Employee { Id = "Employees/Marco", FirstName = "Marco" };
+            session.Store(user);
+            Console.WriteLine(user.Id);
+            session.SaveChanges();
+
+            session.Advanced.Clear();
+
+            var user2 = new Employee { Id = "Employees/Marco", FirstName = "Marco 2" };
+            session.Store(user2);
+
+            try
+            {
+                session.SaveChanges();
+            }
+            catch (ConcurrencyException)
+            {
+                Console.WriteLine($"Error: Document with Id='{user2.Id}' already exists");
+            }
         }
     }
 
