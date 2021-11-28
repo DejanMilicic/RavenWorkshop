@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Northwind.Models.Entity;
@@ -14,9 +15,13 @@ namespace Northwind.Features.Caching
     {
         public void DocumentCaching()
         {
+            var store = DocumentStoreHolder.GetStore();
+            store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
+            store.Initialize();
+
             while (true)
             {
-                using var session = Dsh.Store.OpenSession();
+                using var session = store.OpenSession();
                 session.Load<Employee>("employees/2-a");
 
                 Console.ReadLine();
@@ -25,9 +30,13 @@ namespace Northwind.Features.Caching
 
         public void QueryCaching()
         {
+            var store = DocumentStoreHolder.GetStore();
+            store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
+            store.Initialize();
+
             while (true)
             {
-                using var session = Dsh.Store.OpenSession();
+                using var session = store.OpenSession();
                 session.Query<Order>()
                     .Where(x => x.OrderedAt < DateTime.Today)
                     .ToList();
@@ -38,11 +47,15 @@ namespace Northwind.Features.Caching
 
         public void AggressiveCaching()
         {
+            var store = DocumentStoreHolder.GetStore();
+            store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
+            store.Initialize();
+
             while (true)
             {
-                using (Dsh.Store.OpenSession().Advanced.DocumentStore.AggressivelyCache())
+                using (store.OpenSession().Advanced.DocumentStore.AggressivelyCache())
                 {
-                    using var session = Dsh.Store.OpenSession();
+                    using var session = store.OpenSession();
                     var orders = session.Query<Order>()
                         .Where(x => x.OrderedAt < DateTime.Today)
                         .ToList();
@@ -53,31 +66,5 @@ namespace Northwind.Features.Caching
                 Console.ReadLine();
             }
         }
-    }
-
-    public static class Dsh
-    {
-        private static readonly Lazy<IDocumentStore> LazyStore =
-            new Lazy<IDocumentStore>(() =>
-            {
-                var store = new DocumentStore
-                {
-                    Urls = new[] { "http://127.0.0.1:8080" },
-                    Database = "demo"
-                };
-
-                store.OnSucceedRequest += (sender, e) =>
-                {
-                    Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
-                };
-
-                store.Initialize();
-
-                IndexCreation.CreateIndexes(typeof(Program).Assembly, store);
-
-                return store;
-            });
-
-        public static IDocumentStore Store => LazyStore.Value;
     }
 }
