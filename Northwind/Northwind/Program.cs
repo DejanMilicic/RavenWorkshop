@@ -11,6 +11,7 @@ using Northwind.Features.Attachments;
 using Northwind.Features.BulkInsert;
 using Northwind.Features.Caching;
 using Northwind.Features.Changes;
+using Northwind.Features.ChangeVector;
 using Northwind.Features.Client;
 using Northwind.Features.ClusterWideTransactions;
 using Northwind.Features.Counters;
