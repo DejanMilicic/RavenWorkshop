@@ -197,7 +197,9 @@ namespace Northwind.Features.Client
 
         public void SaveSameDocumentAgain()
         {
-            using var session = Dsh.Store.OpenSession();
+            var store = DocumentStoreHolder.GetStore().Initialize();
+
+            using var session = store.OpenSession();
 
             var user = new Employee { Id = "Employees/Marco", FirstName = "Marco" };
             session.Store(user);
@@ -212,12 +214,11 @@ namespace Northwind.Features.Client
             session.SaveChanges();
         }
 
-        public void SaveSameDocumentAgainWithOptimisticConcurrency()
+        public void SaveSameDocumentAgain_WithOptimisticConcurrency()
         {
             var store = DocumentStoreHolder.GetStore().Initialize();
 
             using var session = store.OpenSession();
-
             session.Advanced.UseOptimisticConcurrency = true;
 
             var user = new Employee { Id = "Employees/Marco", FirstName = "Marco" };
