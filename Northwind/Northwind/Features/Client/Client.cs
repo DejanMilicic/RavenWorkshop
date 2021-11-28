@@ -19,9 +19,12 @@ namespace Northwind.Features.Client
         public void PreferredNode()
         {
             // showcase preferred node getting hits
-            // showcase round robin / fastest node
 
-            using var session = Dsh.Store.OpenSession();
+            var store = DocumentStoreHolder.GetStore();
+            store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
+            store.Initialize();
+            
+            using var session = store.OpenSession();
 
             var employees = session.Query<Employee>().Count();
 
@@ -33,11 +36,16 @@ namespace Northwind.Features.Client
             // showcase what happens when you kill preferred node
             // showcase round robin
 
+            var store = DocumentStoreHolder.GetStore();
+            store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
+            store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.RoundRobin;
+            store.Initialize();
+
             while (true)
             {
                 var sp = Stopwatch.StartNew();
 
-                using (var session = Dsh.Store.OpenSession())
+                using (var session = store.OpenSession())
                 {
                     session.Load<Order>("orders/1-A");
                     Thread.Sleep(1000);
@@ -49,11 +57,15 @@ namespace Northwind.Features.Client
 
         public void ClientFailoverWrite()
         {
+            var store = DocumentStoreHolder.GetStore();
+            store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
+            store.Initialize();
+
             while (true)
             {
                 var sp = Stopwatch.StartNew();
 
-                using (var session = Dsh.Store.OpenSession())
+                using (var session = store.OpenSession())
                 {
                     session.Store(new Employee());
                     Thread.Sleep(1000);
@@ -66,10 +78,15 @@ namespace Northwind.Features.Client
 
         public void RoundRobinFastestNodeDemo()
         {
+            var store = DocumentStoreHolder.GetStore();
+            store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
+            store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.RoundRobin;
+            store.Initialize();
+
             Random r = new Random();
             while (true)
             {
-                using (var session = Dsh.Store.OpenSession())
+                using (var session = store.OpenSession())
                 {
                     int id = r.Next(1, 830);
 
@@ -82,11 +99,15 @@ namespace Northwind.Features.Client
 
         public void SessionContext()
         {
+            var store = DocumentStoreHolder.GetStore();
+            store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
+            store.Initialize();
+
             string ctx = "1";
 
             while (true)
             {
-                using (var session = Dsh.Store.OpenSession())
+                using (var session = store.OpenSession())
                 {
                     session.Advanced.SessionInfo.SetContext(ctx);
 
@@ -103,18 +124,22 @@ namespace Northwind.Features.Client
 
         public void CompareExchange()
         {
+            var store = DocumentStoreHolder.GetStore();
+
             var operation = new PutCompareExchangeValueOperation<string>("dejan@ravendb.net", "users/1-A", 0);
 
-            CompareExchangeResult<string> result = Dsh.Store.Operations.Send(operation);
+            CompareExchangeResult<string> result = store.Operations.Send(operation);
             Console.WriteLine($"Compare Exchange creation: {result.Successful}");
 
-            var val = Dsh.Store.Operations.Send(
+            var val = store.Operations.Send(
                 new GetCompareExchangeValueOperation<string>("dejan@ravendb.net"));
         }
 
         public void CompareExchange2()
         {
-            using var session = Dsh.Store.OpenSession();
+            var store = DocumentStoreHolder.GetStore();
+
+            using var session = store.OpenSession();
 
             var user = new User
             {
@@ -123,7 +148,7 @@ namespace Northwind.Features.Client
 
             session.Store(user);
 
-            var cmpXchgResult = Dsh.Store.Operations.Send(
+            var cmpXchgResult = store.Operations.Send(
                     new PutCompareExchangeValueOperation<string>(user.Email, user.Id, 0));
 
             if (cmpXchgResult.Successful == false)
@@ -146,7 +171,9 @@ namespace Northwind.Features.Client
 
         public void ClusterWideTransaction()
         {
-            using var session = Dsh.Store.OpenSession(new SessionOptions
+            var store = DocumentStoreHolder.GetStore();
+
+            using var session = store.OpenSession(new SessionOptions
             {
                 //default is:     TransactionMode.SingleNode
                 TransactionMode = TransactionMode.ClusterWide
@@ -171,7 +198,9 @@ namespace Northwind.Features.Client
 
         public void ClusterWideTransaction2()
         {
-            using var session = Dsh.Store.OpenSession(new SessionOptions
+            var store = DocumentStoreHolder.GetStore();
+
+            using var session = store.OpenSession(new SessionOptions
             {
                 TransactionMode = TransactionMode.ClusterWide
             });
@@ -184,7 +213,9 @@ namespace Northwind.Features.Client
 
         public void ClusterWideTransactionRavenDb_5_2_plus()
         {
-            using var session = Dsh.Store.OpenSession(new SessionOptions
+            var store = DocumentStoreHolder.GetStore();
+
+            using var session = store.OpenSession(new SessionOptions
             {
                 TransactionMode = TransactionMode.ClusterWide
             });
@@ -246,39 +277,5 @@ namespace Northwind.Features.Client
     {
         public string Id { get; set; }
         public string Email { get; set; }
-    }
-
-    public static class Dsh
-    {
-        private static readonly Lazy<IDocumentStore> LazyStore =
-            new Lazy<IDocumentStore>(() =>
-            {
-                var store = new DocumentStore
-                {
-                    Urls = new[]
-                    {
-                        "https://a.wrk20211125.development.run/",
-                        "https://b.wrk20211125.development.run/",
-                        "https://c.wrk20211125.development.run/"
-                    },
-                    Certificate = new X509Certificate2(@"C:\dev\wrk\wrk20211125.Cluster.Settings\admin.client.certificate.wrk20211125.pfx"),
-                    Database = "demo"
-                };
-
-                //store.OnBeforeRequest += (sender, args) =>
-                //{
-                //    Console.WriteLine(args.Url);
-                //};
-
-                //store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.FastestNode;
-
-                store.Initialize();
-
-                //IndexCreation.CreateIndexes(typeof(Program).Assembly, store);
-
-                return store;
-            });
-
-        public static IDocumentStore Store => LazyStore.Value;
     }
 }
