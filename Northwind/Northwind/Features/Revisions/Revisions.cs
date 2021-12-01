@@ -96,6 +96,23 @@ namespace Northwind.Features.Revisions
             }
         }
 
+        public void GetChangeVectorsForRevisions()
+        {
+            List<string> vectors = new List<string>();
+
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            Order order = session.Load<Order>("orders/823-A");
+            vectors.Add(session.Advanced.GetChangeVectorFor(order));
+
+            List<Order> orderRevisions = session.Advanced.Revisions.GetFor<Order>("orders/823-A");
+
+            foreach (Order revision in orderRevisions)
+            {
+                vectors.Add(session.Advanced.GetChangeVectorFor(revision));
+            }
+        }
+
         public void ExtractChanges()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
