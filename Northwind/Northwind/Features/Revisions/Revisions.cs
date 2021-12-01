@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Northwind.Models.Entity;
+using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.Revisions
 {
@@ -124,6 +125,65 @@ namespace Northwind.Features.Revisions
                 new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
 
             var changes = session.Advanced.WhatChanged();
+        }
+
+        public void PrintRevisions()
+        {
+            string id = "employees/1-A";
+
+            var revisions = this.GetRevisions<Employee>(id);
+
+            Console.WriteLine($"Revisions for {id}");
+
+            foreach (Employee revision in revisions)
+            {
+                Console.WriteLine($"{revision.FirstName}");
+            }
+        }
+
+        public List<T> GetRevisions<T>(string id)
+        {
+            List<T> revs = new List<T>();
+
+            using (var session = DocumentStoreHolder.Store.OpenSession())
+            {
+                T entity = session.Load<T>(id);
+
+                string lastModified = session.Advanced.GetMetadataFor(entity)["@last-modified"].ToString();
+
+                List<T> revisions = session.Advanced.Revisions.GetFor<T>(id);
+
+                foreach (T revision in revisions.Skip(1))
+                {
+                    string revisionLastModified = session.Advanced.GetMetadataFor(revision)["@last-modified"].ToString();
+
+                    if (revisionLastModified != lastModified)
+                        revs.Add(revision);
+                }
+            }
+
+            revs.Reverse();
+
+            return revs;
+        }
+
+        public void Print()
+        {
+            string id = "employees/1-A";
+
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            Employee employee = session.Load<Employee>(id);
+            Console.WriteLine($"{employee.FirstName} - {session.Advanced.GetChangeVectorFor(employee)}");
+            Console.WriteLine("--------------");
+
+            List<Employee> orderRevisions = session.Advanced.Revisions.GetFor<Employee>(id);
+
+            foreach (Employee revision in orderRevisions)
+            {
+                Console.WriteLine($"{revision.FirstName} - {session.Advanced.GetChangeVectorFor(revision)}" +
+                                  $" - {session.Advanced.GetMetadataFor(revision)["@last-modified"]}");
+            }
         }
     }
 }
