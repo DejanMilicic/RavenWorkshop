@@ -147,11 +147,11 @@ namespace Northwind.Features.Revisions
 
             using (var session = DocumentStoreHolder.Store.OpenSession())
             {
-                T entity = session.Load<T>(id);
-
-                string lastModified = session.Advanced.GetMetadataFor(entity)["@last-modified"].ToString();
-
                 List<T> revisions = session.Advanced.Revisions.GetFor<T>(id);
+
+                if (!revisions.Any()) return revs;
+
+                string lastModified = session.Advanced.GetMetadataFor(revisions.First())["@last-modified"].ToString();
 
                 foreach (T revision in revisions.Skip(1))
                 {
