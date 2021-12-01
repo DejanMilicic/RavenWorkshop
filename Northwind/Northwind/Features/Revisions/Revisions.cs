@@ -147,7 +147,7 @@ namespace Northwind.Features.Revisions
             {
                 List<T> revisions = session.Advanced.Revisions.GetFor<T>(id);
 
-                if (!revisions.Any()) return new List<T>();
+                if (revisions.Count < 2) return new List<T>();
 
                 List<T> revs = new List<T>();
 
