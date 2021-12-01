@@ -15,7 +15,7 @@ namespace Northwind.Features.Caching
     {
         public void DocumentCaching()
         {
-            var store = DocumentStoreHolder.GetStore();
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
             store.Initialize();
 
@@ -30,7 +30,7 @@ namespace Northwind.Features.Caching
 
         public void QueryCaching()
         {
-            var store = DocumentStoreHolder.GetStore();
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
             store.Initialize();
 
@@ -47,7 +47,7 @@ namespace Northwind.Features.Caching
 
         public void AggressiveCaching()
         {
-            var store = DocumentStoreHolder.GetStore();
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
             store.Initialize();
 

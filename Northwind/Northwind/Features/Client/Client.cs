@@ -20,7 +20,7 @@ namespace Northwind.Features.Client
         {
             // showcase preferred node getting hits
 
-            var store = DocumentStoreHolder.GetStore();
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
             store.Initialize();
             
@@ -36,7 +36,7 @@ namespace Northwind.Features.Client
             // showcase what happens when you kill preferred node
             // showcase round robin
 
-            var store = DocumentStoreHolder.GetStore();
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
             store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.RoundRobin;
             store.Initialize();
@@ -57,7 +57,7 @@ namespace Northwind.Features.Client
 
         public void ClientFailoverWrite()
         {
-            var store = DocumentStoreHolder.GetStore();
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
             store.Initialize();
 
@@ -78,7 +78,7 @@ namespace Northwind.Features.Client
 
         public void RoundRobinFastestNodeDemo()
         {
-            var store = DocumentStoreHolder.GetStore();
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
             store.Conventions.ReadBalanceBehavior = ReadBalanceBehavior.RoundRobin;
             store.Initialize();
@@ -99,7 +99,7 @@ namespace Northwind.Features.Client
 
         public void SessionContext()
         {
-            var store = DocumentStoreHolder.GetStore();
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
             store.Initialize();
 
