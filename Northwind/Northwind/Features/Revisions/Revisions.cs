@@ -143,13 +143,13 @@ namespace Northwind.Features.Revisions
 
         public List<T> GetRevisions<T>(string id)
         {
-            List<T> revs = new List<T>();
-
             using (var session = DocumentStoreHolder.Store.OpenSession())
             {
                 List<T> revisions = session.Advanced.Revisions.GetFor<T>(id);
 
-                if (!revisions.Any()) return revs;
+                if (!revisions.Any()) return new List<T>();
+
+                List<T> revs = new List<T>();
 
                 string lastModified = session.Advanced.GetMetadataFor(revisions.First())["@last-modified"].ToString();
 
@@ -161,12 +161,12 @@ namespace Northwind.Features.Revisions
                         revs.Add(revision);
                 }
 
-                //Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
+                revs.Reverse();
+
+                return revs;
+
+                Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
             }
-
-            revs.Reverse();
-
-            return revs;
         }
 
         public void Print()
