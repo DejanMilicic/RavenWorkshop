@@ -160,6 +160,8 @@ namespace Northwind.Features.Revisions
                     if (revisionLastModified != lastModified)
                         revs.Add(revision);
                 }
+
+                //Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
             }
 
             revs.Reverse();
