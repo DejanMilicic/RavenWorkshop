@@ -155,9 +155,7 @@ namespace Northwind.Features.Revisions
 
                 foreach (T revision in revisions.Skip(1))
                 {
-                    string revisionLastModified = session.Advanced.GetMetadataFor(revision)["@last-modified"].ToString();
-
-                    if (revisionLastModified != lastModified)
+                    if (lastModified != session.Advanced.GetMetadataFor(revision)["@last-modified"].ToString())
                         revs.Add(revision);
                 }
 
