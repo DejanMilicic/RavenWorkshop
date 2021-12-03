@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -164,6 +164,32 @@ namespace Northwind.Features.Revisions
                 return revs;
 
                 Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
+            }
+        }
+
+        public List<IDictionary<string, object>> GetRevisionsMetadata(string id)
+        {
+            using (var session = DocumentStoreHolder.Store.OpenSession())
+            {
+                List<MetadataAsDictionary> revMetas = session.Advanced.Revisions.GetMetadataFor(id, 0, int.MaxValue);
+                        
+                if (revMetas.Count < 2) return new List<IDictionary<string, object>>();
+
+                List<IDictionary<string, object>> revs = new List<IDictionary<string, object>>();
+
+                string lastModified = revMetas.First()[Constants.Documents.Metadata.LastModified].ToString();
+
+                foreach (var revision in revMetas.Skip(1))
+                    if (lastModified != revision[Constants.Documents.Metadata.LastModified].ToString())
+                        revs.Add(new Dictionary<string, object>
+                        {
+                            { Constants.Documents.Metadata.ChangeVector, revision[Constants.Documents.Metadata.ChangeVector] },
+                            { Constants.Documents.Metadata.LastModified, revision[Constants.Documents.Metadata.LastModified] }
+                        });
+
+                revs.Reverse();
+                
+                return revs;
             }
         }
 
