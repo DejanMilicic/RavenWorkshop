@@ -170,6 +170,28 @@ namespace Northwind.Features.Revisions
             }
         }
 
+        public void PrintRevisionsFromMetadata()
+        {
+            using (var session = DocumentStoreHolder.Store.OpenSession())
+            {
+                string id = "employees/1-A";
+
+                var revisions = this.GetRevisionsMetadata(id);
+
+                Console.WriteLine($"Revisions for {id}");
+
+                foreach (var revision in revisions)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(string.Join(Environment.NewLine, revision.Select(a => $"{a.Key}: {a.Value}")));
+                    Employee historicERmp = session.Advanced.Revisions.Get<Employee>(revision[Constants.Documents.Metadata.ChangeVector]
+                        .ToString());
+                    Console.WriteLine($"First Name: {historicERmp.FirstName}");
+                    Console.WriteLine("-----------");
+                }
+            }
+        }
+
         public List<IDictionary<string, object>> GetRevisionsMetadata(string id)
         {
             using (var session = DocumentStoreHolder.Store.OpenSession())
