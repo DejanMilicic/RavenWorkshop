@@ -1,4 +1,5 @@
-﻿using Northwind.Models.Entity;
+﻿using System;
+using Northwind.Models.Entity;
 
 namespace Northwind.Features.BulkInsert
 {
@@ -18,6 +19,22 @@ namespace Northwind.Features.BulkInsert
                     FirstName = "FirstName #" + i,
                     LastName = "LastName #" + i
                 });
+            }
+        }
+
+        public void DoWithIds()
+        {
+            using var bulk = DocumentStoreHolder.Store.BulkInsert();
+
+            for (int i = 0; i < 100; i++)
+            {
+                string id = bulk.Store(new Employee
+                        {
+                            FirstName = "FirstName #" + i,
+                            LastName = "LastName #" + i
+                        });
+
+                Console.WriteLine(id);
             }
         }
     }
