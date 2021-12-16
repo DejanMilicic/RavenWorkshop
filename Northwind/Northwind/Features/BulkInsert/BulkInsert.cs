@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Diagnostics;
 using Northwind.Models.Entity;
 
 namespace Northwind.Features.BulkInsert
 {
     public class BulkInsert
     {
+        // todo: comparison with inserting via session
+
         public void Do()
         {
-             // todo: introduce timer so we can see how long it lasts
-             // todo: comparison with inserting via session
+            var timer = new Stopwatch();
+            timer.Start();
 
             using var bulk = DocumentStoreHolder.Store.BulkInsert();
 
@@ -20,6 +23,9 @@ namespace Northwind.Features.BulkInsert
                     LastName = "LastName #" + i
                 });
             }
+
+            timer.Stop();
+            Console.WriteLine($"Elapsed: " + timer.Elapsed.ToString(@"m\:ss\.fff"));
         }
 
         public void DoWithIds()
