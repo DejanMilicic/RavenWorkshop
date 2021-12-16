@@ -6,7 +6,28 @@ namespace Northwind.Features.BulkInsert
 {
     public class BulkInsert
     {
-        // todo: comparison with inserting via session
+        public void DoViaSession()
+        {
+            var timer = new Stopwatch();
+            timer.Start();
+
+            for (int i = 0; i < 25_000; i++)
+            {
+                using (var session = DocumentStoreHolder.Store.OpenSession())
+                {
+                    session.Store(new Employee
+                    {
+                        FirstName = "FirstName #" + i,
+                        LastName = "LastName #" + i
+                    });
+
+                    session.SaveChanges();
+                }
+            }
+
+            timer.Stop();
+            Console.WriteLine($"Elapsed: " + timer.Elapsed.ToString(@"m\:ss\.fff"));
+        }
 
         public void Do()
         {
@@ -15,7 +36,7 @@ namespace Northwind.Features.BulkInsert
 
             using var bulk = DocumentStoreHolder.Store.BulkInsert();
 
-            for (int i = 0; i < 1000 * 1000; i++)
+            for (int i = 0; i < 40 * 25_000; i++)
             {
                 bulk.Store(new Employee
                 {
