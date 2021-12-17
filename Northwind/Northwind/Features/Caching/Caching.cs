@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,7 +90,8 @@ namespace Northwind.Features.Caching
         public void DocumentSessionNotModified()
         {
             DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
-            store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Response.StatusCode}");
+            store.OnSucceedRequest += (sender, e) => 
+                Console.WriteLine($"{e.Response.Content.ReadAsStringAsync().Result.Length} \t {e.Response.StatusCode}");
             store.Initialize();
 
             using (var s1 = store.OpenSession())
