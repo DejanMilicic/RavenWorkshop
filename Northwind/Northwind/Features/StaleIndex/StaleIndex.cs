@@ -11,6 +11,15 @@ namespace Northwind.Features.StaleIndex
 {
     public static class StaleIndex
     {
+        // this method will display info if index Orders/ByCompany was stale in the moment of querying
+        // try running it while this script is executing
+        //
+        // from Orders
+        // update {
+        //    for (var i=0; i<100; i++) {
+        //        put("orders/", this)
+        //    }
+        // }
         public static void IsIndexStale()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
