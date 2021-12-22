@@ -4,8 +4,10 @@ using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Operations.CompareExchange;
 using Raven.Client.Http;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Transactions;
@@ -23,7 +25,7 @@ namespace Northwind.Features.Client
             DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
             store.Initialize();
-            
+
             using var session = store.OpenSession();
 
             var employees = session.Query<Employee>().Count();
@@ -184,7 +186,7 @@ namespace Northwind.Features.Client
                 FirstName = "John",
                 LastName = "Doe"
             };
-            
+
             session.Store(user);
 
             // this transaction is now conditional on this being 
@@ -270,6 +272,56 @@ namespace Northwind.Features.Client
             {
                 Console.WriteLine($"Error: Document with Id='{user2.Id}' already exists");
             }
+        }
+
+        public static void GetBytesSentReceived()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            session.Advanced.DocumentStore.GetRequestExecutor().OnBeforeRequest += (s, e) =>
+            {
+                Console.WriteLine(e.Request.Method);
+                Console.WriteLine($"Request URL: {e.Request.RequestUri}");
+
+                int headerSize = e.Request.Headers.ToString().Length;
+                int contentSize = e.Request.Content?.ReadAsStringAsync().Result.Length ?? 0;
+
+                Console.WriteLine($"Request size: {headerSize + contentSize}b [Header: {headerSize}b] [Content: {contentSize}b]");
+            };
+
+            session.Advanced.DocumentStore.GetRequestExecutor().OnSucceedRequest += (s, e) =>
+            {
+                int headerSize = e.Response.Headers.ToString().Length;
+                int contentSize = e.Response.Content?.ReadAsStringAsync().Result.Length ?? 0;
+
+                Console.WriteLine($"Response size: {headerSize + contentSize}b [Header: {headerSize}b] [Content: {contentSize}b]");
+                Console.WriteLine();
+            };
+
+            Console.WriteLine(">> Create new document without ID\n");
+
+            Employee emp = new Employee
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Notes = new List<string> { "This is our new employee" }
+            };
+
+            session.Store(emp);
+            session.SaveChanges();
+
+            Console.WriteLine(">> Create new document with ID\n");
+
+            Employee emp2 = new Employee
+            {
+                Id = "",
+                FirstName = "John",
+                LastName = "Doe",
+                Notes = new List<string> { "This is our new employee" }
+            };
+
+            session.Store(emp2);
+            session.SaveChanges();
         }
     }
 
