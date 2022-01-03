@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Transactions;
 using Raven.Client.Documents.Session;
 using Raven.Client.Exceptions;
@@ -322,6 +323,16 @@ namespace Northwind.Features.Client
 
             session.Store(emp2);
             session.SaveChanges();
+        }
+
+        public static async Task AsyncTest()
+        {
+            using (IAsyncDocumentSession session = DocumentStoreHolder.Store.OpenAsyncSession())
+            {
+                Employee emp = await session.Query<Employee>().FirstAsync();
+
+                Console.WriteLine(emp.FirstName);
+            }
         }
     }
 
