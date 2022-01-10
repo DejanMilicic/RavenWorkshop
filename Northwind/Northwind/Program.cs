@@ -14,6 +14,7 @@ using Northwind.Features.Changes;
 using Northwind.Features.ChangeVector;
 using Northwind.Features.Client;
 using Northwind.Features.ClusterWideTransactions;
+using Northwind.Features.Compression;
 using Northwind.Features.Counters;
 using Northwind.Features.Events;
 using Northwind.Features.Expiration;
