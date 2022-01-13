@@ -12,7 +12,6 @@ namespace Northwind.Features.Attachments
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             var employee = session.Load<Employee>("employees/8-A");
-            var attNames = session.Advanced.Attachments.GetNames(employee);
 
             AttachmentName[] attachmentNames = session.Advanced.Attachments.GetNames(employee);
             foreach (AttachmentName attachmentName in attachmentNames)
