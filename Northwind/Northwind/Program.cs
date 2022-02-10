@@ -32,7 +32,7 @@ using Northwind.Features.Projections;
 using Northwind.Features.Refresh;
 using Northwind.Features.Revisions;
 using Northwind.Features.Search;
-using Northwind.Features.Session;
+using Northwind.Features.DocumentSession;
 using Northwind.Features.Sorting;
 using Northwind.Features.Spatial;
 using Northwind.Features.StaleIndex;

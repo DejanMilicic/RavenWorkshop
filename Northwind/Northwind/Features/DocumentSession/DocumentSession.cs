@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Northwind.Models.Entity;
 using Raven.Client.Documents.Session;
 
-namespace Northwind.Features.Session
+namespace Northwind.Features.DocumentSession
 {
-    public class RavenSession
+    public static class DocumentSession
     {
-        public void Evict()
+        public static void Evict()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
