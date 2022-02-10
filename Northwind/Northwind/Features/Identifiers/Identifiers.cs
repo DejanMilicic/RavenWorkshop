@@ -40,7 +40,7 @@ namespace Northwind.Features.Identifiers
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             Employee emp = new Employee();
-            emp.Id = "230600A_56";
+            emp.Id = "Employees/Usa/California/Office1/JaneDoe";
             emp.FirstName = "Jane";
             emp.LastName = "Doe";
 
