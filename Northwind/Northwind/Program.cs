@@ -23,6 +23,7 @@ using Northwind.Features.Includes;
 using Northwind.Features.Indexes;
 using Northwind.Features.Lazy;
 using Northwind.Features.Metadata;
+using Northwind.Features.Operations;
 using Northwind.Features.OptimisticConcurrency;
 using Northwind.Features.Paging;
 using Northwind.Features.Patching;
