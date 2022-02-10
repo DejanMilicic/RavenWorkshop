@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Northwind.Features.Identifiers;
 using Northwind.Models.Entity;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.DocumentSession
@@ -69,6 +71,25 @@ namespace Northwind.Features.DocumentSession
             robert = session.Load<Employee>("employees/7-A");
             
             Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
+        }
+
+        public static void SelectiveTracking()
+        {
+            var store = (DocumentStore)DocumentStoreHolder.GetStore();
+
+            store.Conventions.ShouldIgnoreEntityChanges =
+                (session, entity, id) => (entity is Employee e) && (e.FirstName == "Laura");
+            store.Initialize();
+
+            using var session = store.OpenSession();
+            
+            Employee laura = session.Load<Employee>("employees/8-A"); // laura will not be tracked
+            Employee robert = session.Load<Employee>("employees/7-A");
+
+            laura.LastName += " CHANGED";
+            robert.LastName += " CHANGED";
+
+            session.SaveChanges();
         }
 
         public static void WhatChanged()
