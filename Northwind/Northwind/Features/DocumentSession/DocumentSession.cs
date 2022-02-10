@@ -24,9 +24,24 @@ namespace Northwind.Features.DocumentSession
 
             Employee laura = session.Load<Employee>("employees/8-A");
             
-            session.Advanced.Evict(laura);
+            session.Advanced.Evict(laura); // stop tracking specified entity
 
             laura = session.Load<Employee>("employees/8-A");
+            
+            Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
+        }
+
+        public static void SessionClear()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            Employee laura = session.Load<Employee>("employees/8-A");
+            Employee robert = session.Load<Employee>("employees/7-A");
+            
+            session.Advanced.Clear(); // stop tracking all entities
+
+            laura = session.Load<Employee>("employees/8-A");
+            robert = session.Load<Employee>("employees/7-A");
             
             Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
         }
