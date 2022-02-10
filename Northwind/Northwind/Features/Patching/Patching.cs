@@ -5,13 +5,14 @@ using Northwind.Models.Entity;
 
 namespace Northwind.Features.Patching
 {
-    public class Patching
+    public static class Patching
     {
-        public void PatchFromRevision()
+        public static void PatchFromRevision()
         {
             string orderId = "orders/830-A";
 
             using var session = DocumentStoreHolder.Store.OpenSession();
+
             List<Order> revisions = session.Advanced.Revisions.GetFor<Order>(orderId).ToList();
 
             var revisionDate = revisions.Skip(1).First().OrderedAt;
