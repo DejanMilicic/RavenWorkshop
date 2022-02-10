@@ -7,6 +7,17 @@ namespace Northwind.Features.DocumentSession
 {
     public static class DocumentSession
     {
+        public static void IdentityMap()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            Employee laura = session.Load<Employee>("employees/8-A");
+            
+            laura = session.Load<Employee>("employees/8-A");
+            
+            Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
+        }
+
         public static void Evict()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
