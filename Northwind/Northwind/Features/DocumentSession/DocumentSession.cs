@@ -7,6 +7,15 @@ namespace Northwind.Features.DocumentSession
 {
     public static class DocumentSession
     {
+        public static void ExplicitDatabase()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession(database: "demo2");
+
+            Employee laura = session.Load<Employee>("employees/8-A");
+            
+            Console.WriteLine($"{laura.FirstName} {laura.LastName}");
+        }
+
         public static void IdentityMap()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
