@@ -100,10 +100,30 @@ namespace Northwind.Features.Identifiers
             session.SaveChanges();
         }
 
+        public static void HowRavenAssignsId()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            Employee emp = new Employee
+            {
+                FirstName = "Jane",
+                LastName = "Doe"
+            };
+
+            Console.WriteLine($"Newly created object has NULL ID : emp.Id = {emp.Id ?? "NULL"}");
+
+            session.Store(emp);
+
+            Console.WriteLine("\nAfter executing session.Store, session will create new ID using HiLo algorithm");
+            Console.WriteLine($"And assign it to emp.Id : emp.Id = {emp.Id}");
+
+            session.SaveChanges();
+        }
+
         //http://127.0.0.1:8080/debug/routes
 
         //http://127.0.0.1:8080/databases/demo/debug/storage/btree-structure?name=Docs
-        
+
         // example: fragmentation of B+Tree
         //from Orders
         //update {
@@ -111,7 +131,7 @@ namespace Northwind.Features.Identifiers
         //        put("", this)
         //    }
         //}
-        
+
         //from Orders
         //update {
         //    for (var i=0; i< 100; i++) {
