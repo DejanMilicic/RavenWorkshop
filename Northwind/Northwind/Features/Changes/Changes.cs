@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Northwind.Features.Changes
 {
-    public class Changes
+    public static class Changes
     {
-        public void Consume()
+        public static void Consume()
         {
             DocumentStoreHolder.Store.Changes()
                 .ForAllDocuments()
