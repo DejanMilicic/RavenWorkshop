@@ -12,6 +12,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using Newtonsoft.Json;
 using Northwind.Models.ValueObject;
 using Raven.Client.Documents.Session;
 using Raven.Client.Exceptions;
@@ -296,6 +297,68 @@ namespace Northwind.Features.Client
             }
         }
 
+        public static void EnsureUniquenessWithCustomIdentity()
+        {
+            #region Customize Store
+
+            IDocumentStore store = DocumentStoreHolder.GetStore();
+
+            var defaultFindIdentityProperty = store.Conventions.FindIdentityProperty;
+
+            store.Conventions.FindIdentityProperty = property =>
+                typeof(Worker).IsAssignableFrom(property.DeclaringType)
+                    ? property.Name == "Identifier"
+                    : defaultFindIdentityProperty(property);
+
+            store.Initialize();
+
+            #endregion
+
+            using (var session = store.OpenSession(new SessionOptions
+                       { TransactionMode = TransactionMode.ClusterWide }))
+            {
+                Worker john = new Worker
+                {
+                    FirstName = "John",
+                    LastName = "Doe",
+                    City = "London"
+                };
+
+                session.Store(john);
+
+                try
+                {
+                    session.SaveChanges();
+                }
+                catch (ClusterTransactionConcurrencyException ex)
+                {
+                    Console.WriteLine("Error: Employee already exists in the database");
+                }
+            }
+
+            using (var session = store.OpenSession(new SessionOptions
+                       { TransactionMode = TransactionMode.ClusterWide }))
+            {
+                Worker jane = new Worker
+                {
+                    FirstName = "Jane",
+                    LastName = "Doe",
+                    City = "London"
+                };
+
+                session.Store(jane);
+
+                try
+                {
+                    session.SaveChanges();
+                }
+                catch (ClusterTransactionConcurrencyException ex)
+                {
+                    Console.WriteLine("Error: Employee already exists in the database");
+                }
+            }
+        }
+
         public void SaveSameDocumentAgain()
         {
             var store = DocumentStoreHolder.GetStore().Initialize();
@@ -407,5 +470,17 @@ namespace Northwind.Features.Client
     {
         public string Id { get; set; }
         public string Email { get; set; }
+    }
+
+    public class Worker
+    {
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string City { get; set; }
+
+        [JsonIgnore]
+        public string Identifier => $"Worker/{City}/{LastName}";
     }
 }
