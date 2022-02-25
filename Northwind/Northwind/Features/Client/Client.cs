@@ -12,6 +12,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using Northwind.Models.ValueObject;
 using Raven.Client.Documents.Session;
 using Raven.Client.Exceptions;
 
@@ -227,6 +228,72 @@ namespace Northwind.Features.Client
             session.Store(user); // hilo-powered node-bound id generated
             session.Store(new { ReservedFor = user.Id }, "Employees/dejan@ravendb.net");
             session.SaveChanges();
+        }
+
+        public static void EnsureUniqueness()
+        {
+            // we will consider two employees identical
+            // if they have the same lastname and address.city
+
+            var store = DocumentStoreHolder.Store;
+
+            using (var session = store.OpenSession(new SessionOptions 
+                       { TransactionMode = TransactionMode.ClusterWide }))
+            {
+                Employee john = new Employee
+                {
+                    FirstName = "John",
+                    LastName = "Doe",
+                    Address = new Address
+                    {
+                        City = "London",
+                        Country = "UK"
+                    }
+                };
+
+                session.Store(john);
+                session.Store(entity: new { id = john.Id }, id: $"UniqueEmployee/{john.LastName}_{john.Address.City}");
+
+                try
+                {
+                    session.SaveChanges();
+                }
+                catch (ClusterTransactionConcurrencyException ex)
+                {
+                    Console.WriteLine("Error: Employee already exists in the database");
+                }
+            }
+
+            // now, lets attempt to create what we consider to be identical employee
+
+            using (var session = store.OpenSession(new SessionOptions
+                       { TransactionMode = TransactionMode.ClusterWide }))
+            {
+
+                Employee jane = new Employee
+                {
+                    FirstName = "Jane",
+                    LastName = "Doe",
+                    Address = new Address
+                    {
+                        City = "London",
+                        Country = "USA"
+                    }
+                };
+
+                session.Store(jane);
+                session.Store(entity: new { id = jane.Id }, id: $"UniqueEmployee/{jane.LastName}_{jane.Address.City}");
+
+                try
+                {
+                    session.SaveChanges();
+                }
+                catch (ClusterTransactionConcurrencyException ex)
+                {
+                    Console.WriteLine("Error: Employee already exists in the database");
+                }
+                
+            }
         }
 
         public void SaveSameDocumentAgain()
