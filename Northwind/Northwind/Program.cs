@@ -37,6 +37,7 @@ using Northwind.Features.DocumentSession;
 using Northwind.Features.Sorting;
 using Northwind.Features.Spatial;
 using Northwind.Features.StaleIndex;
+using Northwind.Features.Staleness;
 using Northwind.Features.Streaming;
 using Northwind.Features.Subscriptions;
 using Northwind.Features.Timeseries;
