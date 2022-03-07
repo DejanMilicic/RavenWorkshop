@@ -23,6 +23,7 @@ namespace Northwind.Features.Staleness
 
             // save new entities to the database
             session.SaveChanges();
+            session.Advanced.Clear();
 
             // operations that will always return non-stale results
             // from local node:
