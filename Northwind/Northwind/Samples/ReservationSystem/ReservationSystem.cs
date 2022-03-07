@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
+using Raven.Client.Documents.Session.Tokens;
 
 namespace Northwind.Samples.ReservationSystem
 {
@@ -30,11 +31,40 @@ namespace Northwind.Samples.ReservationSystem
 
     public static class ReservationSystem
     {
+        public static void Query()
+        {
+            DateTime appointment = new DateTime(2022, 4, 1, 12, 0, 0);
+            int length = 2;
+
+            Console.WriteLine($"Customer: I need an appoint of {length}h on {appointment}");
+
+            var session = ReservationsStoreHolder.Store.OpenSession();
+
+            List<RoomDate> availableRooms = session.Query<Rooms_ByEmptySlot.Entry, Rooms_ByEmptySlot>()
+                .Where(x => x.From <= appointment && appointment.AddHours(length) <= x.To)
+                .OfType<RoomDate>()
+                .ToList();
+
+            if (availableRooms.Any())
+            {
+                Console.WriteLine("Company: We can offer you following rooms");
+                foreach (RoomDate room in availableRooms)
+                {
+                    Console.WriteLine($"> {room.Name}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Company: Unfortunately, we do not have any rooms available");
+            }
+
+        }
+
         public static void Seed()
         {
             var session = ReservationsStoreHolder.Store.OpenSession();
 
-            if (session.Query<RoomDate>().Count() == 0)
+            if (!session.Query<RoomDate>().Any())
             {
                 session.Store(new RoomDate
                 {

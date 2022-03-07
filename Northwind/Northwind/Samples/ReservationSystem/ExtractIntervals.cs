@@ -27,6 +27,9 @@ namespace Northwind.Samples.ReservationSystem
                 {
                     for (int i = 0; i < reservations.Count()-1; i++)
                     {
+                        //dynamic r = reservations;
+                        //var element = r[i];
+
                         freeSlots.Add(new(reservations.ElementAt(i).Item2, reservations.ElementAt(i+1).Item1));
                     }
                 }
