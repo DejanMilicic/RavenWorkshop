@@ -58,6 +58,13 @@ namespace Northwind.Samples.ReservationSystem
                         }
                     }
                 });
+
+                session.Store(new RoomDate
+                {
+                    Name = "Office 2",
+                    Open = new DateTime(2022, 4, 1, 12, 0, 0),
+                    Close = new DateTime(2022, 4, 1, 18, 0, 0)
+                });
             }
 
             session.SaveChanges();
