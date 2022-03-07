@@ -91,6 +91,9 @@ namespace Northwind.Features.Staleness
 
             // 3. customize query to wait for non-stale results
             // if timespan is not specified, default value of 15s will be used
+            // as soon as index becomes non-stale, query will be executed
+            // if index is still stale after timespan passes, this will be cutoff point
+            // and query will be executed against index which is still stale
             workers = session.Query<Worker>()
                 .Customize(x => x.WaitForNonStaleResults(TimeSpan.FromSeconds(5)))
                 .Where(x => x.Name == "jane")
