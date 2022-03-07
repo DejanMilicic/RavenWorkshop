@@ -101,7 +101,7 @@ namespace Northwind.Features.Staleness
             session.Store(new Worker { Id = "workers/3-A", Name = "marco" });
             session.SaveChanges(); // this call will not end until all affected indexes are updated
 
-            // 5. or you can specify list of indexes to wait on for and additional options
+            // 5. or you can specify a list of indexes to wait on for and additional options
             session.Advanced.WaitForIndexesAfterSaveChanges(
                 timeout: TimeSpan.FromSeconds(5),
                 throwOnTimeout: false,
