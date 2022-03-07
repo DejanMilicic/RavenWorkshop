@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Northwind.Samples.ReservationSystem
 {
@@ -21,7 +19,8 @@ namespace Northwind.Samples.ReservationSystem
             }
             else
             {
-                freeSlots.Add(new(open, reservations.First().Item1));
+                if (reservations.First().Item1 > open)
+                    freeSlots.Add(new(open, reservations.First().Item1));
 
                 if (reservations.Count() > 1)
                 {
@@ -34,7 +33,8 @@ namespace Northwind.Samples.ReservationSystem
                     }
                 }
 
-                freeSlots.Add(new(reservations.Last().Item2, close));
+                if (reservations.Last().Item2 < close)
+                    freeSlots.Add(new(reservations.Last().Item2, close));
             }
 
             return freeSlots;

@@ -57,7 +57,6 @@ namespace Northwind.Samples.ReservationSystem
             {
                 Console.WriteLine("Company: Unfortunately, we do not have any rooms available");
             }
-
         }
 
         public static void Seed()
@@ -75,6 +74,13 @@ namespace Northwind.Samples.ReservationSystem
                     {
                         new RoomDate.Reservation
                         {
+                            User = "Marco Polo",
+                            From = new DateTime(2022, 4, 1, 9, 0, 0),
+                            To = new DateTime(2022, 4, 1, 9, 30, 0),
+                        },
+
+                        new RoomDate.Reservation
+                        {
                             User = "Jane Doe",
                             From = new DateTime(2022, 4, 1, 10, 30, 0),
                             To = new DateTime(2022, 4, 1, 12, 00, 0),
@@ -85,6 +91,13 @@ namespace Northwind.Samples.ReservationSystem
                             User = "John Doe",
                             From = new DateTime(2022, 4, 1, 14, 00, 0),
                             To = new DateTime(2022, 4, 1, 16, 00, 0),
+                        },
+
+                        new RoomDate.Reservation
+                        {
+                            User = "Magelan",
+                            From = new DateTime(2022, 4, 1, 19, 45, 0),
+                            To = new DateTime(2022, 4, 1, 20, 00, 0),
                         }
                     }
                 });
