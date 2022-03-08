@@ -57,6 +57,20 @@ namespace Northwind.Samples.ReservationSystem
             {
                 Console.WriteLine("Company: Unfortunately, we do not have any rooms available");
             }
+
+            int minimumMinuteLength = 180;
+
+            List<Rooms_ByEmptySlot.Entry> availableSlots = session.Query<Rooms_ByEmptySlot.Entry, Rooms_ByEmptySlot>()
+                .Where(x => x.MinutesLength >= minimumMinuteLength)
+                .ProjectInto<Rooms_ByEmptySlot.Entry>()
+                .ToList();
+
+            Console.WriteLine($"We can also offer following slots of at least {minimumMinuteLength} minutes");
+
+            foreach (var slot in availableSlots)
+            {
+                Console.WriteLine($"> {slot.MinutesLength}m slot at room {slot.Id}");
+            }
         }
 
         public static void Seed()
@@ -118,9 +132,13 @@ namespace Northwind.Samples.ReservationSystem
     {
         public class Entry
         {
+            public string Id { get; set; }
+
             public DateTime From { get; set; }
 
             public DateTime To { get; set; }
+
+            public double MinutesLength { get; set; }
         }
 
         public Rooms_ByEmptySlot()
@@ -132,10 +150,14 @@ namespace Northwind.Samples.ReservationSystem
                         (rd.Reservations.Select(x => new Tuple<DateTime, DateTime>(x.From, x.To))).ToArray())
                     .Select(x => new Entry
                     {
+                        Id = rd.Id,
                         From = x.Item1,
-                        To = x.Item2
+                        To = x.Item2,
+                        MinutesLength = (x.Item2 - x.Item1).TotalMinutes
                     })
             );
+
+            Stores.Add(x => x.MinutesLength, FieldStorage.Yes);
 
             AdditionalSources = new Dictionary<string, string>
             {
