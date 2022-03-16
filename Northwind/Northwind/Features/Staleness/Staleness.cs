@@ -44,6 +44,8 @@ namespace Northwind.Features.Staleness
                 .WhereIn(x => x.Id, new []{"workers/1-A", "workers/2-A"})
                 .ToList();
 
+            // todo: project this into anonymous object, what will be result
+
             workers = session.Query<Worker>()
                 .Where(x => x.Id.In("workers/1-A", "workers/2-A"))
                 .ToList();

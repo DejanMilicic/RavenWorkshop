@@ -242,7 +242,7 @@ select output(o)
 
             var entries = session.Query<Orders_ByCompany.Entry, Orders_ByCompany>()
                 .Where(x => x.CompanyName == companyName)
-                .ProjectInto<Orders_ByCompany.Entry>()
+                //.ProjectInto<Orders_ByCompany.Entry>()
                 .Select(x => 
                     new { 
                     Order = RavenQuery.Load<Order>(x.OrderId),

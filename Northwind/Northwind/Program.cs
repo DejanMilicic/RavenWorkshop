@@ -34,6 +34,7 @@ using Northwind.Features.Refresh;
 using Northwind.Features.Revisions;
 using Northwind.Features.Search;
 using Northwind.Features.DocumentSession;
+using Northwind.Features.RavenDocumentStore;
 using Northwind.Features.Sorting;
 using Northwind.Features.Spatial;
 using Northwind.Features.StaleIndex;
@@ -43,6 +44,8 @@ using Northwind.Features.Subscriptions;
 using Northwind.Features.Timeseries;
 using Northwind.Models.Entity;
 using Northwind.Models.ValueObject;
+//using Northwind.Samples.JsonObject;
+//using Northwind.Samples.ReservationSystem;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
@@ -62,7 +65,24 @@ namespace Northwind
     {
         static async Task Main(string[] args)
         {
-            DocumentStoreHolder.Store.OpenSession();
+            var session = DocumentStoreHolder.Store.OpenSession();
+
+            var query  = session.Query<Employee>()
+                .Where(x => x.FirstName == "")
+                .Select(x => new
+                {
+                    Name = x.FirstName
+                });
+
+            Console.WriteLine(query.ToString());
+                
+
+            //Staleness.NonStaleOperations();
+
+            //JsonObjects.Query();
+
+            //RavenDocumentStore.CreateInMemoryDatabase();
+            //ReservationSystem.Seed();
 
             //new Lazy().ManyCallsOptimizedViaLazily();
 

@@ -125,6 +125,15 @@ namespace Northwind.Features.Projections
 
             bool isAdmin = false; // try changing to true and observing result
 
+            // todo: example of 
+            // 1. querying index
+            // 2. filtering condition is composed dynamically before query
+            //     where tag == "testing"
+            //     or where project == "project_123"
+            // 3. project into view model
+            // 4. dereference in an efficient way (load referenced documents by id)
+            // optional: show both syntaxes // 5. it should be dot syntax (if possible)
+
             List<OrderViewModel> londonOrders = (
                     from order in session.Query<Order>()
                     where order.ShipTo.City == "London"
