@@ -94,6 +94,8 @@ namespace Northwind.Features.Certificates
                     "1234") // password you stated in step 4 when pfx file was created
             }.Initialize();
 
+            // pay attention to https://snede.net/the-most-dangerous-constructor-in-net/
+
             using IDocumentSession session = store.OpenSession();
 
             session.Store(
