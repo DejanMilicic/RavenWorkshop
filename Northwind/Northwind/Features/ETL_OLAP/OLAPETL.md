@@ -119,6 +119,8 @@ find companies with most orders
 ```
 SELECT Company, COUNT(*) FROM 'file.parquet' GROUP BY Company ORDER BY COUNT(*) DESC limit 5;
 ```
+
+```
 ┌────────────────────────────┬──────────────┐
 │          Company           │ count_star() │
 ├────────────────────────────┼──────────────┤
@@ -128,6 +130,7 @@ SELECT Company, COUNT(*) FROM 'file.parquet' GROUP BY Company ORDER BY COUNT(*) 
 │ Rattlesnake Canyon Grocery │ 19           │
 │ Folk och fä HB             │ 19           │
 └────────────────────────────┴──────────────┘
+```
 
 ## Trasform with Partition
 
