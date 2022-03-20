@@ -44,6 +44,8 @@ or to show just first 10 orders
 ```
 SELECT * FROM 'file.parquet' limit 10;
 ```
+
+```
 ┌────────────────┬─────────────┬───────────────────┐
 │    Company     │     _id     │ _lastModifiedTime │
 ├────────────────┼─────────────┼───────────────────┤
@@ -58,6 +60,7 @@ SELECT * FROM 'file.parquet' limit 10;
 │ companies/88-A │ orders/9-A  │ 1532693513        │
 │ companies/35-A │ orders/10-A │ 1532693513        │
 └────────────────┴─────────────┴───────────────────┘
+```
 
 You can dereference CompanyID and push company names instead of their ID
 ```
@@ -68,6 +71,8 @@ loadToOrders(noPartition(), {
 
 ```
 SELECT * FROM 'file.parquet' limit 10;
+```
+
 ```
 ┌───────────────────────────┬─────────────┬───────────────────┐
 │          Company          │     _id     │ _lastModifiedTime │
@@ -83,6 +88,7 @@ SELECT * FROM 'file.parquet' limit 10;
 │ Wellington Importadora    │ orders/9-A  │ 1532693513        │
 │ HILARION-Abastos          │ orders/10-A │ 1532693513        │
 └───────────────────────────┴─────────────┴───────────────────┘
+```
 
 Whole document can be pushed as well, taking into account that complex fields will not be flattened
 
@@ -94,16 +100,21 @@ loadToProducts(noPartition(), this);
 ```
 SELECT * FROM 'file.parquet' limit 1;
 ```
+
+```
 ┌────────────────┬──────────────┬──────┬───────────────────────┬────────────────────┬──────────────┬───────────────┬──────────────┬──────────────┬──────────────┬───────────────────┐
 │    Category    │ Discontinued │ Name │     PricePerUnit      │  QuantityPerUnit   │ ReorderLevel │   Supplier    │ UnitsInStock │ UnitsOnOrder │     _id      │ _lastModifiedTime │
 ├────────────────┼──────────────┼──────┼───────────────────────┼────────────────────┼──────────────┼───────────────┼──────────────┼──────────────┼──────────────┼───────────────────┤
 │ categories/1-A │ false        │ Chai │ 18.000000000000000000 │ 10 boxes x 20 bags │ 10           │ suppliers/1-A │ 1            │ 39           │ products/1-A │ 1647465276        │
 └────────────────┴──────────────┴──────┴───────────────────────┴────────────────────┴──────────────┴───────────────┴──────────────┴──────────────┴──────────────┴───────────────────┘
+```
 
 Getting back to orders, now you can use OLAP database to 
 find number of orders per company
 ```
 SELECT Company, COUNT(*) FROM 'file.parquet' GROUP BY Company limit 5;
+```
+
 ```
 ┌───────────────────────────┬──────────────┐
 │          Company          │ count_star() │
@@ -114,6 +125,7 @@ SELECT Company, COUNT(*) FROM 'file.parquet' GROUP BY Company limit 5;
 │ Victuailles en stock      │ 10           │
 │ Suprêmes délices          │ 12           │
 └───────────────────────────┴──────────────┘
+```
 
 find companies with most orders
 ```
