@@ -3,12 +3,12 @@
 https://ravendb.net/docs/article-page/5.3/csharp/studio/database/tasks/ongoing-tasks/olap-etl-task
 https://ravendb.net/docs/article-page/5.3/csharp/server/ongoing-tasks/etl/olap
 
-OLAP ETL will generate Apache Parquet files.
-Apache Parquet is the most common “Big Data” storage format for analytics. In Parquet files, data is stored in a columnar-compressed binary format. 
-Each Parquet file stores a single table. The table is partitioned into row groups, which each contain a subset of the rows of the table. 
-Within a row group, the table data is stored in a columnar fashion.
+OLAP ETL will generate Apache Parquet files.  
+Apache Parquet is the most common “Big Data” storage format for analytics. In Parquet files, data is stored in a columnar-compressed binary format.   
+Each Parquet file stores a single table. The table is partitioned into row groups, which each contain a subset of the rows of the table.   
+Within a row group, the table data is stored in a columnar fashion.  
 
-More about Parquet
+More about Parquet  
 https://eng.uber.com/presto/
 
 Parquet files can be consumed by 
@@ -17,10 +17,10 @@ Parquet files can be consumed by
 - Snowflake
 and many other systems 
 
-One of handy ways to inspect generated files is 
-DuckDB https://duckdb.org/
-https://duckdb.org/docs/data/parquet
-https://duckdb.org/docs/data/overview
+One of handy ways to inspect generated files is  
+DuckDB https://duckdb.org/  
+https://duckdb.org/docs/data/parquet  
+https://duckdb.org/docs/data/overview  
 
 ## Transform without Partitions
 
