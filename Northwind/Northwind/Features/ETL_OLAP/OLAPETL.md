@@ -22,9 +22,22 @@ DuckDB https://duckdb.org/
 https://duckdb.org/docs/data/parquet  
 https://duckdb.org/docs/data/overview  
 
-## Transform without Partitions
+## Overview
 
-These transformations will transform and push whole collection(s) to a single Parquet file
+OLAP ETL is an ongoing task. It will generate Parquet files in each etl batch-run, with the batch frequency 
+being configured by the user. e.g. "every day at noon". Every time OLAP ETL task runs, it will process only
+documents created/changed since the last run.
+
+There are two flavors of OLAP ETL
+- without partitions : hese transformations will transform and push whole collection(s) to a single Parquet file.
+- with partitions : data to be exported is separated into subsets, and one Parquet file is generated per subset
+
+Idea behind partitioning data is to introduce optimization early on, even before you start analyzing data
+in OLAP database. For example, if you are doing retail analysis, you may partition sales statistics into partitions
+for regions and for years. This way, you can load just "Australia 2018" sales data and perform analysis on this
+subset.
+
+## Transform without Partitions
 
 Transformation script for Orders
 ```
@@ -32,6 +45,9 @@ loadToOrders(noPartition(), {
     Company: this.Company
 });
 ```
+
+Each batch run will create one Parquet file per such transformation script. All these files will be placed
+in the same folder.
 
 Content of this file can be inspected via
 
@@ -146,9 +162,13 @@ SELECT Company, COUNT(*) FROM 'file.parquet' GROUP BY Company ORDER BY COUNT(*) 
 
 ## Trasform with Partition
 
-Instead of producing one file with all documents, you can create Partitions - multiple files
-containing subsets of data
-After that, you can load only some partitions and run queries on them
+This transformation will create multiple parquets, with folder hierarchy determined by the partitioning scheme.
+For example, if you are partitioning by year and month, foldrt "year=2022" will be created on top level, 
+with subfolders "month=01", "month=02" etc.
+
+Hence, these Parquet files contain a subset of the data, with the partition columns not being stored 
+inside the parquet but instead they are used as folder names.
+
 ```
 SELECT * FROM parquet_scan(['file1.parquet', 'file2.parquet', 'file3.parquet']);
 ```
