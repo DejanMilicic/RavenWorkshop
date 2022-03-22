@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Northwind.Models.Entity;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 
@@ -51,6 +53,14 @@ namespace Northwind.Features.Staleness
             // 5. query by id prefix
             workers = session.Query<Worker>()
                 .Where(x => x.Id.StartsWith("workers/"))
+                .ToList();
+
+            // 6. filtering 
+            // https://ravendb.net/docs/article-page/5.3/csharp/indexes/querying/exploration-queries
+            // Filtering will fetch content of collection and then select subset out of that
+            // hence not triggering index creation
+            var result = session.Query<Employee>()
+                .Filter(f => f.Address.Country == "USA", limit: 500)
                 .ToList();
         }
 
