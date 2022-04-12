@@ -20,7 +20,11 @@ namespace Northwind.Features.IndexingRelationships
 
             store.Initialize();
 
-            IndexCreation.CreateIndexes(new [] { new Users_ByContent() }, store);
+            IndexCreation.CreateIndexes(new AbstractIndexCreationTask[]
+            {
+                new Users_ByContent(),
+                new Users_ByContent2()
+            }, store);
 
             return store;
         }
