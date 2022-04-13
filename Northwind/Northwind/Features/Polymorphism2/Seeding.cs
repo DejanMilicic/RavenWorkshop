@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Northwind.Features.IndexingRelationships;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Conventions;
 using Raven.Client.Documents.Indexes;
 
 namespace Northwind.Features.Polymorphism2
@@ -16,14 +17,23 @@ namespace Northwind.Features.Polymorphism2
             IDocumentStore store = new DocumentStore
             {
                 Urls = new[] { "http://127.0.0.1:8080" },
-                Database = "animals"
+                Database = "animals",
+                //Conventions =
+                //{
+                //    FindCollectionName = type =>
+                //    {
+                //        if (typeof(Models.Animal).IsAssignableFrom(type))
+                //            return "Animals";
+                //        return DocumentConventions.DefaultGetCollectionName(type);
+                //    }
+                //}
             };
 
             store.Initialize();
 
             IndexCreation.CreateIndexes(new AbstractIndexCreationTask[]
             {
-                new Animals()
+                new CatsParrots()
             }, store);
 
             return store;

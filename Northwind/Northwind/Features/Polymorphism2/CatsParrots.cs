@@ -7,7 +7,7 @@ using Raven.Client.Documents.Indexes;
 
 namespace Northwind.Features.Polymorphism2
 {
-    public class Animals : AbstractMultiMapIndexCreationTask<Animals.Entry>
+    public class CatsParrots : AbstractMultiMapIndexCreationTask<CatsParrots.Entry>
     {
         public class Entry
         {
@@ -20,7 +20,7 @@ namespace Northwind.Features.Polymorphism2
             public string Characteristic { get; set; }
         }
 
-        public Animals()
+        public CatsParrots()
         {
             AddMap<Models.Cat>(
                 cats => from cat in cats
