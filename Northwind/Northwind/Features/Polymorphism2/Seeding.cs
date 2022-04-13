@@ -33,7 +33,8 @@ namespace Northwind.Features.Polymorphism2
 
             IndexCreation.CreateIndexes(new AbstractIndexCreationTask[]
             {
-                new CatsParrots()
+                new CatsParrots(),
+                new Animals()
             }, store);
 
             return store;
