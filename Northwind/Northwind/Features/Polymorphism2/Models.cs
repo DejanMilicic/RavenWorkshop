@@ -8,7 +8,7 @@ namespace Northwind.Features.Polymorphism2
 {
     public class Models
     {
-        public abstract class Animal
+        public class Animal
         {
             public string Id { get; set; }
 
