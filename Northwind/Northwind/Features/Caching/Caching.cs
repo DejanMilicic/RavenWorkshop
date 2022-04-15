@@ -9,6 +9,7 @@ using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
+using Raven.Client.Http;
 
 namespace Northwind.Features.Caching
 {
@@ -67,6 +68,28 @@ namespace Northwind.Features.Caching
             {
                 using (var session = store.OpenSession())
                 using (session.Advanced.DocumentStore.AggressivelyCacheFor(TimeSpan.FromSeconds(20)))
+                {
+                    var orders = session.Query<Order>()
+                        .Where(x => x.OrderedAt < DateTime.Today)
+                        .ToList();
+
+                    Console.WriteLine($"Total number of orders: {orders.Count}");
+                }
+
+                Console.ReadLine();
+            }
+        }
+
+        public static void AggressiveCachingNoChangeTracking()
+        {
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
+            store.OnSucceedRequest += (sender, e) => { DisplayResponseInfo(e); };
+            store.Initialize();
+
+            while (true)
+            {
+                using (var session = store.OpenSession())
+                using (session.Advanced.DocumentStore.AggressivelyCacheFor(TimeSpan.FromSeconds(50), AggressiveCacheMode.DoNotTrackChanges))
                 {
                     var orders = session.Query<Order>()
                         .Where(x => x.OrderedAt < DateTime.Today)
