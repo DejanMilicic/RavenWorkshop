@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Northwind.Models.Entity;
 using Raven.Client;
 using Raven.Client.Documents;
@@ -11,6 +12,12 @@ using Raven.Client.Documents.Conventions;
 
 namespace Northwind.Features.Identifiers
 {
+    // todo : custom Id generation based on email as a suffix
+
+    // todo : also
+    // [JsonIgnore]
+    // public string Id { get; set; }
+
     public class EmailEmployee
     {
         public string Email { get; set; }
