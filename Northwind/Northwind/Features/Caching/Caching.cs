@@ -12,63 +12,74 @@ using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.Caching
 {
-    public class Caching
+    public static class Caching
     {
-        public void DocumentCaching()
+        private static void DisplayResponseInfo(SucceedRequestEventArgs e)
         {
-            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
-            store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
-            store.Initialize();
-
-            while (true)
-            {
-                using var session = store.OpenSession();
-                session.Load<Employee>("employees/2-a");
-
-                Console.ReadLine();
-            }
+            Console.WriteLine("\nResponse");
+            Console.WriteLine($"Status Code: {e.Response.StatusCode}");
+            Console.WriteLine($"Payload size: {e.Response.Content.ReadAsByteArrayAsync().Result.Length} bytes");
         }
 
-        public void QueryCaching()
+        public static void DocumentCaching()
         {
             DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
-            store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
+            store.OnSucceedRequest += (sender, e) => { DisplayResponseInfo(e); };
             store.Initialize();
 
             while (true)
             {
-                using var session = store.OpenSession();
-                session.Query<Order>()
-                    .Where(x => x.OrderedAt < DateTime.Today)
-                    .ToList();
-
-                Console.ReadLine();
-            }
-        }
-
-        public void AggressiveCaching()
-        {
-            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
-            store.OnSucceedRequest += (sender, e) => Console.WriteLine($"{e.Url} {e.Response.StatusCode}");
-            store.Initialize();
-
-            while (true)
-            {
-                using (store.OpenSession().Advanced.DocumentStore.AggressivelyCache())
+                using (var session = store.OpenSession())
                 {
-                    using var session = store.OpenSession();
-                    var orders = session.Query<Order>()
-                        .Where(x => x.OrderedAt < DateTime.Today)
-                        .ToList();
-
-                    Console.WriteLine(orders.Count);
+                    session.Load<Employee>("employees/2-a");
                 }
 
                 Console.ReadLine();
             }
         }
 
-        public void DocumentSessionIdentityMap()
+        public static void QueryCaching()
+        {
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
+            store.OnSucceedRequest += (sender, e) => { DisplayResponseInfo(e); };
+            store.Initialize();
+
+            while (true)
+            {
+                using (var session = store.OpenSession())
+                {
+                    session.Query<Order>()
+                        .Where(x => x.OrderedAt < DateTime.Today)
+                        .ToList();
+                }
+
+                Console.ReadLine();
+            }
+        }
+
+        public static void AggressiveCaching()
+        {
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
+            store.OnSucceedRequest += (sender, e) => { DisplayResponseInfo(e); };
+            store.Initialize();
+
+            while (true)
+            {
+                using (var session = store.OpenSession())
+                using (session.Advanced.DocumentStore.AggressivelyCacheFor(TimeSpan.FromSeconds(20)))
+                {
+                    var orders = session.Query<Order>()
+                        .Where(x => x.OrderedAt < DateTime.Today)
+                        .ToList();
+
+                    Console.WriteLine($"Total number of orders: {orders.Count}");
+                }
+
+                Console.ReadLine();
+            }
+        }
+
+        public static void DocumentSessionIdentityMap()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -77,7 +88,7 @@ namespace Northwind.Features.Caching
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public void DocumentSessionEvict()
+        public static void DocumentSessionEvict()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -87,11 +98,10 @@ namespace Northwind.Features.Caching
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public void DocumentSessionNotModified()
+        public static void DocumentSessionNotModified()
         {
             DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
-            store.OnSucceedRequest += (sender, e) => 
-                Console.WriteLine($"{e.Response.Content.ReadAsStringAsync().Result.Length} \t {e.Response.StatusCode}");
+            store.OnSucceedRequest += (sender, e) => { DisplayResponseInfo(e); };
             store.Initialize();
 
             using (var s1 = store.OpenSession())
