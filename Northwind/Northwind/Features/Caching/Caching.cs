@@ -80,6 +80,40 @@ namespace Northwind.Features.Caching
             }
         }
 
+        public static void AggressiveCachingTwoSessions()
+        {
+            DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
+            store.OnSucceedRequest += (sender, e) => { DisplayResponseInfo(e); };
+            store.Initialize();
+
+            while (true)
+            {
+                // Session 1
+                using (var session = store.OpenSession())
+                using (session.Advanced.DocumentStore.AggressivelyCacheFor(TimeSpan.FromSeconds(10)))
+                {
+                    var orders = session.Query<Order>()
+                        .Where(x => x.OrderedAt < DateTime.Today)
+                        .ToList();
+
+                    Console.WriteLine($"session #1 Total number of orders: {orders.Count}");
+                }
+
+                // Session 2
+                using (var session = store.OpenSession())
+                using (session.Advanced.DocumentStore.AggressivelyCacheFor(TimeSpan.FromSeconds(10)))
+                {
+                    var orders = session.Query<Order>()
+                        .Where(x => x.OrderedAt < DateTime.Today)
+                        .ToList();
+
+                    Console.WriteLine($"session #2 Total number of orders: {orders.Count}");
+                }
+
+                Console.ReadLine();
+            }
+        }
+
         public static void AggressiveCachingNoChangeTracking()
         {
             DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
