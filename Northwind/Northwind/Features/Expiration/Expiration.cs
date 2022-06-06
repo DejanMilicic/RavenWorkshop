@@ -12,7 +12,7 @@ namespace Northwind.Features.Expiration
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            var employee = session.Load<Employee>("employees/42-A");
+            var employee = session.Load<Employee>("employees/8-A");
             session.Advanced.GetMetadataFor(employee)["@expires"] = DateTime.UtcNow.AddSeconds(20);
             session.SaveChanges();
         }
