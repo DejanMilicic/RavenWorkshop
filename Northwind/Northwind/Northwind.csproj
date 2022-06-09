@@ -26,6 +26,9 @@
     <None Update="Features\Attachments\ResumeSearch\cv.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Features\Attachments\ResumeSearch\dracula.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="free.dejanmilicic.client.certificate.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

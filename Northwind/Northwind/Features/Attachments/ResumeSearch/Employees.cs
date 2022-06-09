@@ -12,15 +12,33 @@ namespace Northwind.Features.Attachments.ResumeSearch
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            var emp = new Employee()
+            #region John Doe
+
+            var johnDoe = new Employee()
             {
                 FirstName = "Jonathan",
                 LastName = "Doe"
             };
-            session.Store(emp);
+            session.Store(johnDoe);
 
-            using FileStream cv = File.Open("./Features/Attachments/ResumeSearch/cv.txt", FileMode.Open);
-            session.Advanced.Attachments.Store(emp.Id, "cv.txt", cv, "text/plain");
+            using FileStream johnCv = File.Open("./Features/Attachments/ResumeSearch/cv.txt", FileMode.Open);
+            session.Advanced.Attachments.Store(johnDoe.Id, "cv.txt", johnCv, "text/plain");
+
+            #endregion
+
+            #region Vlad Dracula
+
+            var vladDracula = new Employee()
+            {
+                FirstName = "Vlad",
+                LastName = "Dracula"
+            };
+            session.Store(vladDracula);
+
+            using FileStream draculaCv = File.Open("./Features/Attachments/ResumeSearch/dracula.zip", FileMode.Open);
+            session.Advanced.Attachments.Store(vladDracula.Id, "dracula.zip", draculaCv, "application/zip");
+
+            #endregion
 
             session.SaveChanges();
         }

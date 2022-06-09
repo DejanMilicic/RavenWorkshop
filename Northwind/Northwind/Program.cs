@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Northwind.Features.AdditionalSources.AveragePrice;
 using Northwind.Features.Attachments;
+using Northwind.Features.Attachments.ResumeSearch;
 using Northwind.Features.BulkInsert;
 using Northwind.Features.Caching;
 using Northwind.Features.Changes;
@@ -63,7 +65,13 @@ namespace Northwind
     {
         static async Task Main(string[] args)
         {
-            DocumentStoreHolder.Store.OpenSession();
+            //DocumentStoreHolder.Store.OpenSession();
+
+            Employees.Search();
+
+            //EmployeeSeeding.Seed();
+
+            //MyProductSeed.Do();
 
             //new Lazy().ManyCallsOptimizedViaLazily();
 
