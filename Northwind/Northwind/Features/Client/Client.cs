@@ -19,9 +19,9 @@ using Raven.Client.Exceptions;
 
 namespace Northwind.Features.Client
 {
-    public class Client
+    public static class Client
     {
-        public void PreferredNode()
+        public static void PreferredNode()
         {
             // showcase preferred node getting hits
 
@@ -36,7 +36,7 @@ namespace Northwind.Features.Client
             Console.WriteLine($"Total employees: {employees}");
         }
 
-        public void ClientFailoverRead()
+        public static void ClientFailoverRead()
         {
             // showcase what happens when you kill preferred node
             // showcase round robin
@@ -60,7 +60,7 @@ namespace Northwind.Features.Client
             }
         }
 
-        public void ClientFailoverWrite()
+        public static void ClientFailoverWrite()
         {
             DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
@@ -81,7 +81,7 @@ namespace Northwind.Features.Client
             }
         }
 
-        public void RoundRobinFastestNodeDemo()
+        public static void RoundRobinFastestNodeDemo()
         {
             DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
@@ -102,7 +102,7 @@ namespace Northwind.Features.Client
             }
         }
 
-        public void SessionContext()
+        public static void SessionContext()
         {
             DocumentStore store = (DocumentStore)DocumentStoreHolder.GetStore();
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
@@ -127,7 +127,7 @@ namespace Northwind.Features.Client
             }
         }
 
-        public void CompareExchange()
+        public static void CompareExchange()
         {
             var store = DocumentStoreHolder.GetStore();
 
@@ -140,7 +140,7 @@ namespace Northwind.Features.Client
                 new GetCompareExchangeValueOperation<string>("dejan@ravendb.net"));
         }
 
-        public void CompareExchange2()
+        public static void CompareExchange2()
         {
             var store = DocumentStoreHolder.GetStore();
 
@@ -174,7 +174,7 @@ namespace Northwind.Features.Client
             // where id() = CmpXchg("dejan@ravendb.net")
         }
 
-        public void ClusterWideTransaction()
+        public static void ClusterWideTransaction()
         {
             var store = DocumentStoreHolder.GetStore();
 
@@ -201,7 +201,7 @@ namespace Northwind.Features.Client
             session.SaveChanges();
         }
 
-        public void ClusterWideTransaction2()
+        public static void ClusterWideTransaction2()
         {
             var store = DocumentStoreHolder.GetStore();
 
@@ -216,7 +216,7 @@ namespace Northwind.Features.Client
             session.SaveChanges();
         }
 
-        public void ClusterWideTransactionRavenDb_5_2_plus()
+        public static void ClusterWideTransactionRavenDb_5_2_plus()
         {
             var store = DocumentStoreHolder.GetStore();
 
@@ -359,7 +359,7 @@ namespace Northwind.Features.Client
             }
         }
 
-        public void SaveSameDocumentAgain()
+        public static void SaveSameDocumentAgain()
         {
             var store = DocumentStoreHolder.GetStore().Initialize();
 
@@ -378,7 +378,7 @@ namespace Northwind.Features.Client
             session.SaveChanges();
         }
 
-        public void SaveSameDocumentAgain_WithOptimisticConcurrency()
+        public static void SaveSameDocumentAgain_WithOptimisticConcurrency()
         {
             var store = DocumentStoreHolder.GetStore().Initialize();
 
