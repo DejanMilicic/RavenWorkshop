@@ -130,6 +130,7 @@ namespace Northwind.Features.Client
         public static void CompareExchange()
         {
             var store = DocumentStoreHolder.GetStore();
+            store.Initialize();
 
             var operation = new PutCompareExchangeValueOperation<string>("dejan@ravendb.net", "users/1-A", 0);
 
@@ -143,6 +144,7 @@ namespace Northwind.Features.Client
         public static void CompareExchange2()
         {
             var store = DocumentStoreHolder.GetStore();
+            store.Initialize();
 
             using var session = store.OpenSession();
 
