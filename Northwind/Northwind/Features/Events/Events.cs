@@ -3,6 +3,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Northwind.Features.Events
@@ -109,5 +110,70 @@ namespace Northwind.Features.Events
             });
 
         public static IDocumentStore Store => LazyStore.Value;
+    }
+
+    public static class Dsh2
+    {
+        public static void ShippedNotificationsDemo()
+        {
+            IDocumentStore store = new DocumentStore
+            {
+                Urls = new[] { "http://127.0.0.1:8080" },
+                Database = "demoOrders"
+            };
+
+            // create command when order is created
+            // without creating new commands on updates
+            store.OnBeforeStore += (_, args) =>
+            {
+                if (args.Entity is Order o)
+                {
+                    if (o.ShippedAt is not null && args.DocumentMetadata.ContainsKey("ShippedNotification") == false)
+                    {
+                        args.DocumentMetadata["ShippedNotification"] = true;
+                        args.Session.Store(new OrderShippedNotification(o));
+                    }
+                }
+            };
+
+            store.Initialize();
+
+            using var session = store.OpenSession();
+
+            Order order = new Order
+            {
+                ShippedAt = DateTime.Now,
+                Company = "companies/1",
+                Employee = "employees/1",
+                Lines = new List<OrderLine>
+                {
+                    new OrderLine
+                    {
+                        ProductName = "apple",
+                        Quantity = 5,
+                        PricePerUnit = 1
+                    }
+                }
+            };
+
+            session.Store(order);
+            session.SaveChanges();
+
+            var o = session.Load<Order>(order.Id);
+            o.ShippedAt = DateTime.Now.AddDays(7);
+            session.SaveChanges();
+        }
+
+        public class OrderShippedNotification
+        {
+            public string Id { get; set; }
+
+            public string OrderId { get; set; }
+
+            public OrderShippedNotification(Order order)
+            {
+                this.OrderId = order.Id;
+            }
+        }
     }
 }
