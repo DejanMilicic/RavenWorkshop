@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using CsvHelper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Northwind.Features.Attachments;
@@ -59,11 +62,111 @@ namespace Northwind
         public string CompanyId { get; set; }
     }
 
+    public class Advertiser
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public string name2 { get; set; }
+        public string detail { get; set; }
+    }
+
+    public class AdvertisersRoot
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public string name2 { get; set; }
+        public string name4 { get; set; }
+        public string name5 { get; set; }
+        public string detail { get; set; }
+
+    }
+
+    public class Result
+    {
+        public string FleetAdvId { get; set; }
+        public string FleetAdvTitle { get; set; }
+        public string RootId { get; set; }
+        public string RootTitle { get; set; }
+        public string EmailTo { get; set; }
+        public string EmailCc { get; set; }
+        public string EmailBcc { get; set; }
+        public string Logo { get; set; }
+        public string Website { get; set; }
+        public string FinePrint { get; set; }
+        public string OldID { get; set; }
+        public string SupplierDirectoryLogo { get; set; }
+    }
+
     class Program
     {
         static async Task Main(string[] args)
         {
-            DocumentStoreHolder.Store.OpenSession();
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            var details = session.Query<Advertiser>().Where(x => x.name2 == "Advertiser")
+                .ToList();
+
+            List<string> detailsIds = details.Select(x => x.detail).ToList();
+
+            var roots = session.Query<AdvertisersRoot>()
+                .Where(x => x.id.In(detailsIds)).ToList();
+
+            List<Result> finalResult = new List<Result>();
+
+            foreach (var detail in details)
+            {
+                var root = roots.Where(x => x.id == detail.detail).ToList();
+
+                var uniqueProperties = root.Where(x => x.name2 != null)
+                    .Distinct().ToList();
+
+                finalResult.Add(
+                    new Result
+                    {
+                        FleetAdvId = detail.id,
+                        FleetAdvTitle = detail.title,
+                        RootId = root.FirstOrDefault()?.id ?? "",
+                        RootTitle = root.FirstOrDefault()?.title ?? "",
+                        EmailTo = root.SingleOrDefault(x => x.name2 == "EmailTo")?.detail ?? "",
+                        EmailCc = root.SingleOrDefault(x => x.name2 == "EmailCc")?.detail ?? "",
+                        EmailBcc = root.SingleOrDefault(x => x.name2 == "EmailBcc")?.detail ?? "",
+                        Logo = root.SingleOrDefault(x => x.name2 == "Logo")?.detail ?? "",
+                        Website = root.SingleOrDefault(x => x.name2 == "Website")?.detail ?? "",
+                        FinePrint = root.SingleOrDefault(x => x.name2 == "FinePrint")?.detail ?? "",
+                        OldID = root.SingleOrDefault(x => x.name2 == "OldID")?.detail ?? "",
+                        SupplierDirectoryLogo = root.SingleOrDefault(x => x.name2 == "SupplierDirectoryLogo")?.detail ?? "",
+                    }
+                    );
+            }
+
+            using (var writer = new StreamWriter("c:\\temp\\bobit.csv"))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(finalResult.OrderBy(x => x.FleetAdvTitle));
+
+                //csv.WriteField("FleetAdvId");
+                //csv.WriteField("FleetAdvTitle");
+                //csv.WriteField("EmailTo");
+                //csv.WriteField("EmailCc");
+                //csv.WriteField("EmailBcc");
+                //csv.NextRecord();
+
+                //foreach (var row in finalResult)
+                //{
+                //    csv.WriteField(row.FleetAdvId);
+                //    csv.NextRecord();
+                //}
+            }
+
+
+            var x = 1;
+
+
+            //new OptimisticConcurrency().UseOptimisticConcurrency();
+
+            //DocumentStoreHolder.Store.OpenSession();
+
+            //Dsh2.ShippedNotificationsDemo();
 
             //new Lazy().ManyCallsOptimizedViaLazily();
 
