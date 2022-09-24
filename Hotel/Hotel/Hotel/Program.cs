@@ -22,6 +22,8 @@ namespace Hotel
             Show_Most_Bidded_Rooms();
             Console.WriteLine();
             Show_Room101_Most_Bidded_Days();
+            Console.WriteLine();
+            Show_Most_Popular_Days();
 
             void Show_Room101_January2022_Reservations()
             {
@@ -83,7 +85,7 @@ namespace Hotel
                 string room = "101";
 
                 List<Bids_ByDay_ByRoom.Entry> most_bidded_days = session
-                        .Query<Reservation, Bids_ByDay_ByRoom>()
+                        .Query<Bid, Bids_ByDay_ByRoom>()
                         .ProjectInto<Bids_ByDay_ByRoom.Entry>()
                         .Where(r => r.Room == room)
                         .OrderByDescending(x => x.TotalBids)
@@ -93,6 +95,21 @@ namespace Hotel
                 foreach (var entry in most_bidded_days)
                 {
                     Console.WriteLine($"Date: {entry.Day} - Bids: {entry.TotalBids}");
+                }
+            }
+
+            void Show_Most_Popular_Days()
+            {
+                var most_bidded_days = session
+                    .Query<Bid, Bids_ByDay>()
+                    .ProjectInto<Bids_ByDay.Entry>()
+                    .OrderByDescending(x => x.TotalBids)
+                    .ToList();
+
+                Console.WriteLine($"Most bidded days");
+                foreach (var entry in most_bidded_days)
+                {
+                    Console.WriteLine($"Date: {entry.Day} - Bids: {entry.TotalBids} - Rooms: {String.Join(", ", entry.Rooms)}");
                 }
             }
         }
