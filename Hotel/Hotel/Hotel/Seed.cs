@@ -91,6 +91,22 @@ namespace Hotel
                 Vip = false
             });
 
+            session.Store(new Bid
+            {
+                Room = "102",
+                Start = new DateOnly(2022, 1, 9),
+                End = new DateOnly(2022, 1, 13),
+                Vip = false
+            });
+
+            session.Store(new Bid
+            {
+                Room = "103",
+                Start = new DateOnly(2022, 1, 12),
+                End = new DateOnly(2022, 1, 17),
+                Vip = false
+            });
+
         }
     }
 }
