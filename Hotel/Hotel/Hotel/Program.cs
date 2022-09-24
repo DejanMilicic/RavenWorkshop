@@ -20,6 +20,8 @@ namespace Hotel
             Show_Free_Days_Room101_January2022();
             Console.WriteLine();
             Show_Most_Bidded_Rooms();
+            Console.WriteLine();
+            Show_Room101_Most_Bidded_Days();
 
             void Show_Room101_January2022_Reservations()
             {
@@ -76,28 +78,23 @@ namespace Hotel
                 }
             }
 
-            //void Show_Most_Bidded_Rooms()
-            //{
-            //    string room = "101";
+            void Show_Room101_Most_Bidded_Days()
+            {
+                string room = "101";
 
-            //    var room101_jan2022_reservations = session
-            //            .Query<Reservation, Reservations_ByDay>()
-            //            .ProjectInto<Reservations_ByDay.Entry>()
-            //            .Where(r => (r.Room == room) && (r.Day >= jan1 && r.Day <= jan31))
-            //            .ToList()
-            //            .Select(r => r.Day)
-            //        ;
+                List<Bids_ByDay_ByRoom.Entry> most_bidded_days = session
+                        .Query<Reservation, Bids_ByDay_ByRoom>()
+                        .ProjectInto<Bids_ByDay_ByRoom.Entry>()
+                        .Where(r => r.Room == room)
+                        .OrderByDescending(x => x.TotalBids)
+                        .ToList();
 
-            //    List<DateOnly> freeDaysJan2022 = Enumerable.Range(0, 31).Select(d => new DateOnly(2022, 1, 1 + d))
-            //        .Where(day => !room101_jan2022_reservations.Contains(day))
-            //        .ToList();
-
-            //    Console.WriteLine($"Free days for Room {room} between {jan1} and {jan31}");
-            //    foreach (var day in freeDaysJan2022)
-            //    {
-            //        Console.WriteLine($"Date: {day}");
-            //    }
-            //}
+                Console.WriteLine($"Most bidded days for Room {room}");
+                foreach (var entry in most_bidded_days)
+                {
+                    Console.WriteLine($"Date: {entry.Day} - Bids: {entry.TotalBids}");
+                }
+            }
         }
     }
 }
