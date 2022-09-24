@@ -23,6 +23,8 @@ namespace Hotel.Indexes
                     Room = r.Room,
                     Day = new DateOnly(d.Year, d.Month, d.Day)
                 };
+
+            StoreAllFields(FieldStorage.Yes);
         }
     }
 }

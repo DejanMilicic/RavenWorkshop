@@ -42,8 +42,32 @@ namespace Hotel
             session.Store(new Reservation
             {
                 Room = "101",
-                Start = new DateOnly(2002, 1, 1),
-                End = new DateOnly(2002, 1, 3),
+                Start = new DateOnly(2022, 1, 1),
+                End = new DateOnly(2022, 1, 3),
+                Status = "active"
+            });
+
+            session.Store(new Reservation
+            {
+                Room = "101",
+                Start = new DateOnly(2022, 1, 31),
+                End = new DateOnly(2022, 2, 1),
+                Status = "active"
+            });
+
+            session.Store(new Reservation
+            {
+                Room = "102",
+                Start = new DateOnly(2022, 1, 10),
+                End = new DateOnly(2022, 1, 13),
+                Status = "active"
+            });
+
+            session.Store(new Reservation
+            {
+                Room = "103",
+                Start = new DateOnly(2022, 1, 31),
+                End = new DateOnly(2022, 2, 2),
                 Status = "active"
             });
         }
