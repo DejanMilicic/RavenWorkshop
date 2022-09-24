@@ -18,6 +18,8 @@ namespace Hotel
             Show_Room101_January2022_Reservations();
             Console.WriteLine();
             Show_Free_Days_Room101_January2022();
+            Console.WriteLine();
+            Show_Most_Bidded_Rooms();
 
             void Show_Room101_January2022_Reservations()
             {
@@ -56,6 +58,21 @@ namespace Hotel
                 foreach (var day in freeDaysJan2022)
                 {
                     Console.WriteLine($"Date: {day}");
+                }
+            }
+
+            void Show_Most_Bidded_Rooms()
+            {
+                List<Bids_ByRoom.Entry> topBids = session
+                    .Query<Bid, Bids_ByRoom>()
+                    .ProjectInto<Bids_ByRoom.Entry>()
+                    .OrderByDescending(x => x.TotalBids)
+                    .ToList();
+
+                Console.WriteLine($"Rooms with most bids");
+                foreach (var entry in topBids)
+                {
+                    Console.WriteLine($"Room: {entry.Room} - Bids: {entry.TotalBids}");
                 }
             }
 
