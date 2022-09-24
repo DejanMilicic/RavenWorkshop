@@ -15,6 +15,7 @@ namespace Hotel
 
             SeedRooms(session);
             SeedReservations(session);
+            SeedBids(session);
             
             session.SaveChanges();
         }
@@ -70,6 +71,26 @@ namespace Hotel
                 End = new DateOnly(2022, 2, 2),
                 Status = "active"
             });
+        }
+
+        private static void SeedBids(IDocumentSession session)
+        {
+            session.Store(new Bid
+            {
+                Room = "101",
+                Start = new DateOnly(2022, 1, 10),
+                End = new DateOnly(2022, 1, 11),
+                Vip = true
+            });
+
+            session.Store(new Bid
+            {
+                Room = "101",
+                Start = new DateOnly(2022, 1, 9),
+                End = new DateOnly(2022, 1, 13),
+                Vip = false
+            });
+
         }
     }
 }
