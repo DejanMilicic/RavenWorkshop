@@ -49,6 +49,7 @@ using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using DocumentSession = Northwind.Features.DocumentSession.DocumentSession;
+using Northwind.Features.Facets;
 
 namespace Northwind
 {
