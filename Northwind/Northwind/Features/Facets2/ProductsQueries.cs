@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Northwind.Features.Facets2.Indexes;
 
 namespace Northwind.Features.Facets2
 {
@@ -15,7 +16,7 @@ namespace Northwind.Features.Facets2
         {
             using var session = FacetsStoreHolder.Store.OpenSession();
 
-            var query = session.Advanced.DocumentQuery<Product>("Products/Options")
+            var query = session.Advanced.DocumentQuery<Product, Products_Options>()
                 .UsingDefaultOperator(QueryOperator.And)
                 .Statistics(out var stats);
             
@@ -34,7 +35,7 @@ namespace Northwind.Features.Facets2
         {
             using var session = FacetsStoreHolder.Store.OpenSession();
 
-            var query = session.Advanced.DocumentQuery<Product>("Products/Options")
+            var query = session.Advanced.DocumentQuery<Product, Products_Options>()
                 .UsingDefaultOperator(QueryOperator.And)
                 .Statistics(out var stats);
             
