@@ -50,6 +50,7 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using DocumentSession = Northwind.Features.DocumentSession.DocumentSession;
 using Northwind.Features.Facets;
+using Northwind.Features.Facets2;
 
 namespace Northwind
 {
