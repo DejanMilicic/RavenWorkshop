@@ -8,12 +8,12 @@ namespace Northwind.Features.Facets2.Indexes
     {
         public Products_Options()
         {
-            Map = products => from doc in products
-                from option in doc.Options
+            Map = products => from product in products
+                from option in product.Options
                 select new
                 {
-                    doc.Title,
-                    doc.Brand,
+                    product.Title,
+                    product.Brand,
                     Option_Available = option.Available,
                     _ = option.Attributes.Select(attribute => CreateField(attribute.Name, attribute.Value))
                 };

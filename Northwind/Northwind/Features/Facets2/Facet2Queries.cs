@@ -1,11 +1,7 @@
 ﻿using Raven.Client.Documents.Queries.Facets;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Northwind.Features.Facets2.Models;
 
 namespace Northwind.Features.Facets2
 {
