@@ -51,6 +51,7 @@ using Raven.Client.Documents.Session;
 using DocumentSession = Northwind.Features.DocumentSession.DocumentSession;
 using Northwind.Features.Facets;
 using Northwind.Features.Facets2;
+using Northwind.Features.Search0;
 
 namespace Northwind
 {
