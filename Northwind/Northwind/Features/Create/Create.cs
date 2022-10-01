@@ -11,7 +11,7 @@ namespace Northwind.Features.Create
     {
         public static void ObjectWithList()
         {
-            var session = DocumentStoreHolder.Store.OpenSession();
+            using var session = DocumentStoreHolder.Store.OpenSession();
 
             Order order = new Order();
             order.Company = "companies/91-A";
