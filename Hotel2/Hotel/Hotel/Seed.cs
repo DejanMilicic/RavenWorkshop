@@ -14,9 +14,9 @@ namespace Hotel
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             SeedRooms(session);
-            SeedReservations(session);
-            SeedBids(session);
-            
+            //SeedReservations(session);
+            //SeedBids(session);
+
             session.SaveChanges();
         }
 
@@ -24,17 +24,27 @@ namespace Hotel
         {
             session.Store(new Room
             {
-                Id = "101"
+                Id = "Rooms/101",
+                Beds = 1,
+                Type = "apartment",
+                InUse = true
             });
 
             session.Store(new Room
             {
-                Id = "102"
+                Id = "Rooms/102",
+                Beds = 3,
+                Type = "suite",
+                InUse = true
+
             });
 
             session.Store(new Room
             {
-                Id = "103"
+                Id = "Rooms/103",
+                Beds = 1,
+                Type = "studio",
+                InUse = true
             });
         }
 
