@@ -14,8 +14,7 @@ namespace Hotel
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             SeedRooms(session);
-            //SeedReservations(session);
-            //SeedBids(session);
+            SeedReservations(session);
 
             session.SaveChanges();
         }
@@ -52,71 +51,36 @@ namespace Hotel
         {
             session.Store(new Reservation
             {
-                Room = "101",
-                Start = new DateOnly(2022, 1, 1),
-                End = new DateOnly(2022, 1, 3),
-                Status = "active"
+                Room = "Rooms/101",
+                Start = new DateTime(2022, 1, 1),
+                End = new DateTime(2022, 1, 3),
+                GuestsIn = new DateTime(2022, 1, 1),
+                GuestsOut = new DateTime(2022, 1, 3)
             });
 
-            session.Store(new Reservation
-            {
-                Room = "101",
-                Start = new DateOnly(2022, 1, 31),
-                End = new DateOnly(2022, 2, 1),
-                Status = "active"
-            });
+            //session.Store(new Reservation
+            //{
+            //    Room = "101",
+            //    Start = new DateTime(2022, 1, 31),
+            //    End = new DateTime(2022, 2, 1),
+            //    Status = "active"
+            //});
 
-            session.Store(new Reservation
-            {
-                Room = "102",
-                Start = new DateOnly(2022, 1, 10),
-                End = new DateOnly(2022, 1, 13),
-                Status = "active"
-            });
+            //session.Store(new Reservation
+            //{
+            //    Room = "102",
+            //    Start = new DateTime(2022, 1, 10),
+            //    End = new DateTime(2022, 1, 13),
+            //    Status = "active"
+            //});
 
-            session.Store(new Reservation
-            {
-                Room = "103",
-                Start = new DateOnly(2022, 1, 31),
-                End = new DateOnly(2022, 2, 2),
-                Status = "active"
-            });
-        }
-
-        private static void SeedBids(IDocumentSession session)
-        {
-            session.Store(new Bid
-            {
-                Room = "101",
-                Start = new DateOnly(2022, 1, 10),
-                End = new DateOnly(2022, 1, 11),
-                Vip = true
-            });
-
-            session.Store(new Bid
-            {
-                Room = "101",
-                Start = new DateOnly(2022, 1, 9),
-                End = new DateOnly(2022, 1, 13),
-                Vip = false
-            });
-
-            session.Store(new Bid
-            {
-                Room = "102",
-                Start = new DateOnly(2022, 1, 9),
-                End = new DateOnly(2022, 1, 13),
-                Vip = false
-            });
-
-            session.Store(new Bid
-            {
-                Room = "103",
-                Start = new DateOnly(2022, 1, 12),
-                End = new DateOnly(2022, 1, 17),
-                Vip = false
-            });
-
+            //session.Store(new Reservation
+            //{
+            //    Room = "103",
+            //    Start = new DateTime(2022, 1, 31),
+            //    End = new DateTime(2022, 2, 2),
+            //    Status = "active"
+            //});
         }
     }
 }
