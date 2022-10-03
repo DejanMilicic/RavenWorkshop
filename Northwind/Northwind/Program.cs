@@ -19,6 +19,7 @@ using Northwind.Features.ClusterWideTransactions;
 using Northwind.Features.Compression;
 using Northwind.Features.Counters;
 using Northwind.Features.Create;
+using Northwind.Features.CRUD;
 using Northwind.Features.Events;
 using Northwind.Features.Expiration;
 using Northwind.Features.Identifiers;
