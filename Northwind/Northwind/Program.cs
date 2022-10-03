@@ -69,9 +69,9 @@ namespace Northwind
     {
         static async Task Main(string[] args)
         {
-            //DocumentStoreHolder.Store.OpenSession();
+            DocumentStoreHolder.Store.OpenSession();
 
-            Employees.Search();
+            #region temp
 
             //EmployeeSeeding.Seed();
 
@@ -87,6 +87,8 @@ namespace Northwind
             //}.Initialize();
 
             //await IndexCreation.CreateIndexesAsync(typeof(Program).Assembly, store);
+
+            #endregion
 
             #region Read entity from the database
 
