@@ -10,8 +10,8 @@
 
         public DateTime End { get; set; }
 
-        public DateTime GuestsIn { get; set; } // moment when guests enter the room
+        public DateTime? GuestsIn { get; set; } // moment when guests enter the room
 
-        public DateTime GuestsOut { get; set; } // moment when guests exit the room
+        public DateTime? GuestsOut { get; set; } // moment when guests exit the room
     }
 }

@@ -63,8 +63,8 @@ namespace Hotel
                 Room = "Rooms/101",
                 Start = new DateTime(2022, 1, 1, 14, 0, 0),
                 End = new DateTime(2022, 1, 2, 23, 10, 0),
-                GuestsIn = new DateTime(2022, 1, 1),
-                GuestsOut = new DateTime(2022, 1, 3)
+                GuestsIn = new DateTime(2022, 1, 1, 17, 0, 0),
+                GuestsOut = null
             });
         }
     }
