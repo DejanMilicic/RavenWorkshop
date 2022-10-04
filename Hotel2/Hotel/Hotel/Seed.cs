@@ -25,7 +25,7 @@ namespace Hotel
             {
                 Id = "Rooms/101",
                 Beds = 1,
-                Type = "apartment",
+                Type = "apart",
                 InUse = true
             });
 
