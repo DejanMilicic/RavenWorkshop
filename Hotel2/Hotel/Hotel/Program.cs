@@ -16,16 +16,16 @@ namespace Hotel
 
             List<Room> rooms = session.Query<Room>().ToList();
 
-            DateTime moment = new DateTime(2022, 1, 1, 14, 0, 0);
+            DateTime moment = new DateTime(2022, 1, 1, 14, 0, 0, DateTimeKind.Utc);
             var statuses = session.Query<RoomStatus>()
-                .Where(x => x.IntervalStart <= moment.AddHours(1) && moment.AddHours(1) < x.IntervalEnd)
+                .Where(x => x.IntervalStart <= moment && moment < x.IntervalEnd)
                 .ToList();
             
             PrintRoomsAvailability(session, rooms, moment, statuses);
 
             moment = moment.AddHours(4);
             statuses = session.Query<RoomStatus>()
-                .Where(x => x.IntervalStart <= moment.AddHours(1) && moment.AddHours(1) < x.IntervalEnd)
+                .Where(x => x.IntervalStart <= moment && moment < x.IntervalEnd)
                 .ToList();
             PrintRoomsAvailability(session, rooms, moment, statuses);
 
@@ -48,21 +48,17 @@ namespace Hotel
                     // NotAvailable, Available, GuestsIn, ReadyForGuests, ReservationsInFuture
                     string status = "[green]Available[/]";
 
-                    if (!room.InUse)
-                        status = "[red]Not in use[/]";
-                    else
-                    {
-                        RoomStatus? s = statuses.SingleOrDefault(x => x.Room == room.Id);
-                        if (s != null)
-                            status = s.Status;
-                        else
-                        {
-                            bool futureReservations = session.Query<RoomStatus>()
-                                .Any(x => x.Room == room.Id && moment.AddHours(1) < x.IntervalStart);
+                    RoomStatus? s = statuses.SingleOrDefault(x => x.Room == room.Id);
+                    if (s != null)
+                        status = s.Status;
 
-                            if (futureReservations)
-                                status = "ReservationsInFuture";
-                        }
+                    if (status == "Available")
+                    {
+                        bool futureReservations = session.Query<RoomStatus>()
+                            .Any(x => (x.Room == room.Id) && (x.Status == "ReadyForGuests") && (moment < x.IntervalStart));
+
+                        if (futureReservations)
+                            status = "ReservationsInFuture";
                     }
 
                     table.AddRow(room.Id, room.Beds.ToString(), room.Type, status);
