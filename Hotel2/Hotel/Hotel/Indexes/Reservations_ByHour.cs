@@ -61,7 +61,15 @@ namespace Hotel.Indexes
                                     Status = "GuestsIn"
                                 });
 
-
+            Reduce = results => from result in results
+                                group result by new { result.Room, result.IntervalStart, result.IntervalEnd } into g
+                                select new Entry
+                                {
+                                    Room = g.Key.Room,
+                                    IntervalStart = g.Key.IntervalStart,
+                                    IntervalEnd = g.Key.IntervalEnd,
+                                    Status = g.Any(x => x.Status == "GuestsIn") ? "GuestsIn" : "ReadyForGuests"
+                                };
 
             StoreAllFields(FieldStorage.Yes);
         }
