@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="RavenDB.Client" Version="5.4.2" />
+    <PackageReference Include="Spectre.Console" Version="0.45.0" />
   </ItemGroup>
 
 </Project>

@@ -72,6 +72,8 @@ namespace Hotel.Indexes
                                 };
 
             StoreAllFields(FieldStorage.Yes);
+
+            OutputReduceToCollection = "RoomStatuses";
         }
     }
 }

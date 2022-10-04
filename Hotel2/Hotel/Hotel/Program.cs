@@ -1,6 +1,8 @@
 ﻿using Hotel.Indexes;
 using Hotel.Models;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Session;
+using Spectre.Console;
 
 namespace Hotel
 {
@@ -12,38 +14,58 @@ namespace Hotel
 
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            //DateOnly jan1 = new DateOnly(2022, 1, 1);
-            //DateOnly jan31 = new DateOnly(2022, 1, 31);
-
             List<Room> rooms = session.Query<Room>().ToList();
-            DateTime moment = new DateTime(2022, 1, 1, 14, 0, 0);
 
-            PrintRoomsAvailability(rooms, moment);
+            DateTime moment = new DateTime(2022, 1, 1, 14, 0, 0);
+            var statuses = session.Query<RoomStatus>()
+                .Where(x => x.IntervalStart <= moment.AddHours(1) && moment.AddHours(1) < x.IntervalEnd)
+                .ToList();
+
+
+            PrintRoomsAvailability(session, rooms, moment, statuses);
 
             // TODO:
             // 1. sorting by RoomNumber, NumberOfBeds, TypeOfRoom, Status { NotAvailable, Available, GuestsIn, ReadyForGuests, ReservationsInFuture}
             // 2. paging
             
-            void PrintRoomsAvailability(List<Room> rooms, DateTime moment)
+            void PrintRoomsAvailability(IDocumentSession session, List<Room> rooms, DateTime moment, List<RoomStatus> statuses)
             {
-                Console.WriteLine("Rooms\n");
-                Console.WriteLine("Room\t\tBeds\tType\t\tStatus\n");
-
+                var table = new Table();
+                table.Title($"Rooms [yellow]{moment}[/]");
+                table.AddColumn("Room");
+                table.AddColumn("Beds");
+                table.AddColumn("Type");
+                table.AddColumn("Status");
+                    
 
                 foreach (Room room in rooms)
                 {
                     // NotAvailable, Available, GuestsIn, ReadyForGuests, ReservationsInFuture
-                    string status = "TODO";
+                    string status = "[green]Available[/]";
 
                     if (!room.InUse)
-                        status = "Not Available";
+                        status = "[red]Not in use[/]";
                     else
                     {
-                        // todo: process other statuses
+                        RoomStatus? s = statuses.SingleOrDefault(x => x.Room == room.Id);
+                        if (s != null)
+                            status = s.Status;
+                        else
+                        {
+                            bool futureReservations = session.Query<RoomStatus>()
+                                .Any(x => x.Room == room.Id && moment.AddHours(1) < x.IntervalStart);
+
+                            if (futureReservations)
+                                status = "ReservationsInFuture";
+                        }
                     }
 
-                    Console.WriteLine($"{room.Id}\t{room.Beds}\t{room.Type} \t\tTODO");
+                    table.AddRow(room.Id, room.Beds.ToString(), room.Type, status);
+
+                    //Console.WriteLine($"{room.Id}\t{room.Beds}\t{room.Type} \t\tTODO");
                 }
+
+                AnsiConsole.Write(table);
             }
 
 

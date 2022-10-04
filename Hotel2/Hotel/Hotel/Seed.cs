@@ -66,6 +66,15 @@ namespace Hotel
                 GuestsIn = new DateTime(2022, 1, 1, 17, 0, 0),
                 GuestsOut = null
             });
+
+            session.Store(new Reservation
+            {
+                Room = "Rooms/102",
+                Start = new DateTime(2022, 2, 1, 14, 0, 0),
+                End = new DateTime(2022, 2, 2, 23, 10, 0),
+                GuestsIn = null,
+                GuestsOut = null
+            });
         }
     }
 }
