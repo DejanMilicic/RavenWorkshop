@@ -20,14 +20,19 @@ namespace Hotel
             var statuses = session.Query<RoomStatus>()
                 .Where(x => x.IntervalStart <= moment.AddHours(1) && moment.AddHours(1) < x.IntervalEnd)
                 .ToList();
+            
+            PrintRoomsAvailability(session, rooms, moment, statuses);
 
-
+            moment = moment.AddHours(4);
+            statuses = session.Query<RoomStatus>()
+                .Where(x => x.IntervalStart <= moment.AddHours(1) && moment.AddHours(1) < x.IntervalEnd)
+                .ToList();
             PrintRoomsAvailability(session, rooms, moment, statuses);
 
             // TODO:
             // 1. sorting by RoomNumber, NumberOfBeds, TypeOfRoom, Status { NotAvailable, Available, GuestsIn, ReadyForGuests, ReservationsInFuture}
             // 2. paging
-            
+
             void PrintRoomsAvailability(IDocumentSession session, List<Room> rooms, DateTime moment, List<RoomStatus> statuses)
             {
                 var table = new Table();
