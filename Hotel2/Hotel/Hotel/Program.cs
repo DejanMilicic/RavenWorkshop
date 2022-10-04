@@ -10,13 +10,46 @@ namespace Hotel
         {
             Seed.Do();
 
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            //DateOnly jan1 = new DateOnly(2022, 1, 1);
+            //DateOnly jan31 = new DateOnly(2022, 1, 31);
+
+            List<Room> rooms = session.Query<Room>().ToList();
+            DateTime moment = new DateTime(2022, 1, 1, 14, 0, 0);
+
+            PrintRoomsAvailability(rooms, moment);
+
+            // TODO:
+            // 1. sorting by RoomNumber, NumberOfBeds, TypeOfRoom, Status { NotAvailable, Available, GuestsIn, ReadyForGuests, ReservationsInFuture}
+            // 2. paging
+            
+            void PrintRoomsAvailability(List<Room> rooms, DateTime moment)
+            {
+                Console.WriteLine("Rooms\n");
+                Console.WriteLine("Room\t\tBeds\tType\t\tStatus\n");
+
+
+                foreach (Room room in rooms)
+                {
+                    // NotAvailable, Available, GuestsIn, ReadyForGuests, ReservationsInFuture
+                    string status = "TODO";
+
+                    if (!room.InUse)
+                        status = "Not Available";
+                    else
+                    {
+                        // todo: process other statuses
+                    }
+
+                    Console.WriteLine($"{room.Id}\t{room.Beds}\t{room.Type} \t\tTODO");
+                }
+            }
+
 
 
             /*
-            var session = DocumentStoreHolder.Store.OpenSession();
 
-            DateOnly jan1 = new DateOnly(2022, 1, 1);
-            DateOnly jan31 = new DateOnly(2022, 1, 31);
 
             Show_Room101_January2022_Reservations();
             Console.WriteLine();
@@ -33,9 +66,9 @@ namespace Hotel
             //{
             //    string room = "101";
 
-            //    List<Reservations_ByDay.Entry> room101_jan2022_reservations = session
-            //        .Query<Reservation, Reservations_ByDay>()
-            //        .ProjectInto<Reservations_ByDay.Entry>()
+            //    List<Reservations_ByHour.Entry> room101_jan2022_reservations = session
+            //        .Query<Reservation, Reservations_ByHour>()
+            //        .ProjectInto<Reservations_ByHour.Entry>()
             //        .Where(r => (r.Room == room) && (r.Day >= jan1 && r.Day <= jan31))
             //        .ToList();
 
@@ -51,8 +84,8 @@ namespace Hotel
             //    string room = "101";
 
             //    var room101_jan2022_reservations = session
-            //        .Query<Reservation, Reservations_ByDay>()
-            //        .ProjectInto<Reservations_ByDay.Entry>()
+            //        .Query<Reservation, Reservations_ByHour>()
+            //        .ProjectInto<Reservations_ByHour.Entry>()
             //        .Where(r => (r.Room == room) && (r.Day >= jan1 && r.Day <= jan31))
             //        .ToList()
             //        .Select(r => r.Day)

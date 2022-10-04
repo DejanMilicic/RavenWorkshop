@@ -8,9 +8,10 @@ namespace Hotel
     {
         internal static void Do()
         {
-            DatabaseStatistics? stats = DocumentStoreHolder.Store.Maintenance.Send(new GetStatisticsOperation());
-            if (stats.CountOfDocuments > 0) return;
-
+            var stats2 = DocumentStoreHolder.Store.Maintenance.Send(new GetCollectionStatisticsOperation());
+            bool hasDocuments = stats2.Collections.Count(x => x.Value > 0 && !x.Key.StartsWith("@")) > 0;
+            if (hasDocuments) return;
+            
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             SeedRooms(session);
@@ -45,6 +46,14 @@ namespace Hotel
                 Type = "studio",
                 InUse = true
             });
+
+            session.Store(new Room
+            {
+                Id = "Rooms/104",
+                Beds = 1,
+                Type = "studio",
+                InUse = false
+            });
         }
 
         private static void SeedReservations(IDocumentSession session)
@@ -52,35 +61,11 @@ namespace Hotel
             session.Store(new Reservation
             {
                 Room = "Rooms/101",
-                Start = new DateTime(2022, 1, 1),
-                End = new DateTime(2022, 1, 3),
+                Start = new DateTime(2022, 1, 1, 14, 0, 0),
+                End = new DateTime(2022, 1, 2, 23, 10, 0),
                 GuestsIn = new DateTime(2022, 1, 1),
                 GuestsOut = new DateTime(2022, 1, 3)
             });
-
-            //session.Store(new Reservation
-            //{
-            //    Room = "101",
-            //    Start = new DateTime(2022, 1, 31),
-            //    End = new DateTime(2022, 2, 1),
-            //    Status = "active"
-            //});
-
-            //session.Store(new Reservation
-            //{
-            //    Room = "102",
-            //    Start = new DateTime(2022, 1, 10),
-            //    End = new DateTime(2022, 1, 13),
-            //    Status = "active"
-            //});
-
-            //session.Store(new Reservation
-            //{
-            //    Room = "103",
-            //    Start = new DateTime(2022, 1, 31),
-            //    End = new DateTime(2022, 2, 2),
-            //    Status = "active"
-            //});
         }
     }
 }
