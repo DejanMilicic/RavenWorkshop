@@ -1,13 +1,17 @@
 ﻿using Raven.Client.Documents.Indexes;
 using Hotel.Models;
-using System;
-using Raven.Client.Documents.Indexes.Analysis;
 
 namespace Hotel.Indexes
 {
-    public class Reservations_ByHour : AbstractMultiMapIndexCreationTask<Entry>
+    public class Reservations_ByHour : AbstractMultiMapIndexCreationTask<Reservations_ByHour.Entry>
     {
-
+        public class Entry
+        {
+            public string Room { get; set; }
+            public DateTime IntervalStart { get; set; }
+            public DateTime IntervalEnd { get; set; }
+            public string Status { get; set; }
+        }
 
         public Reservations_ByHour()
         {
@@ -83,7 +87,8 @@ namespace Hotel.Indexes
                                     IntervalStart = g.Key.IntervalStart,
                                     IntervalEnd = g.Key.IntervalEnd,
                                     //Status = ComputeStatus.Do(String.Join(",", g.Select(x => x.Status).Distinct()))
-                                    Status = ComputeStatus.Do(g.Select(x => x.Status).Distinct())
+                                    Status = ComputeStatus.Do(g.Select(x => x.Status).Distinct()),
+                                    //FutureReservations = ...
                                 };
 
             AdditionalSources = new Dictionary<string, string>
