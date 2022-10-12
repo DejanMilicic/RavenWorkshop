@@ -14,13 +14,14 @@ namespace Northwind.Features.IndexingRelationships.Graph
         public Graph_ByDistance2()
         {
             Map = numbers => from number in numbers
-                let zzz = GraphHelper.Process()
-                select new
-                {
-                    Ancestor = zzz.Ancestor,
-                    Distance = zzz.Distance,
-                    Descendant = zzz.Descendant
-                };
+                             let entries = GraphHelper.Process()
+                             from entry in entries
+                             select new
+                             {
+                                 Ancestor = entry.Ancestor,
+                                 Distance = entry.Distance,
+                                 Descendant = entry.Descendant
+                             };
 
             AdditionalSources = new Dictionary<string, string>
             {

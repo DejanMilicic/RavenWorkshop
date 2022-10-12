@@ -18,13 +18,22 @@ namespace Northwind.Features.IndexingRelationships.Graph
 
     public static class GraphHelper
     {
-        public static Entry Process()
+        public static List<Entry> Process()
         {
-            return new Entry
+            return new List<Entry>
             {
-                Ancestor = "1x",
-                Distance = "2x",
-                Descendant = "3x"
+                new Entry
+                {
+                    Ancestor = "x",
+                    Distance = "x",
+                    Descendant = "x"
+                },
+                new Entry
+                {
+                    Ancestor = "y",
+                    Distance = "y",
+                    Descendant = "y"
+                }
             };
         }
     }
