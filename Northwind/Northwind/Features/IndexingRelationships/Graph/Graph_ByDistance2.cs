@@ -13,8 +13,8 @@ namespace Northwind.Features.IndexingRelationships.Graph
     {
         public Graph_ByDistance2()
         {
-            Map = numbers => from number in numbers
-                             let entries = GraphHelper.Process(number)
+            Map = flights => from flight in flights
+                             let entries = GraphHelper.Process(flight)
                              from entry in entries
                              select new
                              {
