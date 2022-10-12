@@ -11,6 +11,13 @@ namespace Northwind.Features.IndexingRelationships.Graph
 {
     public class Entry
     {
+        public Entry(string ancestor, int distance, string descendant)
+        {
+            this.Ancestor = ancestor;
+            this.Distance = distance.ToString();
+            this.Descendant = descendant;
+        }
+
         public string Ancestor { get; set; }
 
         public string Distance { get; set; }
@@ -34,14 +41,7 @@ namespace Northwind.Features.IndexingRelationships.Graph
             {
                 foreach (string num in followedBy)
                 {
-                    res.Add(
-                        new Entry
-                        {
-                            Ancestor = number.Id,
-                            Distance = "1",
-                            Descendant = num
-                        }
-                    );
+                    res.Add(new Entry(number.Id, 1, num));
                 }
             }
 
