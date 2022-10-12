@@ -29,19 +29,28 @@ namespace Northwind.Features.IndexingRelationships.Graph
     {
         public static List<Entry> Process(Northwind.Features.IndexingRelationships.Graph.Number number)
         {
-            var res = new List<Entry>();
+            List<Entry> res = new List<Entry>();
+            Queue<(int distance, string doc)> queue = new();
 
             CurrentIndexingScope scope = CurrentIndexingScope.Current;
+            
+            queue.Enqueue((0, number.Id));
 
-            dynamic doc = scope.LoadDocument(null, number.Id, "Numbers");
-
-            string[] followedBy = doc.FollowedBy;
-
-            if (followedBy.Any())
+            while (queue.Any())
             {
-                foreach (string num in followedBy)
+                var current = queue.Dequeue();
+
+                dynamic doc = scope.LoadDocument(null, current.doc, "Numbers");
+
+                string[] followedBy = doc.FollowedBy;
+
+                if (followedBy.Any())
                 {
-                    res.Add(new Entry(number.Id, 1, num));
+                    foreach (string descendant in followedBy)
+                    {
+                        res.Add(new Entry(number.Id, current.distance + 1, descendant));
+                        queue.Enqueue((current.distance + 1, descendant));
+                    }
                 }
             }
 
