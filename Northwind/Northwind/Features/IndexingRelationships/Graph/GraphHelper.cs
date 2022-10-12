@@ -27,28 +27,56 @@ namespace Northwind.Features.IndexingRelationships.Graph
 
             var scope = Raven.Server.Documents.Indexes.Static.CurrentIndexingScope.Current;
             //dynamic document = (Raven.Server.Documents.Indexes.Static.DynamicArray)scope.LoadDocument(null, "1", "Numbers");
-            var document = scope.LoadDocument(null, number.Id, "Numbers");
-            var cd = (IEnumerable<KeyValuePair<object, object>>)document;
-            List<KeyValuePair<object, object>> list = cd.ToList();
-            var el = list.Skip(1).Take(1).Single();
+            //var document = scope.LoadDocument(null, number.Id, "Numbers");
+            //var cd = (IEnumerable<KeyValuePair<object, object>>)document;
+            //List<KeyValuePair<object, object>> list = cd.ToList();
+            //var el = list.Skip(1).Take(1).Single();
 
-            var array = ((DynamicArray)el.Value);
-            if (array.Any())
+            //var xx = list.SingleOrDefault(x => x.Key == "folowedby");
+
+            dynamic doc = scope.LoadDocument(null, number.Id, "Numbers");
+
+            string[] followedBy = doc.FollowedBy;
+
+            if (followedBy.Any())
             {
-                //var a = ((DynamicArray)el.Value)[0];
-
-                foreach (object num in ((DynamicArray)el.Value))
+                foreach (string num in followedBy)
                 {
                     res.Add(
                         new Entry
                         {
                             Ancestor = number.Id,
                             Distance = "1",
-                            Descendant = num.ToString()
+                            Descendant = num
                         }
-                        );
+                    );
                 }
             }
+
+            return res;
+
+
+            //string yy = xx.Value.ToString() ?? ":(";
+
+
+            //var array = ((DynamicArray)el.Value);
+            //if (array.Any())
+            //{
+            //    //var a = ((DynamicArray)el.Value)[0];
+
+            //    foreach (object num in ((DynamicArray)el.Value))
+            //    {
+            //        res.Add(
+            //            new Entry
+            //            {
+            //                Ancestor = number.Id,
+            //                //Distance = (((IEnumerable<object>)xx.Value).ToList())[0].ToString(),
+            //                Distance = "yy",
+            //                Descendant = num.ToString()
+            //            }
+            //            );
+            //    }
+            //}
 
             return res;
         }
