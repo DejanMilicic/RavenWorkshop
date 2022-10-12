@@ -27,22 +27,27 @@ namespace Northwind.Features.IndexingRelationships.Graph
 
             var scope = Raven.Server.Documents.Indexes.Static.CurrentIndexingScope.Current;
             //dynamic document = (Raven.Server.Documents.Indexes.Static.DynamicArray)scope.LoadDocument(null, "1", "Numbers");
-            var document = scope.LoadDocument(null, "1", "Numbers");
+            var document = scope.LoadDocument(null, number.Id, "Numbers");
             var cd = (IEnumerable<KeyValuePair<object, object>>)document;
             List<KeyValuePair<object, object>> list = cd.ToList();
             var el = list.Skip(1).Take(1).Single();
-            var a = ((DynamicArray)el.Value)[0];
 
-            foreach (object num in ((DynamicArray)el.Value))
+            var array = ((DynamicArray)el.Value);
+            if (array.Any())
             {
-                res.Add(
-                    new Entry
-                    {
-                        Ancestor = num.ToString(),
-                        Distance = "x-",
-                        Descendant = "x-"
-                    }
-                    );
+                //var a = ((DynamicArray)el.Value)[0];
+
+                foreach (object num in ((DynamicArray)el.Value))
+                {
+                    res.Add(
+                        new Entry
+                        {
+                            Ancestor = number.Id,
+                            Distance = "1",
+                            Descendant = num.ToString()
+                        }
+                        );
+                }
             }
 
             return res;
