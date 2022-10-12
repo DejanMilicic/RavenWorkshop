@@ -1,11 +1,8 @@
-﻿using Northwind.Features.AdditionalSources;
-using Raven.Client.Documents.Indexes;
+﻿using Raven.Client.Documents.Indexes;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Northwind.Features.IndexingRelationships.Graph
 {
@@ -29,11 +26,6 @@ namespace Northwind.Features.IndexingRelationships.Graph
                     File.ReadAllText(Path.Combine(new[]
                         { AppContext.BaseDirectory, "..", "..", "..", "Features", "IndexingRelationships", "Graph", "GraphHelper.cs" }))
             };
-
-            //AdditionalAssemblies = new HashSet<AdditionalAssembly>
-            //{
-            //    AdditionalAssembly.FromPath(typeof(Flight).Assembly...GetName().ToString())
-            //};
         }
     }
 }
