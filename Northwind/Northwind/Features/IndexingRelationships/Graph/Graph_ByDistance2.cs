@@ -14,7 +14,7 @@ namespace Northwind.Features.IndexingRelationships.Graph
         public Graph_ByDistance2()
         {
             Map = numbers => from number in numbers
-                             let entries = GraphHelper.Process()
+                             let entries = GraphHelper.Process(number)
                              from entry in entries
                              select new
                              {
@@ -29,6 +29,11 @@ namespace Northwind.Features.IndexingRelationships.Graph
                     File.ReadAllText(Path.Combine(new[]
                         { AppContext.BaseDirectory, "..", "..", "..", "Features", "IndexingRelationships", "Graph", "GraphHelper.cs" }))
             };
+
+            //AdditionalAssemblies = new HashSet<AdditionalAssembly>
+            //{
+            //    AdditionalAssembly.FromPath(typeof(Number).Assembly...GetName().ToString())
+            //};
         }
     }
 }
