@@ -1,4 +1,6 @@
-﻿namespace Northwind.Features.IndexingRelationships.Graph
+﻿using System;
+
+namespace Northwind.Features.IndexingRelationships.Graph
 {
     public static class Seed
     {
@@ -9,19 +11,19 @@
             session.Store(new Number
             {
                 Id = "1",
-                IsFollowedBy = "2"
+                FollowedBy = new[] { "2", "3" }
             });
 
             session.Store(new Number
             {
                 Id = "2",
-                IsFollowedBy = "3"
+                FollowedBy = new[] { "3" }
             });
 
             session.Store(new Number
             {
                 Id = "3",
-                IsFollowedBy = ""
+                FollowedBy = Array.Empty<string>()
             });
 
             session.SaveChanges();

@@ -27,24 +27,35 @@ map('Numbers', function (num) {
     var graph = [];
 
     var ancestor = id(num);
-    var descendant = load(num.IsFollowedBy, 'Numbers');
+    //var descendants = load(num.FollowedBy.join(','), 'Numbers');
+    //var descendants = num.FollowedBy.forEach(x => load(x, 'Numbers'));
+
+    var obj = load('1', 'Numbers');
+    var descendants = obj.FollowedBy.forEach(x => id(load(x, 'Numbers')));
     var distance = 1;
 
-    while (descendant != null) {
         graph.push({
             Ancestor: ancestor,
             Distance: distance,
-            Descendant: id(descendant)
-        });        
+            Descendants: descendants
+        });  
+
+    return graph;
+
+    while (descendants.length > 0) {
+        //graph.push({
+        //    Ancestor: ancestor,
+        //    Distance: distance,
+        //    //Descendants: id(descendant)
+        //    Descendants: descendants
+        //});        
 
         distance++;
     
-        descendant = load(descendant.IsFollowedBy, 'Numbers');
+        descendant = load(descendant.FollowedBy.join(','), 'Numbers');
     }
 
-    return {
-        Graph: graph
-    };
+    return graph;
 });
 "
             };

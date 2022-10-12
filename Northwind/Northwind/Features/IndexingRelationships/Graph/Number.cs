@@ -4,6 +4,6 @@
     {
         public string Id { get; set; }
 
-        public string IsFollowedBy { get; set; }
+        public string[] FollowedBy { get; set; }
     }
 }

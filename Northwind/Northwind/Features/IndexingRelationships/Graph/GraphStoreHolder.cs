@@ -22,8 +22,9 @@ namespace Northwind.Features.IndexingRelationships.Graph
 
                 store.Initialize();
 
-                new Numbers_ByHierarchy().Execute(store);
-                new Graph_ByDistance().Execute(store);
+                //new Numbers_ByHierarchy().Execute(store);
+                //new Graph_ByDistance().Execute(store);
+                new Graph_ByDistance2().Execute(store);
 
                 return store;
             });
