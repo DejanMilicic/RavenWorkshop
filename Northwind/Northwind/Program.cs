@@ -54,6 +54,7 @@ using Raven.Client.Documents.Session;
 using DocumentSession = Northwind.Features.DocumentSession.DocumentSession;
 using Northwind.Features.Facets;
 using Northwind.Features.Facets2;
+using Northwind.Features.IndexingRelationships.Graph;
 using Northwind.Features.Search0;
 
 namespace Northwind
@@ -69,7 +70,9 @@ namespace Northwind
     {
         static async Task Main(string[] args)
         {
-            DocumentStoreHolder.Store.OpenSession();
+            //DocumentStoreHolder.Store.OpenSession();
+
+            App.Execute();
 
             #region temp
 
