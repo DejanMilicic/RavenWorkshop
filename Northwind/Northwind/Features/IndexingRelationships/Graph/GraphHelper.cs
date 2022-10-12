@@ -11,45 +11,45 @@ namespace Northwind.Features.IndexingRelationships.Graph
 {
     public class Entry
     {
-        public Entry(string ancestor, int distance, string descendant)
+        public Entry(string origin, int distance, string destination)
         {
-            this.Ancestor = ancestor;
+            this.Origin = origin;
             this.Distance = distance.ToString();
-            this.Descendant = descendant;
+            this.Destination = destination;
         }
 
-        public string Ancestor { get; set; }
+        public string Origin { get; set; }
 
         public string Distance { get; set; }
 
-        public string Descendant { get; set; }
+        public string Destination { get; set; }
     }
 
     public static class GraphHelper
     {
-        public static List<Entry> Process(Northwind.Features.IndexingRelationships.Graph.Number number)
+        public static List<Entry> Process(Northwind.Features.IndexingRelationships.Graph.Flight flight)
         {
             List<Entry> res = new List<Entry>();
             Queue<(int distance, string doc)> queue = new();
 
             CurrentIndexingScope scope = CurrentIndexingScope.Current;
             
-            queue.Enqueue((0, number.Id));
+            queue.Enqueue((0, flight.Id));
 
             while (queue.Any())
             {
                 var current = queue.Dequeue();
 
-                dynamic doc = scope.LoadDocument(null, current.doc, "Numbers");
+                dynamic doc = scope.LoadDocument(null, current.doc, "Flights");
 
-                string[] followedBy = doc.FollowedBy;
+                string[] to = doc.To;
 
-                if (followedBy.Any())
+                if (to.Any())
                 {
-                    foreach (string descendant in followedBy)
+                    foreach (string destination in to)
                     {
-                        res.Add(new Entry(number.Id, current.distance + 1, descendant));
-                        queue.Enqueue((current.distance + 1, descendant));
+                        res.Add(new Entry(flight.Id, current.distance + 1, destination));
+                        queue.Enqueue((current.distance + 1, destination));
                     }
                 }
             }

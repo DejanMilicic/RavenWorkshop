@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Northwind.Features.IndexingRelationships.Graph
 {
-    public class Graph_ByDistance2 : AbstractIndexCreationTask<Number>
+    public class Graph_ByDistance2 : AbstractIndexCreationTask<Flight>
     {
         public Graph_ByDistance2()
         {
@@ -18,9 +18,9 @@ namespace Northwind.Features.IndexingRelationships.Graph
                              from entry in entries
                              select new
                              {
-                                 Ancestor = entry.Ancestor,
+                                 Origin = entry.Origin,
                                  Distance = entry.Distance,
-                                 Descendant = entry.Descendant
+                                 Destination = entry.Destination
                              };
 
             AdditionalSources = new Dictionary<string, string>
@@ -32,7 +32,7 @@ namespace Northwind.Features.IndexingRelationships.Graph
 
             //AdditionalAssemblies = new HashSet<AdditionalAssembly>
             //{
-            //    AdditionalAssembly.FromPath(typeof(Number).Assembly...GetName().ToString())
+            //    AdditionalAssembly.FromPath(typeof(Flight).Assembly...GetName().ToString())
             //};
         }
     }

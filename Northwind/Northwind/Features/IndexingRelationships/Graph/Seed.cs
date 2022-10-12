@@ -8,22 +8,28 @@ namespace Northwind.Features.IndexingRelationships.Graph
         {
             using var session = GraphStoreHolder.Store.OpenSession();
 
-            session.Store(new Number
+            session.Store(new Flight
             {
-                Id = "1",
-                FollowedBy = new[] { "2", "3" }
+                Id = "London",
+                To = new[] { "Paris", "Stockholm" }
             });
 
-            session.Store(new Number
+            session.Store(new Flight
             {
-                Id = "2",
-                FollowedBy = new[] { "3" }
+                Id = "Paris",
+                To = new[] { "Istanbul" }
             });
 
-            session.Store(new Number
+            session.Store(new Flight
             {
-                Id = "3",
-                FollowedBy = Array.Empty<string>()
+                Id = "Stockholm",
+                To = Array.Empty<string>()
+            });
+
+            session.Store(new Flight
+            {
+                Id = "Istanbul",
+                To = Array.Empty<string>()
             });
 
             session.SaveChanges();

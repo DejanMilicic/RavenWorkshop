@@ -1,9 +1,9 @@
 ﻿namespace Northwind.Features.IndexingRelationships.Graph
 {
-    public class Number
+    public class Flight
     {
         public string Id { get; set; }
 
-        public string[] FollowedBy { get; set; }
+        public string[] To { get; set; }
     }
 }

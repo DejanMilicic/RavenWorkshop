@@ -27,15 +27,15 @@ map('Numbers', function (num) {
     var graph = [];
 
     var ancestor = id(num);
-    //var descendants = load(num.FollowedBy.join(','), 'Numbers');
-    //var descendants = num.FollowedBy.forEach(x => load(x, 'Numbers'));
+    //var descendants = load(num.To.join(','), 'Numbers');
+    //var descendants = num.To.forEach(x => load(x, 'Numbers'));
 
     var obj = load('1', 'Numbers');
-    var descendants = obj.FollowedBy.forEach(x => id(load(x, 'Numbers')));
+    var descendants = obj.To.forEach(x => id(load(x, 'Numbers')));
     var distance = 1;
 
         graph.push({
-            Ancestor: ancestor,
+            Origin: ancestor,
             Distance: distance,
             Descendants: descendants
         });  
@@ -44,7 +44,7 @@ map('Numbers', function (num) {
 
     while (descendants.length > 0) {
         //graph.push({
-        //    Ancestor: ancestor,
+        //    Origin: ancestor,
         //    Distance: distance,
         //    //Descendants: id(descendant)
         //    Descendants: descendants
@@ -52,7 +52,7 @@ map('Numbers', function (num) {
 
         distance++;
     
-        descendant = load(descendant.FollowedBy.join(','), 'Numbers');
+        descendant = load(descendant.To.join(','), 'Numbers');
     }
 
     return graph;
