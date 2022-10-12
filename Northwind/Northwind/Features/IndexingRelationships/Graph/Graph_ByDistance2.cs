@@ -9,25 +9,17 @@ using System.Threading.Tasks;
 
 namespace Northwind.Features.IndexingRelationships.Graph
 {
-    public class Graph_ByDistance2 : AbstractIndexCreationTask<Number, Graph_ByDistance2.Entry>
+    public class Graph_ByDistance2 : AbstractIndexCreationTask<Number>
     {
-        public class Entry
-        {
-            public string Ancestor { get; set; }
-
-            public string Distance { get; set; }
-
-            public string Descendant { get; set; }
-        }
-
         public Graph_ByDistance2()
         {
             Map = numbers => from number in numbers
-                select new Entry
+                let zzz = GraphHelper.Process()
+                select new
                 {
-                    Ancestor = "1",
-                    Distance = "2",
-                    Descendant = "3"
+                    Ancestor = zzz.Ancestor,
+                    Distance = zzz.Distance,
+                    Descendant = zzz.Descendant
                 };
 
             AdditionalSources = new Dictionary<string, string>
