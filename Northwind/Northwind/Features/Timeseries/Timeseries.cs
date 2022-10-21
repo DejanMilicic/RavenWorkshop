@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Northwind.Models.Entity;
 using Raven.Client.Documents.Session;
 using Raven.Client.Documents.Session.TimeSeries;
+using static System.Formats.Asn1.AsnWriter;
+using static Northwind.Models.Entity.Company;
 
 namespace Northwind.Features.Timeseries
 {
@@ -9,13 +12,25 @@ namespace Northwind.Features.Timeseries
     {
         // There is no need to explicitly create Timeseries
         // appending a value will automatically create it if it does not already exist
-        public static void Do()
+        public static void AppendNative()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             ISessionDocumentTimeSeries ts = session.TimeSeriesFor("shippers/3-A", "Likes");
             List<double> values = new List<double> { 1.1, 2.15 };
             ts.Append(DateTime.UtcNow, values);
+
+            session.SaveChanges();
+        }
+
+        public static void AppendNamed()
+        {
+            DocumentStoreHolder.Store.TimeSeries.Register<Shipper, StockPrice>();
+
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            session.TimeSeriesFor<StockPrice>("shippers/1-A", "Stock")
+                .Append(DateTime.UtcNow, new() { Open = 515.267, Close = 580.1, High = 613.44, Low = 499.99, Volume = 5487 });
 
             session.SaveChanges();
         }
