@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Northwind.Models.Entity;
-using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session.TimeSeries;
 
 namespace Northwind.Features.Timeseries
 {
-    public class Timeseries
+    public static class Timeseries
     {
-        public void Insert()
+        public static void Insert()
         {
             // todo : add timer
             // todo : correct dates (year 3000)
+            // todo : index this data and run queries
 
             using var bulk = DocumentStoreHolder.Store.BulkInsert();
             var random = new Random();
@@ -35,7 +30,7 @@ namespace Northwind.Features.Timeseries
             }
         }
 
-        public void Query()
+        public static void Query()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
                 TimeSeriesEntry[] val = session
