@@ -1,10 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
+using Raven.Client.Documents.Session;
 using Raven.Client.Documents.Session.TimeSeries;
 
 namespace Northwind.Features.Timeseries
 {
     public static class Timeseries
     {
+        // There is no need to explicitly create Timeseries
+        // appending a value will automatically create it if it does not already exist
+        public static void Do()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            var ts = session.TimeSeriesFor("shippers/3-A", "Likes");
+            var values = new List<double> { 1.1, 2.15 };
+            ts.Append(DateTime.UtcNow, values);
+
+            session.SaveChanges();
+        }
+
         public static void Insert()
         {
             // todo : add timer
