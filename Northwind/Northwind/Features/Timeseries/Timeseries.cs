@@ -25,7 +25,7 @@ namespace Northwind.Features.Timeseries
 
         public static void AppendNamed()
         {
-            DocumentStoreHolder.Store.TimeSeries.Register<Shipper, StockPrice>();
+            DocumentStoreHolder.Store.TimeSeries.Register<Shipper, StockPrice>("Stock");
 
             using var session = DocumentStoreHolder.Store.OpenSession();
 
