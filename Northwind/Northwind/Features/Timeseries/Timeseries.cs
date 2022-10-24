@@ -25,11 +25,11 @@ namespace Northwind.Features.Timeseries
 
         public static void AppendNamed()
         {
-            DocumentStoreHolder.Store.TimeSeries.Register<Shipper, StockPrice>("Stock");
+            DocumentStoreHolder.Store.TimeSeries.Register<Shipper, StockPrice>();
 
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            session.TimeSeriesFor<StockPrice>("shippers/1-A", "Stock")
+            session.TimeSeriesFor<StockPrice>("shippers/1-A")
                 .Append(DateTime.UtcNow, new() { Open = 515.267, Close = 580.1, High = 613.44, Low = 499.99, Volume = 5487 });
 
             session.SaveChanges();
