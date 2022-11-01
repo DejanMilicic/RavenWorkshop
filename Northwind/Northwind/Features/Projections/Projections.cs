@@ -139,7 +139,7 @@ namespace Northwind.Features.Projections
                     }
                     ).ToList();
 
-            foreach (var order in londonOrders)
+            foreach (OrderViewModel order in londonOrders)
             {
                 Console.WriteLine($"Company {order.Company} from {order.ShippingCity} via {order.Employee}");
             }
