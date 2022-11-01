@@ -41,13 +41,13 @@ namespace Northwind.Features.Projections
             var orders = session
                 .Query<Orders_ByEmployeeLastName.Entry, Orders_ByEmployeeLastName>()
                 .Where(x => x.LastName == "Davolio")
-                .OfType<Order>()
+                .OfType<Order>() // will filter out those of specified type
                 .ToList();
 
             var orders2 = session
                 .Query<Orders_ByEmployeeLastName.Entry, Orders_ByEmployeeLastName>()
                 .Where(x => x.LastName == "Davolio")
-                .As<Order>()
+                .As<Order>() // will throw on objects that cannot be casted
                 .ToList();
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
