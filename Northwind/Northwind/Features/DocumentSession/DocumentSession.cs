@@ -15,6 +15,10 @@ namespace Northwind.Features.DocumentSession
 
             Employee laura = session.Load<Employee>("employees/8-A");
             
+            // todo
+            //laura.LastName = "Doe";
+            //var changes = session.Advanced.WhatChanged();
+
             Console.WriteLine($"{laura.FirstName} {laura.LastName}");
         }
 
