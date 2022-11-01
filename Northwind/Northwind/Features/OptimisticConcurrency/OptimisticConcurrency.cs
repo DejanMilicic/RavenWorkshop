@@ -26,7 +26,7 @@ namespace Northwind.Features.OptimisticConcurrency
         public void UseOptimisticConcurrency()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
-            session.Advanced.UseOptimisticConcurrency = true;
+            session.Advanced.UseOptimisticConcurrency = true; // <--- this line added
             var order = session.Load<Order>("orders/1-A");
             order.Freight++; // breakpoint
             session.SaveChanges();
@@ -68,6 +68,11 @@ namespace Northwind.Features.OptimisticConcurrency
                 throw;
             }
         }
+
+        // TODO
+        //from "Employees" update {
+        //    this.Name = this.FirstName + " " + this.LastName;        
+        //}
 
         public void UseDeferredPatch()
         {

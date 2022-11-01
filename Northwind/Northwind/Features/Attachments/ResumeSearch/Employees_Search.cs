@@ -14,6 +14,8 @@ namespace Northwind.Features.Attachments.ResumeSearch
 
         public Employees_Search()
         {
+            // TODO: tidy this
+
             //AddMap<Employee>(employees =>
             //    from emp in employees
             //    let txt = AttachmentsFor(emp)

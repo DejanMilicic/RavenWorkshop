@@ -8,7 +8,9 @@ using Northwind.Models.Entity;
 namespace Northwind.Features.Spatial
 {
     public class Spatial
-    {
+    {  
+        // TODO : LINQ equivalent
+
         public void OrdersInParis()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();

@@ -18,7 +18,7 @@ namespace Northwind.Features.Identifiers
     // [JsonIgnore]
     // public string Id { get; set; }
 
-    public class EmailEmployee
+    public class EmailEmployee  // TODO : rename this to paypal
     {
         public string Email { get; set; }
 

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Northwind.Features.Recursive;
 using Northwind.Models.Entity;
 
 namespace Northwind.Features.Metadata
@@ -16,6 +11,8 @@ namespace Northwind.Features.Metadata
             var emp = session.Load<Employee>("employees/8-A");
 
             session.Advanced.GetMetadataFor(emp)["IsDeleted"] = "true";
+            
+            // todo: add example with json structure being stored to metadata
 
             session.SaveChanges();
         }
