@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Northwind.Models.Entity;
 using NUlid;
 using NUlid.Rng;
 
 namespace Northwind.Features.Identifiers
 {
-    // http://127.0.0.1:8080/databases/demo/debug/storage/btree-structure
+    // http://127.0.0.1:8080/databases/demo/debug/storage/btree-structure?name=Docs
 
     public class Btree
     {
@@ -68,6 +64,21 @@ namespace Northwind.Features.Identifiers
                 bulk.Store(new Employee
                 {
                     Id = RT.Comb.Provider.PostgreSql.Create().ToString(),
+                    FirstName = "FirstName #" + i,
+                    LastName = "LastName #" + i
+                });
+            }
+        }
+
+        public void Youtube()
+        {
+            using var bulk = DocumentStoreHolder.Store.BulkInsert();
+
+            for (int i = 0; i < 100 * 1000; i++)
+            {
+                bulk.Store(new Employee
+                {
+                    Id = YoutubeId.Generate(),
                     FirstName = "FirstName #" + i,
                     LastName = "LastName #" + i
                 });
