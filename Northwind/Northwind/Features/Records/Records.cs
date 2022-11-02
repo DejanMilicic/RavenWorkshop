@@ -36,5 +36,18 @@ namespace Northwind.Features.Records
             
             session.SaveChanges();
         }
+
+        public static void Update2()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            Receipt receipt = session.Query<Receipt>()
+                .Customize(x => x.NoTracking())
+                .First();
+
+            session.Store(receipt with { Store = "Big store" });
+            
+            session.SaveChanges();
+        }
     }
 }
