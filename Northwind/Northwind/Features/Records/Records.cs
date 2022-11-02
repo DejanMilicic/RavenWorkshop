@@ -22,6 +22,15 @@ namespace Northwind.Features.Records
             session.SaveChanges();
         }
 
+        public static void Create2()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            session.Store(new Shipment(null, "users/1", "shipments/1"));
+            
+            session.SaveChanges();
+        }
+
         public static void Update()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();

@@ -15,4 +15,6 @@ namespace Northwind.Features.Records
 
         public DateTime PurchaseDate { get; init; }
     }
+
+    public record Shipment(string Id, string UserId, string ShipmentId);
 }
