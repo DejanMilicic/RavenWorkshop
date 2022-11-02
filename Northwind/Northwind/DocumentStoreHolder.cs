@@ -7,6 +7,8 @@ namespace Northwind
 {
     public static class DocumentStoreHolder
     {
+        public static IDocumentStore Store => LazyStore.Value;
+
         public static IDocumentStore GetStore()
         {
             return new DocumentStore
@@ -28,7 +30,5 @@ namespace Northwind
 
                 return store;
             });
-
-        public static IDocumentStore Store => LazyStore.Value;
     }
 }
