@@ -10,8 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NUlid" Version="1.5.0" />
-    <PackageReference Include="RavenDB.Client" Version="5.3.100" />
+    <PackageReference Include="CSharpVitamins.ShortGuid" Version="2.0.0" />
+    <PackageReference Include="NUlid" Version="1.7.1" />
+    <PackageReference Include="RavenDB.Client" Version="5.4.4" />
     <PackageReference Include="RT.Comb" Version="3.0.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
