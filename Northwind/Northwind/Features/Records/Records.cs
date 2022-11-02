@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.Records
 {
@@ -44,6 +41,19 @@ namespace Northwind.Features.Records
             Receipt receipt = session.Query<Receipt>()
                 .Customize(x => x.NoTracking())
                 .First();
+
+            session.Store(receipt with { Store = "Big store" });
+            
+            session.SaveChanges();
+        }
+
+        // this will not work - you cannot call Store for non-tracked session
+        public static void Update3()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession(
+                    new SessionOptions{ NoTracking = true });
+
+            Receipt receipt = session.Query<Receipt>().First();
 
             session.Store(receipt with { Store = "Big store" });
             
