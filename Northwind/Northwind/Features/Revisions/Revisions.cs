@@ -48,6 +48,10 @@ namespace Northwind.Features.Revisions
                 employeeId = employee.Id;
                 session.SaveChanges();
 
+                // create
+                // keep it in draft, freq edits
+                // after publishing:
+
                 // turn revisions on
                 session.Advanced.Revisions.ForceRevisionCreationFor(employee);
                 session.SaveChanges();
