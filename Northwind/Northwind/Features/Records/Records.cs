@@ -31,6 +31,27 @@ namespace Northwind.Features.Records
             session.SaveChanges();
         }
 
+        public static void UpdateProblem()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            Receipt receipt = new Receipt
+            {
+                Store = "My local store",
+                Description = "Shoes",
+                Amount = 199.99m,
+                PurchaseDate = DateTime.UtcNow
+            };
+
+            session.Store(receipt);
+            session.SaveChanges();
+
+            session.Store(receipt with { Store = "Big store" });
+
+            session.SaveChanges();
+        }
+
+
         public static void Update()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
