@@ -6,6 +6,7 @@ using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Queries.Highlighting;
+using Spectre.Console;
 using Employee = Northwind.Models.Entity.Employee;
 
 namespace Northwind.Features.SearchBasic
@@ -110,13 +111,15 @@ namespace Northwind.Features.SearchBasic
 
         private static void PrintProducts(string title, List<Product> products)
         {
-            Console.WriteLine($"\n{title}\n");
+            AnsiConsole.Markup($"\n[black on yellow]{title}[/]\n\n");
 
-            int counter = 1;
+            var grid = new Grid();
+            grid.AddColumn();
             foreach (Product product in products)
-            {
-                Console.WriteLine($"{counter++}. {product.Name}");
-            }
+                grid.AddRow($" {product.Name}");
+            
+            AnsiConsole.Write(grid);
+            AnsiConsole.WriteLine("\n");
         }
     }
 }
