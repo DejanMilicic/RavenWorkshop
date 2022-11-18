@@ -68,6 +68,23 @@ namespace Northwind.Features.SearchBasic
             PrintEmployees("Employees speaking (Spanish AND Portuguese) OR Manager", employees);
 
 
+            // Search for all employees
+            // whose FirstName is not Nancy
+            /*
+                from 'Employees' 
+                where (
+                    exists(FirstName) 
+                    and 
+                    not search(FirstName, "Nancy")
+                )
+            */
+            employees = session.Query<Employee>()
+                .Search(x => x.FirstName, "Nancy", options: SearchOptions.Not)
+                .ToList();
+
+            PrintEmployees("Employees who are not Nancy", employees);
+
+
             /*
                 from 'Products' 
                 where search(Name, "tofu")
