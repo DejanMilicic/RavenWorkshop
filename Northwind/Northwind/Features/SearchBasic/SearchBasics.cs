@@ -23,7 +23,7 @@ namespace Northwind.Features.SearchBasic
             /*
                 from 'Employees' 
                 where search(Notes, "french")
-             */
+            */
             List<Employee> employees = session.Query<Employee>()
                 .Search(x => x.Notes, "french")
                 .ToList();
@@ -36,12 +36,12 @@ namespace Northwind.Features.SearchBasic
             /*
                 from 'Employees' 
                 where search(Notes, "Washington Colorado")
-             */
+            */
             // operator "or" is implicit, so this is identical to
             /*
                 from 'Employees'
                 where search(Notes, "Washington Colorado", or)
-             */
+            */
             employees = session.Query<Employee>()
                 .Search(x => x.Notes, "Washington Colorado")
                 // identical to
@@ -71,7 +71,7 @@ namespace Northwind.Features.SearchBasic
             /*
                 from 'Products' 
                 where search(Name, "tofu")
-             */
+            */
             List<Product> products = session.Query<Product>()
                 .Search(x => x.Name, "tofu")
                 .ToList();
@@ -82,25 +82,47 @@ namespace Northwind.Features.SearchBasic
             /*
                 from 'Products'
                 where search(Name, "ch*")
-             */
+            */
             products = session.Query<Product>()
                 .Search(x => x.Name, "ch*")
                 .ToList();
 
             PrintProducts("Ch* products", products);
 
+
+            /*
+                from 'Products' 
+                where search(Name, "*ing")
+            */
             products = session.Query<Product>()
                 .Search(x => x.Name, "*ing")
                 .ToList();
 
             PrintProducts("*ing products", products);
 
+
+            /*
+                from 'Products'
+                where search(Name, "*ad*")
+            */
             products = session.Query<Product>()
                 .Search(x => x.Name, "*ad*")
                 .ToList();
 
             PrintProducts("*ad* products", products);
 
+
+            // Boosting search terms
+            /*
+                from 'Employees' 
+                where (
+                    boost(search(Notes, "ph.d."), 100) 
+                    or 
+                    boost(search(Notes, "university"), 20)
+                    or
+                    boost(search(Notes, "college"), 5)
+                )
+            */
             employees = session.Query<Employee>()
                 .Search(x => x.Notes, "ph.d.", boost: 100)
                 .Search(x => x.Notes, "university", boost: 20)
@@ -109,6 +131,13 @@ namespace Northwind.Features.SearchBasic
 
             PrintEmployees("Employees, by education, with rank boosting", employees);
 
+
+            /*
+                from 'Employees'
+                where 
+                    search(Notes, "sales") 
+                    include highlight(Notes,50,1)
+            */
             employees = session.Query<Employee>()
                 .Highlight("Notes", 50, 1, out Highlightings notesHighlightings)
                 .Search(x => x.Notes, "sales")
@@ -117,7 +146,12 @@ namespace Northwind.Features.SearchBasic
 
             PrintEmployeesHighlights("Employees in sales, with highlights", employees, notesHighlightings);
 
+
             // search with regular expression
+            /*
+                from 'Products'
+                where regex(Name, "^[C-F][a-zA-Z]*$")
+            */
             products = session
                 .Query<Product>()
                 .Where(x => Regex.IsMatch(x.Name, "^[C-F][a-zA-Z]*$"))
