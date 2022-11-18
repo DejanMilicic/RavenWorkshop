@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FluentAssertions.Equivalency;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Queries.Highlighting;
@@ -17,14 +18,34 @@ namespace Northwind.Features.SearchBasic
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
+            // Search for all employees
+            // with occurrences of "french" within property Notes
+            /*
+                from 'Employees' 
+                where search(Notes, "french")
+             */
             List<Employee> employees = session.Query<Employee>()
                 .Search(x => x.Notes, "french")
                 .ToList();
 
             PrintEmployees("French-speaking employees", employees);
 
+
+            // Search for all employees
+            // with occurrences of terms "Washington" or "Colorado"
+            /*
+                from 'Employees' 
+                where search(Notes, "Washington Colorado")
+             */
+            // operator "or" is implicit, so this is identical to
+            /*
+                from 'Employees'
+                where search(Notes, "Washington Colorado", or)
+             */
             employees = session.Query<Employee>()
                 .Search(x => x.Notes, "Washington Colorado")
+                // identical to
+                //.Search(x => x.Notes, "Washington Colorado", @operator: SearchOperator.Or)
                 .ToList();
 
             PrintEmployees("Employees related to Washington OR Colorado", employees);
