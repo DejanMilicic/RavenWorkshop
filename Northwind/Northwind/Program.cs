@@ -55,7 +55,7 @@ using DocumentSession = Northwind.Features.DocumentSession.DocumentSession;
 using Northwind.Features.Facets;
 using Northwind.Features.Facets2;
 using Northwind.Features.Records;
-using Northwind.Features.Search0;
+using Northwind.Features.SearchBasic;
 
 namespace Northwind
 {

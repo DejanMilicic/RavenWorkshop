@@ -101,13 +101,16 @@ namespace Northwind.Features.SearchBasic
         {
             AnsiConsole.Markup($"\n[black on yellow]{title}[/]\n\n");
 
-            for (int i = 0; i < employees.Count; i++)
-            {
-                Employee emp = employees[i];
+            var grid = new Grid();
+            grid.AddColumn();
+            grid.AddColumn();
 
-                Console.WriteLine($"{i+1}. {emp.FirstName} {emp.LastName}");
-                Console.WriteLine(String.Join(" ", notesHighlightings.GetFragments(emp.Id)));
-            }
+            foreach (Employee emp in employees)
+
+                grid.AddRow($" {emp.FirstName} {emp.LastName}",
+                    String.Join(" ", notesHighlightings.GetFragments(emp.Id)));
+
+            AnsiConsole.Write(grid);
         }
 
         private static void PrintProducts(string title, List<Product> products)
