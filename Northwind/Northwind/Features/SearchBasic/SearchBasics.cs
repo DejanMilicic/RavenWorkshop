@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Northwind.Features.Attachments.ResumeSearch;
+using System.Text.RegularExpressions;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Queries.Highlighting;
 using Employee = Northwind.Models.Entity.Employee;
 
-namespace Northwind.Features.Search0
+namespace Northwind.Features.SearchBasic
 {
-    internal static class SearchBasics
+    public static class SearchBasics
     {
-        internal static void Execute()
+        public static void Execute()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -76,6 +74,14 @@ namespace Northwind.Features.Search0
                 .ToList();
 
             PrintEmployeesHighlights("Employees in sales, with highlights", employees, notesHighlightings);
+
+            // search with regular expression
+            products = session
+                .Query<Product>()
+                .Where(x => Regex.IsMatch(x.Name, "^[C-F][a-zA-Z]*$"))
+                .ToList();
+
+            PrintProducts("Products with a single word name, starting with letters C-F", products);
         }
 
         private static void PrintEmployees(string title, List<Employee> employees)
