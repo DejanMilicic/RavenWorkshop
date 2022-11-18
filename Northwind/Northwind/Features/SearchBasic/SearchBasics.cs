@@ -50,6 +50,16 @@ namespace Northwind.Features.SearchBasic
 
             PrintEmployees("Employees related to Washington OR Colorado", employees);
 
+
+            // Search for all employees
+            // with both "Spanish" and "Portuguese" in their Notes
+            // or "Manager" in the Notes
+            /*
+                from 'Employees'
+                where 
+                    search(Notes, "Spanish Portuguese", and) 
+                    or search(Notes, "Manager")
+            */
             employees = session.Query<Employee>()
                 .Search(x => x.Notes, "Spanish Portuguese", @operator: SearchOperator.And)
                 .Search(x => x.Notes, "Manager", options: SearchOptions.Or)
@@ -57,12 +67,22 @@ namespace Northwind.Features.SearchBasic
 
             PrintEmployees("Employees speaking (Spanish AND Portuguese) OR Manager", employees);
 
+
+            /*
+                from 'Products' 
+                where search(Name, "tofu")
+             */
             List<Product> products = session.Query<Product>()
                 .Search(x => x.Name, "tofu")
                 .ToList();
 
             PrintProducts("Tofu products", products);
 
+
+            /*
+                from 'Products'
+                where search(Name, "ch*")
+             */
             products = session.Query<Product>()
                 .Search(x => x.Name, "ch*")
                 .ToList();
