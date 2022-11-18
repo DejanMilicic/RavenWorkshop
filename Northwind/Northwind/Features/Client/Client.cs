@@ -221,6 +221,7 @@ namespace Northwind.Features.Client
         public static void ClusterWideTransactionRavenDb_5_2_plus()
         {
             var store = DocumentStoreHolder.GetStore();
+            store.Initialize();
 
             using var session = store.OpenSession(new SessionOptions
             {
