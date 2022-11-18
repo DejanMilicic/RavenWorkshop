@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FluentAssertions.Equivalency;
+using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Queries.Highlighting;
@@ -29,6 +30,27 @@ namespace Northwind.Features.SearchBasic
                 .ToList();
 
             PrintEmployees("French-speaking employees", employees);
+
+
+            // Exact match 1
+            /*
+                from 'Orders' 
+                where exact(Lines[].ProductName = "Singaporean Hokkien Fried Mee")
+            */
+            List<Order> orders = session
+                .Query<Order>()
+                .Where(x => x.Lines.Any(p => p.ProductName == "Singaporean Hokkien Fried Mee"), exact: true)
+                .ToList();
+
+
+            // Exact match 2
+            /*
+                from 'Employees' 
+                where exact(FirstName = "Nancy")
+            */
+            employees = session.Query<Employee>()
+                .Where(x => x.FirstName == "Nancy", exact: true)
+                .ToList();
 
 
             // Search for all employees
