@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Northwind.Models.Entity;
 using Raven.Client.Documents.Queries;
 
 namespace Northwind.Features.Projections
 {
-    public class Projections
+    public static class Projections
     {
-        public void Projection1()
+        public static void Projection1()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -33,7 +31,7 @@ namespace Northwind.Features.Projections
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public void Projection2()
+        public static void Projection2()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -58,7 +56,7 @@ namespace Northwind.Features.Projections
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public void Projection3()
+        public static void Projection3()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -83,7 +81,7 @@ namespace Northwind.Features.Projections
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public void Projection4()
+        public static void Projection4()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -119,7 +117,7 @@ namespace Northwind.Features.Projections
             public string ShippingCity { get; set; }
         }
 
-        public void ProjectionWithPermissions()
+        public static void ProjectionWithPermissions()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -146,6 +144,5 @@ namespace Northwind.Features.Projections
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
         }
-
     }
 }

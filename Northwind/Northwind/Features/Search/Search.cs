@@ -7,9 +7,9 @@ using Raven.Client.Documents;
 
 namespace Northwind.Features.Search
 {
-    public class Search
+    public static class Search
     {
-        public void SearchOrderLines()
+        public static void SearchOrderLines()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -25,7 +25,8 @@ namespace Northwind.Features.Search
                 Console.WriteLine($"Order {order.Id} contains {term}");
             }
         }
-        public void OrdersOmniSearch()
+
+        public static void OrdersOmniSearch()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -57,12 +58,12 @@ namespace Northwind.Features.Search
             Console.WriteLine($"{res.Count} orders returned when searching for {term}");
         }
 
-        public void Omnisearch()
+        public static void Omnisearch()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             IList<Omnisearch.Projection> results = session
-                .Query< Omnisearch.Entry, Omnisearch> ()
+                .Query<Omnisearch.Entry, Omnisearch> ()
                 .Search(x => x.Content, "Lau*")
                 .ProjectInto<Omnisearch.Projection>()
                 .ToList();
