@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Queries.Highlighting;
 using Spectre.Console;
 using Employee = Northwind.Models.Entity.Employee;
+using Product = Northwind.Models.Entity.Product;
 
 namespace Northwind.Features.SearchBasic
 {
@@ -87,18 +87,19 @@ namespace Northwind.Features.SearchBasic
 
         private static void PrintEmployees(string title, List<Employee> employees)
         {
-            Console.WriteLine($"\n{title}\n");
+            AnsiConsole.Markup($"\n[black on yellow]{title}[/]\n\n");
 
-            int counter = 1;
+            var grid = new Grid();
+            grid.AddColumn();
             foreach (Employee employee in employees)
-            {
-                Console.WriteLine($"{counter++}. {employee.FirstName} {employee.LastName}");
-            }
+                grid.AddRow($" {employee.FirstName} {employee.LastName}");
+
+            AnsiConsole.Write(grid);
         }
 
         private static void PrintEmployeesHighlights(string title, List<Employee> employees, Highlightings notesHighlightings)
         {
-            Console.WriteLine($"\n{title}\n");
+            AnsiConsole.Markup($"\n[black on yellow]{title}[/]\n\n");
 
             for (int i = 0; i < employees.Count; i++)
             {
@@ -119,7 +120,6 @@ namespace Northwind.Features.SearchBasic
                 grid.AddRow($" {product.Name}");
             
             AnsiConsole.Write(grid);
-            AnsiConsole.WriteLine("\n");
         }
     }
 }
