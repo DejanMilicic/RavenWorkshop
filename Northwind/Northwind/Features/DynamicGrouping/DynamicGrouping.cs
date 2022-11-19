@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using System;
+using Spectre.Console;
 using System.Linq;
 
 namespace Northwind.Features.DynamicGrouping
@@ -110,6 +111,28 @@ namespace Northwind.Features.DynamicGrouping
 
             AnsiConsole.Markup($"\n[black on yellow]Sneakers grouped by company and brand, filtered for Germany[/]\n\n");
             foreach (var res in res3)
+            {
+                AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: AveragePrice = {res.TotalPrice / res.Count}");
+            }
+
+
+            // Untyped grouping by Company and Brand, filtered by Country, average price
+            Func<Sneaker, dynamic> keySelector = sneaker => new { sneaker.Company, sneaker.Brand, sneaker.Country };
+
+            var res4 = session.Query<Sneaker>()
+                .Where(x => x.Country == "Germany")
+                .GroupBy(keySelector)
+                .Select(x => new
+                {
+                    Company = x.Key.Company,
+                    Brand = x.Key.Brand,
+                    Count = x.Count(),
+                    TotalPrice = x.Sum(a => a.Price),
+                })
+                .ToList();
+
+            AnsiConsole.Markup($"\n[black on yellow]Sneakers grouped by company and brand, filtered for Germany[/]\n\n");
+            foreach (var res in res4)
             {
                 AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: AveragePrice = {res.TotalPrice / res.Count}");
             }
