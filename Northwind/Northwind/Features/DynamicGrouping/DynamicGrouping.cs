@@ -144,7 +144,7 @@ namespace Northwind.Features.DynamicGrouping
             string[] selectFields = { "Company", "Brand", "Price" };
             (string field, string value)[] filters = { ("Country", "Germany") };
 
-            var filter = session.Advanced.DocumentQuery<Sneaker>();
+            IDocumentQuery<Sneaker> filter = session.Advanced.DocumentQuery<Sneaker>();
 
             foreach (var criteria in filters)
                 filter = filter.WhereEquals(criteria.field, criteria.value);
