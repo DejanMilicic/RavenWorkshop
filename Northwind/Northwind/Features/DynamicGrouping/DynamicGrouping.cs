@@ -27,15 +27,15 @@ namespace Northwind.Features.DynamicGrouping
             using var session = DocumentStoreHolder.GetStore().Initialize().OpenSession();
 
             // Adidas
-            session.Store(new Sneaker { Price = 100, Company = "Adidas", Brand = "Terex", Country = "Germany", Size = 45, Color = "White" });
-            session.Store(new Sneaker { Price = 100, Company = "Adidas", Brand = "Terex", Country = "Germany", Size = 46, Color = "White" });
+            session.Store(new Sneaker { Price = 117, Company = "Adidas", Brand = "Terex", Country = "Germany", Size = 45, Color = "White" });
+            session.Store(new Sneaker { Price = 123, Company = "Adidas", Brand = "Terex", Country = "Germany", Size = 46, Color = "White" });
             session.Store(new Sneaker { Price = 100, Company = "Adidas", Brand = "Terex", Country = "Poland", Size = 46, Color = "White" });
             session.Store(new Sneaker { Price = 100, Company = "Adidas", Brand = "Superstar", Country = "Poland", Size = 45, Color = "Red" });
             session.Store(new Sneaker { Price = 100, Company = "Adidas", Brand = "Superstar", Country = "Poland", Size = 47, Color = "White" });
 
             // Nike
-            session.Store(new Sneaker { Price = 100, Company = "Nike", Brand = "AirMax", Country = "Germany", Size = 45, Color = "White" });
-            session.Store(new Sneaker { Price = 100, Company = "Nike", Brand = "AirMax", Country = "Germany", Size = 46, Color = "White" });
+            session.Store(new Sneaker { Price = 157, Company = "Nike", Brand = "AirMax", Country = "Germany", Size = 45, Color = "White" });
+            session.Store(new Sneaker { Price = 101, Company = "Nike", Brand = "AirMax", Country = "Germany", Size = 46, Color = "White" });
             session.Store(new Sneaker { Price = 100, Company = "Nike", Brand = "Flyknit", Country = "Poland", Size = 46, Color = "Blue" });
             session.Store(new Sneaker { Price = 100, Company = "Nike", Brand = "Flyknit", Country = "Poland", Size = 44, Color = "Red" });
             session.Store(new Sneaker { Price = 100, Company = "Nike", Brand = "Flyknit", Country = "Poland", Size = 47, Color = "White" });
@@ -90,7 +90,7 @@ namespace Northwind.Features.DynamicGrouping
                 AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: TotalPrice = {res.TotalPrice}");
             }
 
-            // Grouping by Company and Brand, filtered by Country
+            // Grouping by Company and Brand, filtered by Country, average price
             var res3 = session.Query<Sneaker>()
                 .Where(x => x.Country == "Germany")
                 .GroupBy(sneaker => new
@@ -111,7 +111,7 @@ namespace Northwind.Features.DynamicGrouping
             AnsiConsole.Markup($"\n[black on yellow]Sneakers grouped by company and brand, filtered for Germany[/]\n\n");
             foreach (var res in res3)
             {
-                AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: TotalPrice = {res.TotalPrice}");
+                AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: AveragePrice = {res.TotalPrice / res.Count}");
             }
         }
     }
