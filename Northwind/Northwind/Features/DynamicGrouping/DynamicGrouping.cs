@@ -130,7 +130,7 @@ namespace Northwind.Features.DynamicGrouping
             AnsiConsole.Markup($"\n[black on yellow]Sneakers grouped by company and brand, filtered for Germany[/]\n\n");
             foreach (var res in res4)
             {
-                AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} ");
+                AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: AveragePrice = {res.Price / res.Count} ");
             }
         }
     }
