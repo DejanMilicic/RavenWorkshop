@@ -70,11 +70,11 @@ namespace Northwind.Features.DynamicGrouping
 
             // Grouping by Company and Brand, TotalPrice 
             var res2 = session.Query<Sneaker>()
-            .GroupBy(sneaker => new
-            {
-                sneaker.Company,
-                sneaker.Brand
-            })
+                .GroupBy(sneaker => new
+                {
+                    sneaker.Company,
+                    sneaker.Brand
+                })
                 .Select(x => new
                 {
                     Company = x.Key.Company,
@@ -84,8 +84,32 @@ namespace Northwind.Features.DynamicGrouping
                 })
                 .ToList();
 
-            AnsiConsole.Markup($"\n[black on yellow]Sneakers grouped by company and brand, listing[/]\n\n");
+            AnsiConsole.Markup($"\n[black on yellow]Sneakers grouped by company and brand, total price[/]\n\n");
             foreach (var res in res2)
+            {
+                AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: TotalPrice = {res.TotalPrice}");
+            }
+
+            // Grouping by Company and Brand, filtered by Country
+            var res3 = session.Query<Sneaker>()
+                .Where(x => x.Country == "Germany")
+                .GroupBy(sneaker => new
+                {
+                    sneaker.Company,
+                    sneaker.Brand,
+                    sneaker.Country
+                })
+                .Select(x => new
+                {
+                    Company = x.Key.Company,
+                    Brand = x.Key.Brand,
+                    Count = x.Count(),
+                    TotalPrice = x.Sum(a => a.Price),
+                })
+                .ToList();
+
+            AnsiConsole.Markup($"\n[black on yellow]Sneakers grouped by company and brand, filtered for Germany[/]\n\n");
+            foreach (var res in res3)
             {
                 AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: TotalPrice = {res.TotalPrice}");
             }
