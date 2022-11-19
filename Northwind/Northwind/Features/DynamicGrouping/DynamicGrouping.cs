@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using Spectre.Console;
 using System.Linq;
@@ -136,9 +137,12 @@ namespace Northwind.Features.DynamicGrouping
             // Untyped grouping by Company and Brand, filtered by Country, average price
             string[] groupingFields = { "Company", "Brand", "Country" };
             string[] selectFields = { "Company", "Brand", "Price" };
+            (string field, string value)[] filters = { ("Country", "Germany") };
 
-            var filter = session.Advanced.DocumentQuery<Sneaker>()
-                .WhereEquals("Country", "Germany");
+            var filter = session.Advanced.DocumentQuery<Sneaker>();
+
+            foreach (var criteria in filters)
+                filter = filter.WhereEquals(criteria.field, criteria.value);
 
             var grouping = filter
                 .GroupBy("Company", "Brand", "Country");
