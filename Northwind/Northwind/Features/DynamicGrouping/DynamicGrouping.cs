@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using Spectre.Console;
 using System.Linq;
+using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.DynamicGrouping
 {
@@ -71,6 +72,7 @@ namespace Northwind.Features.DynamicGrouping
                 AnsiConsole.WriteLine($" {res.Company} - {res.Brand} - {res.Count}");
             }
 
+
             // Grouping by Company and Brand, TotalPrice 
             var res2 = session.Query<Sneaker>()
                 .GroupBy(sneaker => new
@@ -92,6 +94,7 @@ namespace Northwind.Features.DynamicGrouping
             {
                 AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: TotalPrice = {res.TotalPrice}");
             }
+
 
             // Grouping by Company and Brand, filtered by Country, average price
             var res3 = session.Query<Sneaker>()
@@ -117,6 +120,7 @@ namespace Northwind.Features.DynamicGrouping
                 AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: AveragePrice = {res.TotalPrice / res.Count}");
             }
 
+
             // Untyped grouping by Company and Brand, filtered by Country, average price
             var res4 = session.Advanced.DocumentQuery<Sneaker>()
                 .WhereEquals("Country", "Germany")
@@ -134,6 +138,7 @@ namespace Northwind.Features.DynamicGrouping
                 AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: AveragePrice = {res.Price / res.Count} ");
             }
 
+
             // Untyped grouping by Company and Brand, filtered by Country, average price
             string[] groupingFields = { "Company", "Brand", "Country" };
             string[] selectFields = { "Company", "Brand", "Price" };
@@ -144,8 +149,17 @@ namespace Northwind.Features.DynamicGrouping
             foreach (var criteria in filters)
                 filter = filter.WhereEquals(criteria.field, criteria.value);
 
-            var grouping = filter
-                .GroupBy("Company", "Brand", "Country");
+            IGroupByDocumentQuery<Sneaker> grouping;
+
+            if (groupingFields.Length == 1)
+            {
+                grouping = filter.GroupBy(groupingFields.First());
+            }
+            else
+            {
+                grouping = filter
+                    .GroupBy(groupingFields.First(), groupingFields.Skip(1).ToArray());                
+            }
 
             foreach (string field in selectFields)
                 grouping = grouping.SelectKey(field);
