@@ -137,14 +137,16 @@ namespace Northwind.Features.DynamicGrouping
             string[] groupingFields = { "Company", "Brand", "Country" };
             string[] selectFields = { "Company", "Brand", "Price" };
 
-            var query = session.Advanced.DocumentQuery<Sneaker>()
-                .WhereEquals("Country", "Germany")
+            var filter = session.Advanced.DocumentQuery<Sneaker>()
+                .WhereEquals("Country", "Germany");
+
+            var grouping = filter
                 .GroupBy("Company", "Brand", "Country");
 
             foreach (string field in selectFields)
-                query = query.SelectKey(field);
+                grouping = grouping.SelectKey(field);
 
-            var res5 = query
+            var res5 = grouping
                 .SelectCount("Count")
                 .OfType<dynamic>()
                 .ToList();
