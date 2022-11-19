@@ -132,6 +132,28 @@ namespace Northwind.Features.DynamicGrouping
             {
                 AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: AveragePrice = {res.Price / res.Count} ");
             }
+
+            // Untyped grouping by Company and Brand, filtered by Country, average price
+            string[] groupingFields = { "Company", "Brand", "Country" };
+            string[] selectFields = { "Company", "Brand", "Price" };
+
+            var query = session.Advanced.DocumentQuery<Sneaker>()
+                .WhereEquals("Country", "Germany")
+                .GroupBy("Company", "Brand", "Country");
+
+            foreach (string field in selectFields)
+                query = query.SelectKey(field);
+
+            var res5 = query
+                .SelectCount("Count")
+                .OfType<dynamic>()
+                .ToList();
+
+            AnsiConsole.Markup($"\n[black on yellow]Sneakers grouped by company and brand, filtered for Germany[/]\n\n");
+            foreach (var res in res5)
+            {
+                AnsiConsole.WriteLine($" {res.Company} - {res.Brand} :: {res.Count} :: AveragePrice = {res.Price / res.Count} ");
+            }
         }
     }
 }
