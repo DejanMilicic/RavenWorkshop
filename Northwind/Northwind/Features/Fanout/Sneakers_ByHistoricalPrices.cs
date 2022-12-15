@@ -32,10 +32,7 @@ namespace Northwind.Features.Fanout
                     Currency = sneaker.Currency
                 };
 
-            Stores.Add(x => x.From, FieldStorage.Yes);
-            Stores.Add(x => x.To, FieldStorage.Yes);
+            StoreAllFields(FieldStorage.Yes);
         }
-
-
     }
 }
