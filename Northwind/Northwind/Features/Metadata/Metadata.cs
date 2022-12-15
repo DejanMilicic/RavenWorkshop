@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Linq;
+using FluentAssertions;
 using Northwind.Models.Entity;
+using Raven.Client.Documents.Linq;
+using Raven.Client.Documents.Queries;
+using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.Metadata
 {
-    public class Metadata
+    public static class Metadata
     {
-        public void Create()
+        public static void Create()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
             var emp = session.Load<Employee>("employees/8-A");
@@ -17,7 +22,7 @@ namespace Northwind.Features.Metadata
             session.SaveChanges();
         }
 
-        public void Read()
+        public static void Read()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
             var emp = session.Load<Employee>("employees/8-A");
@@ -25,6 +30,25 @@ namespace Northwind.Features.Metadata
             string isDeleted = (string)session.Advanced.GetMetadataFor(emp)["IsDeleted"];
 
             Console.WriteLine($"{emp.FirstName}: {isDeleted}");
+        }
+
+        public static void FetchJustMetadata()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            var metadata = session.Query<Employee>()
+                .Where(x => x.Id == "employees/8-A")
+                .Select(x => RavenQuery.Metadata(x)).SingleOrDefault()
+                .As<IMetadataDictionary>();
+
+            if (metadata.ContainsKey("IsDeleted"))
+            {
+                Console.WriteLine($"Entity contains metadata key IsDeleted: {metadata["IsDeleted"]}");
+            }
+            else
+            {
+                Console.WriteLine($"Entity does not contain metadata key IsDeleted");
+            }
         }
     }
 }
