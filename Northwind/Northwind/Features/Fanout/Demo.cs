@@ -26,6 +26,7 @@ namespace Northwind.Features.Fanout
 
             using var session = store.OpenSession();
 
+            // https://ravendb.net/docs/article-page/5.4/Csharp/client-api/session/querying/how-to-customize-query#projectionbehavior
             IRavenQueryable<Sneakers_ByHistoricalPrices.Entry> history = session
                 .Query<Sneaker, Sneakers_ByHistoricalPrices>()
                 .Customize(x => x.Projection(ProjectionBehavior.FromIndexOrThrow))
@@ -47,7 +48,5 @@ namespace Northwind.Features.Fanout
             foreach (Sneakers_ByHistoricalPrices.Entry entry in res2)
                 Console.WriteLine($"Model: {entry.Model}, {entry.Price} {entry.Currency} [{entry.From.ToShortDateString()} - {entry.To.ToShortDateString()}]");
         }
-
-
     }
 }
