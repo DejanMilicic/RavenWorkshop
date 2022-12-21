@@ -58,6 +58,7 @@ using Northwind.Features.Fanout;
 using Northwind.Features.Records;
 using Northwind.Features.RequestExecutor;
 using Northwind.Features.SearchBasic;
+using Northwind.Features.InnerJoin;
 
 namespace Northwind
 {
