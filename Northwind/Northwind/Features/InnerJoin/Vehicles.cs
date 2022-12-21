@@ -9,7 +9,7 @@ namespace Northwind.Features.InnerJoin
         {
             public string RegNo { get; set; }
 
-            public string VehicleId { get; set; }
+            public string VehicleDetailsId { get; set; }
 
             public string OwnerId { get; set; }
 
@@ -22,7 +22,7 @@ namespace Northwind.Features.InnerJoin
                 select new Entry
                 {
                     RegNo = vd.RegNo,
-                    VehicleId = vd.Id,
+                    VehicleDetailsId = vd.Id,
                     OwnerId = "",
                     InsuranceId = ""
                 });
@@ -31,7 +31,7 @@ namespace Northwind.Features.InnerJoin
                 select new Entry
                 {
                     RegNo = owner.RegNo,
-                    VehicleId = "",
+                    VehicleDetailsId = "",
                     OwnerId = owner.Id,
                     InsuranceId = ""
                 });
@@ -40,7 +40,7 @@ namespace Northwind.Features.InnerJoin
                 select new Entry
                 {
                     RegNo = insurance.RegNo,
-                    VehicleId = "",
+                    VehicleDetailsId = "",
                     OwnerId = "",
                     InsuranceId = insurance.Id
                 });
@@ -54,12 +54,12 @@ namespace Northwind.Features.InnerJoin
                 select new Entry
                 {
                     RegNo = g.Key.RegNo,
-                    VehicleId = g.FirstOrDefault(x => x.VehicleId != "").VehicleId,
+                    VehicleDetailsId = g.FirstOrDefault(x => x.VehicleDetailsId != "").VehicleDetailsId,
                     OwnerId = g.FirstOrDefault(x => x.OwnerId != "").OwnerId,
                     InsuranceId = g.FirstOrDefault(x => x.InsuranceId != "").InsuranceId
                 };
 
-            OutputReduceToCollection = "FullVehicleDetails";
+            OutputReduceToCollection = "Vehicles";
         }
     }
 }
