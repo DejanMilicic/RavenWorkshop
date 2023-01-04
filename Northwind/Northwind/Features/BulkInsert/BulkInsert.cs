@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Northwind.Models.Entity;
+using Raven.Client.Documents.BulkInsert;
 
 namespace Northwind.Features.BulkInsert
 {
@@ -34,7 +35,7 @@ namespace Northwind.Features.BulkInsert
             var timer = new Stopwatch();
             timer.Start();
 
-            using var bulk = DocumentStoreHolder.Store.BulkInsert();
+            using BulkInsertOperation bulk = DocumentStoreHolder.Store.BulkInsert();
 
             for (int i = 0; i < 40 * 25_000; i++)
             {
