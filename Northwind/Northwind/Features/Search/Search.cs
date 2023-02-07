@@ -76,5 +76,27 @@ namespace Northwind.Features.Search
                 // Employees: Laura Callahan
             }
         }
+
+        public static void FuzzySearch()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            string firstName = "Nanci";
+            string lastName = "Kin";
+            decimal fuzzy = 0.5m;
+
+            List<Employee> res = session.Advanced.DocumentQuery<Employee>()
+                .WhereEquals(x => x.FirstName, firstName).Fuzzy(fuzzy)
+                .OrElse()
+                .WhereEquals(x => x.LastName, lastName).Fuzzy(fuzzy)
+                .ToList();
+
+            Console.WriteLine($"Performing search for '{firstName}' or '{lastName}'");
+            Console.WriteLine("Matching employees: \n");
+            foreach (Employee employee in res)
+            {
+                Console.WriteLine($"{employee.FirstName} {employee.LastName}");
+            }
+        }
     }
 }
