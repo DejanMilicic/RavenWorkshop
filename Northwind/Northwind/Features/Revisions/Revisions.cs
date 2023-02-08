@@ -28,6 +28,7 @@ namespace Northwind.Features.Revisions
             session.SaveChanges();
 
             session.Advanced.Revisions.ForceRevisionCreationFor(employee);
+            // todo : can this be turned off by need?
             session.SaveChanges();
 
             employee.FirstName = "Rev2";
