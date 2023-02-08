@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Spectre.Console;
@@ -16,6 +17,7 @@ namespace Northwind.Features.Indexes.DynamicFields.ProductAttributes
             }).Initialize();
 
             IndexCreation.CreateIndexes(new AbstractIndexCreationTask[] { new Products_ByAttribute() }, store);
+            IndexCreation.CreateIndexes(new AbstractIndexCreationTask[] { new Products_ByAttribute_Typed() }, store);
 
             return store;
         }
@@ -45,6 +47,15 @@ namespace Northwind.Features.Indexes.DynamicFields.ProductAttributes
                 .ToList();
 
             AnsiConsole.Markup($"\n[black on yellow]Waterproof products[/]\n\n");
+            foreach (var prod in matchingProducts)
+                AnsiConsole.WriteLine(prod.SKU);
+
+            matchingProducts = session
+                .Query<Product, Products_ByAttribute_Typed>()
+                .Where(x => (string)x.Attributes["Color"] == "red")
+                .ToList();
+
+            AnsiConsole.Markup($"\n[black on yellow]Red products[/]\n\n");
             foreach (var prod in matchingProducts)
                 AnsiConsole.WriteLine(prod.SKU);
         }
