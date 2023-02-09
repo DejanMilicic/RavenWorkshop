@@ -15,8 +15,8 @@ namespace Northwind.Features.Streaming
             using (var stream = new MemoryStream())
             using (var session = DocumentStoreHolder.Store.OpenSession())
             {
-                session.Query<Employee>()
-                    .Where(x => x.FirstName == "Robert")
+                session
+                    .Query<Order>()
                     .ToStream(stream);
 
                 stream.Position = 0;
