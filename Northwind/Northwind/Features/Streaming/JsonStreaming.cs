@@ -8,7 +8,7 @@ using Raven.Client.Documents;
 
 namespace Northwind.Features.Streaming
 {
-    public static class Streaming
+    public static class JsonStreaming
     {
         public static void ToStream()
         {
