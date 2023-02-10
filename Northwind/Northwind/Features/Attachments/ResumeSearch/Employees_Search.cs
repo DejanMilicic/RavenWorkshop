@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.IO.Compression;
-using System.Linq;
+﻿using System.Linq;
 using Raven.Client.Documents.Indexes;
 
 namespace Northwind.Features.Attachments.ResumeSearch
