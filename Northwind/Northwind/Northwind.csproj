@@ -34,10 +34,10 @@
     <None Update="Features\Attachments\att2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Features\Attachments\ResumeSearch\cv.txt">
+    <None Update="Features\Indexes\IndexingAttachments\dracula.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Features\Attachments\ResumeSearch\dracula.zip">
+    <None Update="Features\Indexes\IndexingAttachments\RomeoAndJuliet.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="free.dejanmilicic.client.certificate.pfx">
