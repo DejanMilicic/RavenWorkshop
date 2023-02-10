@@ -25,7 +25,7 @@ namespace Northwind.Features.Metadata
         public static void Read()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
-            var emp = session.Load<Employee>("employees/8-A");
+            Employee emp = session.Load<Employee>("employees/8-A");
 
             string isDeleted = (string)session.Advanced.GetMetadataFor(emp)["IsDeleted"];
 
