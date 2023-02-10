@@ -11,10 +11,10 @@ using Raven.Client.Exceptions;
 
 namespace Northwind.Features.OptimisticConcurrency
 {
-    public class OptimisticConcurrency
+    public static class OptimisticConcurrency
     {
         // last write wins
-        public void Default()
+        public static void Default()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
             var order = session.Load<Order>("orders/1-A");
@@ -23,7 +23,7 @@ namespace Northwind.Features.OptimisticConcurrency
         }
 
         // optimistic concurrency on
-        public void UseOptimisticConcurrency()
+        public static void UseOptimisticConcurrency()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
             session.Advanced.UseOptimisticConcurrency = true; // <--- this line added
@@ -33,7 +33,7 @@ namespace Northwind.Features.OptimisticConcurrency
         }
 
         // optimistic concurrency on, with try/catch
-        public void UseOptimisticConcurrencyWithCatch()
+        public static void UseOptimisticConcurrencyWithCatch()
         {
             try
             {
@@ -51,7 +51,7 @@ namespace Northwind.Features.OptimisticConcurrency
         }
 
         // use patch to update single property
-        public void UsePatch()
+        public static void UsePatch()
         {
             try
             {
@@ -74,7 +74,7 @@ namespace Northwind.Features.OptimisticConcurrency
         //    this.Name = this.FirstName + " " + this.LastName;        
         //}
 
-        public void UseDeferredPatch()
+        public static void UseDeferredPatch()
         {
             try
             {
