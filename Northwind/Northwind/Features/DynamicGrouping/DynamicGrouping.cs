@@ -28,7 +28,7 @@ namespace Northwind.Features.DynamicGrouping
 
         public static void Seed()
         {
-            using var session = DocumentStoreHolder.GetStore().Initialize().OpenSession();
+            using var session = DynamicGroupingDemo.GetStore().Initialize().OpenSession();
 
             // Adidas
             session.Store(new Sneaker { Price = 117, Company = "Adidas", Brand = "Terex", Country = "Germany", Size = 45, Color = "White" });
