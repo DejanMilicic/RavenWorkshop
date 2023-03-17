@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Northwind.Features.AdditionalSources.AveragePrice
 {
+    // todo : create JS additional source example
+
     public static class ComputeAveragePrice
     {
         public static decimal FromPriceHistory(List<decimal> prices)

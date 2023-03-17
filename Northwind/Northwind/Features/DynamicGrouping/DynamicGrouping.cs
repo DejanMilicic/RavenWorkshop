@@ -129,6 +129,7 @@ namespace Northwind.Features.DynamicGrouping
                 .SelectKey("Brand")
                 .SelectKey("Price")
                 .SelectCount("Count")
+                // todo : add sum here
                 .OfType<dynamic>()
                 .ToList();
 
