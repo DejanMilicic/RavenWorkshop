@@ -28,7 +28,7 @@ namespace Northwind.Features.Includes
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            var orders = session.Query<Order>()
+            List<Order> orders = session.Query<Order>()
                 .Where(order => order.Company == "Companies/2-A")
                 .ToList();
 
