@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Raven.Client.Documents;
+using Raven.Client.Exceptions;
 
 namespace Northwind.Features.Patching.Upsert
 {
@@ -28,7 +30,8 @@ namespace Northwind.Features.Patching.Upsert
                 {
                     Id = "Appointment/1",
                     Doctor = "Udo Brinkmann",
-                    Time = new DateTime(2023, 1, 1)
+                    Time = new DateTime(2023, 1, 1),
+                    Patients = new List<Patient>()
                 };
 
                 session.Store(app);
@@ -50,6 +53,64 @@ namespace Northwind.Features.Patching.Upsert
                 session1.SaveChanges(); // this will execute second, overriding Bob with Alice
 
                 // final outcome of this is just a single patient saved - Alice
+            }
+        }
+
+        /// One possible way of avoiding this is by usage of Optimistic Concurrency
+        /// RavenDB will use change vector to detect if you are updating same version of document
+        /// as one currently in the database
+        /// If you are attempting to overwrite newer version, ConcurrencyException will be thrown
+        public static void OptimisticConcurrency()
+        {
+            var store = GertStore();
+
+            using (var session = store.OpenSession())
+            {
+                Appointment app = new Appointment
+                {
+                    Id = "Appointment/1",
+                    Doctor = "Udo Brinkmann",
+                    Time = new DateTime(2023, 1, 1),
+                    Patients = new List<Patient>()
+                };
+
+                session.Store(app);
+                session.SaveChanges();
+            }
+
+            using (var session1 = store.OpenSession())
+            {
+                session1.Advanced.UseOptimisticConcurrency = true;
+                
+                Appointment app1 = session1.Load<Appointment>("Appointment/1");
+                app1.Patients.Add(new Patient { Name = "Alice" });
+
+                using (var session2 = store.OpenSession())
+                {
+                    Appointment app2 = session2.Load<Appointment>("Appointment/1");
+                    app2.Patients.Add(new Patient { Name = "Bob" });
+                    session2.SaveChanges(); // this will execute first, saving Bob as a patient
+                }
+
+                try
+                {
+                    // this will execute second, attempting to override Bob with Alice
+                    session1.SaveChanges(); 
+                }
+                catch (ConcurrencyException ex)
+                {
+                    // but exception will be thrown, since session1 is using optimistic concurrency
+                    // so we should handle it in a civilized manner
+
+                    session1.Advanced.Evict("Appointment/1");
+                    Appointment appointment = session1.Load<Appointment>("Appointment/1");
+                    //var changes0 = session1.Advanced.WhatChanged();
+                    appointment.Patients.Add(new Patient { Name = "Alice" });
+                    //var changes1 = session1.Advanced.WhatChanged();
+                    session1.SaveChanges();
+                }
+
+                // final outcome of this is both patients saved - [ Bob, Alice ]
             }
         }
     }
