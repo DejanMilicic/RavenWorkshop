@@ -85,7 +85,7 @@ namespace Northwind.Features.Revisions
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            var revisions = session.Advanced.Revisions.GetFor<Employee>("employees/8-A");
+            List<Employee> revisions = session.Advanced.Revisions.GetFor<Employee>("employees/8-A");
 
             foreach (Employee revision in revisions)
             {
