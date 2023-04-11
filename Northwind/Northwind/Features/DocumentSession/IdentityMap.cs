@@ -4,7 +4,7 @@ using System;
 
 namespace Northwind.Features.DocumentSession;
 
-public static class Clear
+public static class IdentityMap
 {
     public static void Demo()
     {
@@ -12,19 +12,18 @@ public static class Clear
 
         using var session = store.OpenSession();
 
+        // this will go to the server, fetch JSON document employees/8-A
+        // received JSON will be deserialized into strongly typed object "laura"
+        // additionally, session will store document in the Identity map
         Employee laura = session.Load<Employee>("employees/8-A");
-        Employee robert = session.Load<Employee>("employees/7-A");
 
-        // stop tracking all entities that were tracked so far
-        // this is equivalent of opening new session - you get fresh new session
-        session.Advanced.Clear();
-
-        // at this point, identity map is completely empty
-        // so loading ANY entity will be forced to go to the server
+        // By default, when loading document by ID
+        // session will first check inside of Identity Map
+        // and if document with ID is found, it will be returned from it
+        // without making a call to the server
         session.Load<Employee>("employees/8-A");
-        session.Load<Employee>("employees/7-A");
 
-        // hence, 4 requests in total
+        // hence, one call to the database
         Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
     }
 }

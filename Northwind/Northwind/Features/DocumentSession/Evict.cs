@@ -10,7 +10,7 @@ public static class Evict
     {
         using var store = new DocumentStore { Urls = new[] { "http://127.0.0.1:8080" }, Database = "demo" }.Initialize();
 
-        using var session = DocumentStoreHolder.Store.OpenSession();
+        using var session = store.OpenSession();
 
         Employee laura = session.Load<Employee>("employees/8-A");
         session.Advanced.Evict(laura); // stop tracking specified entity
