@@ -1,8 +1,8 @@
-﻿using Northwind.Models.Entity;
+﻿using System;
+using Northwind.Models.Entity;
 using Raven.Client.Documents.Session;
-using System;
 
-namespace Northwind.Features.DocumentSession.ChangeTracking;
+namespace Northwind.Features.DocumentSession.IdentityMap;
 
 public static class NoTracking
 {
