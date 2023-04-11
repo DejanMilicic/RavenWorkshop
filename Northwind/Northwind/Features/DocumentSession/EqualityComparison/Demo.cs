@@ -2,17 +2,13 @@
 using System.Linq;
 using Raven.Client.Documents;
 
-namespace Northwind.Features.OptimisticConcurrency.EqualityComparison
+namespace Northwind.Features.DocumentSession.EqualityComparison
 {
     public static class EqualityComparison
     {
         public static void Demo()
         {
-            var store = new DocumentStore
-            {
-                Urls = new[] { "http://127.0.0.1:8080" },
-                Database = "Demo"
-            }.Initialize();
+            using var store = new DocumentStore { Urls = new[] { "http://127.0.0.1:8080" }, Database = "Demo" }.Initialize();
 
             Patient pa = new Patient
             {
@@ -21,15 +17,15 @@ namespace Northwind.Features.OptimisticConcurrency.EqualityComparison
                 Description = "original desc"
             };
 
+            using var session = store.OpenSession();
+            session.Store(pa);
+
             Patient pb = new Patient
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "John",
                 Description = "edited desc"
             };
-
-            using var session = store.OpenSession();
-            session.Store(pa);
 
             var exists = session.Advanced
                 .GetTrackedEntities()

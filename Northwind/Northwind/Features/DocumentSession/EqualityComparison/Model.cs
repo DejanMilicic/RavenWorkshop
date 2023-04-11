@@ -1,5 +1,4 @@
-﻿
-namespace Northwind.Features.OptimisticConcurrency.EqualityComparison
+﻿namespace Northwind.Features.DocumentSession.EqualityComparison
 {
     public class Patient
     {
