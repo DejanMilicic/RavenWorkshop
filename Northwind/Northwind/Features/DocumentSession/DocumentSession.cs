@@ -9,19 +9,6 @@ namespace Northwind.Features.DocumentSession
 {
     public static class DocumentSession
     {
-        public static void ExplicitDatabase()
-        {
-            using var session = DocumentStoreHolder.Store.OpenSession(database: "demo2");
-
-            Employee laura = session.Load<Employee>("employees/8-A");
-            
-            // todo
-            //laura.LastName = "Doe";
-            //var changes = session.Advanced.WhatChanged();
-
-            Console.WriteLine($"{laura.FirstName} {laura.LastName}");
-        }
-
         public static void IdentityMap()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
@@ -33,20 +20,7 @@ namespace Northwind.Features.DocumentSession
             Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public static void SessionClear()
-        {
-            using var session = DocumentStoreHolder.Store.OpenSession();
 
-            Employee laura = session.Load<Employee>("employees/8-A");
-            Employee robert = session.Load<Employee>("employees/7-A");
-            
-            session.Advanced.Clear(); // stop tracking all entities
-
-            laura = session.Load<Employee>("employees/8-A");
-            robert = session.Load<Employee>("employees/7-A");
-            
-            Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
-        }
 
         public static void WhatChanged()
         {
