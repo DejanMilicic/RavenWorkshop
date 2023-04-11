@@ -1,14 +1,14 @@
 ﻿using Northwind.Models.Entity;
 using Raven.Client.Documents;
 
-namespace Northwind.Features.DocumentSession.IdentityMap;
+namespace Northwind.Features.DocumentSession;
 
 public static class SelectiveTracking
 {
     public static void Demo()
     {
         using var store = new DocumentStore { Urls = new[] { "http://127.0.0.1:8080" }, Database = "demo" };
-        store.Conventions.ShouldIgnoreEntityChanges = (session, entity, id) => (entity is Employee { FirstName: "Laura" });
+        store.Conventions.ShouldIgnoreEntityChanges = (session, entity, id) => entity is Employee { FirstName: "Laura" };
         store.Initialize();
 
         using var session = store.OpenSession();

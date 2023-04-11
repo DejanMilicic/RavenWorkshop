@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Raven.Client.Documents;
 
-namespace Northwind.Features.DocumentSession.IdentityMap;
+namespace Northwind.Features.DocumentSession;
 
 public static class GetTrackedEntities
 {

@@ -3,7 +3,7 @@ using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 
-namespace Northwind.Features.DocumentSession.IdentityMap;
+namespace Northwind.Features.DocumentSession;
 
 public static class NoTracking
 {
