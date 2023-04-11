@@ -17,7 +17,8 @@ public static class NoTracking
 
         laura.LastName += " CHANGED";
 
-        // from this moment onwards, changes will be tracked no more
+        // laura is not tracked anymore
+        // SaveChanges() will "ignore" this object
         // but, document will still be loaded in Identity Map
         // so, attempt to load it will go to the server
         session.Advanced.IgnoreChangesFor(laura);
