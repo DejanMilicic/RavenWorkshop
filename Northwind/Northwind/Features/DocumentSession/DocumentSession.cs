@@ -33,19 +33,6 @@ namespace Northwind.Features.DocumentSession
             Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public static void Evict()
-        {
-            using var session = DocumentStoreHolder.Store.OpenSession();
-
-            Employee laura = session.Load<Employee>("employees/8-A");
-            
-            session.Advanced.Evict(laura); // stop tracking specified entity
-
-            laura = session.Load<Employee>("employees/8-A");
-            
-            Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
-        }
-
         public static void SessionClear()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
