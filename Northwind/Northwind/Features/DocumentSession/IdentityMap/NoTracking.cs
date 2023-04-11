@@ -1,5 +1,6 @@
 ﻿using System;
 using Northwind.Models.Entity;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 
 namespace Northwind.Features.DocumentSession.IdentityMap;
@@ -8,6 +9,8 @@ public static class NoTracking
 {
     public static void Demo()
     {
+        using var store = new DocumentStore { Urls = new[] { "http://127.0.0.1:8080" }, Database = "demo" }.Initialize();
+
         using var session = DocumentStoreHolder.Store.OpenSession(new SessionOptions
         {
             NoTracking = true
