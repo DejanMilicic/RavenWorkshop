@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
@@ -55,5 +57,24 @@ public static class NoTracking
 
         // so total number of requests sent will be 4
         Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
+    }
+
+    public static void QueryNoTracking()
+    {
+        using var store = new DocumentStore { Urls = new[] { "http://127.0.0.1:8080" }, Database = "demo" }.Initialize();
+
+        using var session = store.OpenSession();
+
+        List<Employee> employeesResults = session.Query<Employee>()
+            // all entities returned by Query will not be tracked for changes
+            .Customize(x => x.NoTracking())
+            .Where(x => x.Address.City == "London")
+            .ToList();
+
+        // following modification will not be tracked for SaveChanges
+        employeesResults.First().LastName += " from London";
+
+        // modification we made will not be persisted
+        session.SaveChanges();
     }
 }
