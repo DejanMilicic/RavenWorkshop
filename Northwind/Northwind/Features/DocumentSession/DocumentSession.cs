@@ -61,22 +61,6 @@ namespace Northwind.Features.DocumentSession
             Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
         }
 
-        public static void NoTracking()
-        {
-            using var session = DocumentStoreHolder.Store.OpenSession(new SessionOptions
-            {
-                NoTracking = true
-            });
-            
-            Employee laura = session.Load<Employee>("employees/8-A");
-            Employee robert = session.Load<Employee>("employees/7-A");
-            
-            laura = session.Load<Employee>("employees/8-A");
-            robert = session.Load<Employee>("employees/7-A");
-            
-            Console.WriteLine($"Total requests: {session.Advanced.NumberOfRequests}");
-        }
-
         public static void SelectiveTracking()
         {
             var store = (DocumentStore)DocumentStoreHolder.GetStore();
