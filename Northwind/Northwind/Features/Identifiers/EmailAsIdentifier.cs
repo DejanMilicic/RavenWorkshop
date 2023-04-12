@@ -1,67 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Northwind.Models.Entity;
-using Raven.Client;
 using Raven.Client.Documents;
-using Raven.Client.Documents.Conventions;
 
-namespace Northwind.Features.Identifiers
+namespace Northwind.Features.Identifiers;
+
+// todo : custom Id generation based on email as a suffix
+
+// todo : also
+// [JsonIgnore]
+// public string Id { get; set; }
+
+public class PaypalUser
 {
-    // todo : custom Id generation based on email as a suffix
+    public string Email { get; set; }
 
-    // todo : also
-    // [JsonIgnore]
-    // public string Id { get; set; }
+    public string Name { get; set; }
+}
 
-    public class EmailEmployee  // TODO : rename this to paypal
+public static class EmailAsIdentifier
+{
+    public static void Demo()
     {
-        public string Email { get; set; }
+        #region Customize Store
 
-        public string Name { get; set; }
-    }
+        using var store = new DocumentStore { Urls = new[] { "http://127.0.0.1:8080" }, Database = "demo" };
 
-    public class EmailAsIdentifier
-    {
-        public void Do()
+        var defaultFindIdentityProperty = store.Conventions.FindIdentityProperty;
+
+        store.Conventions.FindIdentityProperty = property =>
+            typeof(PaypalUser).IsAssignableFrom(property.DeclaringType)
+                ? property.Name == "Email"
+                : defaultFindIdentityProperty(property);
+
+        store.Initialize();
+
+        #endregion
+
+        using var session = store.OpenSession();
+
+        PaypalUser user = new PaypalUser
         {
-            #region Customize Store
+            Email = "john@doe.com",
+            Name = "John"
+        };
 
-            IDocumentStore store = DocumentStoreHolder.GetStore();
+        session.Store(user);
+        var userId = session.Advanced.GetDocumentId(user);
+        Console.WriteLine($"id(user) = {userId}");
 
-            var defaultFindIdentityProperty = store.Conventions.FindIdentityProperty;
-
-            store.Conventions.FindIdentityProperty = property =>
-                typeof(EmailEmployee).IsAssignableFrom(property.DeclaringType)
-                    ? property.Name == "Email"
-                    : defaultFindIdentityProperty(property);
-
-            store.Initialize();
-
-            #endregion
-
-            using (var session = store.OpenSession())
-            {
-                EmailEmployee emp = new EmailEmployee
-                {
-                    Email = "john@doe.com",
-                    Name = "John"
-                };
-
-                session.Store(emp);
-                var empId = session.Advanced.GetDocumentId(emp);
-                Console.WriteLine($"id(emp) = {empId}");
-
-                session.SaveChanges();
-                
-                session.Advanced.Evict(emp);
-                EmailEmployee loadedEmp = session.Load<EmailEmployee>(empId);
-                Console.WriteLine($"loadedEmp.Email = {loadedEmp.Email}");
-            }
-        }
+        session.SaveChanges();
+            
+        session.Advanced.Evict(user);
+        PaypalUser loadedUser = session.Load<PaypalUser>(userId);
+        Console.WriteLine($"loadedUser.Email = {loadedUser.Email}");
     }
 }
