@@ -3,12 +3,6 @@ using Raven.Client.Documents;
 
 namespace Northwind.Features.Identifiers;
 
-// todo : custom Id generation based on email as a suffix
-
-// todo : also
-// [JsonIgnore]
-// public string Id { get; set; }
-
 public class PaypalUser
 {
     public string Email { get; set; }
