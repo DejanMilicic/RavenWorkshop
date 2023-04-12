@@ -51,7 +51,6 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using DocumentSession = Northwind.Features.DocumentSession.DocumentSession;
 using Northwind.Features.Facets;
 using Northwind.Features.Facets2;
 using Northwind.Features.Fanout;
@@ -59,6 +58,8 @@ using Northwind.Features.Records;
 using Northwind.Features.RequestExecutor;
 using Northwind.Features.SearchBasic;
 using Northwind.Features.InnerJoin;
+using Northwind.Features.BulkInsert.RawJson;
+using Northwind.Features.Query;
 
 namespace Northwind
 {
@@ -74,6 +75,8 @@ namespace Northwind
         static async Task Main(string[] args)
         {
             DocumentStoreHolder.Store.OpenSession();
+
+            return;
 
             #region temp
 
