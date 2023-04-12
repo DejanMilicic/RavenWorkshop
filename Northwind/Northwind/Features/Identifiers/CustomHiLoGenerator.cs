@@ -1,80 +1,73 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Identity;
 
-namespace Northwind.Features.Identifiers
+namespace Northwind.Features.Identifiers;
+
+public class User
 {
-    public class User
-    {
-        public string Id { get; set; }
+    public string Id { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; }
+}
+
+public static class CustomHiLoGenerator
+{
+    public static void Demo()
+    {
+        #region Customize Store
+
+        using var store = new DocumentStore { Urls = new[] { "http://127.0.0.1:8080" }, Database = "demo" };
+
+        var gen = new SingleNodeAsyncMultiDatabaseHiLoIdGenerator(store);
+        store.Conventions.AsyncDocumentIdGenerator = gen.GenerateDocumentIdAsync;
+
+        store.Initialize();
+
+        #endregion
+
+        User user = new User { Name = "John" };
+
+        using var session = store.OpenSession();
+        session.Store(user);
+        session.SaveChanges();
+
+        Console.WriteLine(user.Id);
+    }
+}
+
+public class SingleNodeAsyncMultiDatabaseHiLoIdGenerator : AsyncMultiDatabaseHiLoIdGenerator
+{
+    public SingleNodeAsyncMultiDatabaseHiLoIdGenerator(DocumentStore store) : base(store)
+    {
     }
 
-    public class CustomHiLoGenerator
+    public override AsyncMultiTypeHiLoIdGenerator GenerateAsyncMultiTypeHiLoFunc(string dbName)
     {
-        public void Do()
-        {
-            #region Customize Store
-
-            var store = (DocumentStore)DocumentStoreHolder.GetStore();
-
-            var gen = new SingleNodeAsyncMultiDatabaseHiLoIdGenerator(store);
-            store.Conventions.AsyncDocumentIdGenerator = gen.GenerateDocumentIdAsync;
-
-            store.Initialize();
-
-            #endregion
-
-            User user = new User { Name = "John" };
-
-            using (var session = store.OpenSession())
-            {
-                session.Store(user);
-                session.SaveChanges();
-            }
-
-            Console.WriteLine(user.Id);
-        }
+        return new SingleNodeAsyncMultiTypeHiLoIdGenerator(Store, dbName);
     }
 
-    public class SingleNodeAsyncMultiDatabaseHiLoIdGenerator : AsyncMultiDatabaseHiLoIdGenerator
+    public class SingleNodeAsyncMultiTypeHiLoIdGenerator : AsyncMultiTypeHiLoIdGenerator
     {
-        public SingleNodeAsyncMultiDatabaseHiLoIdGenerator(DocumentStore store) : base(store)
+        public SingleNodeAsyncMultiTypeHiLoIdGenerator(DocumentStore store, string dbName) : base(store, dbName)
         {
         }
 
-        public override AsyncMultiTypeHiLoIdGenerator GenerateAsyncMultiTypeHiLoFunc(string dbName)
+        protected override AsyncHiLoIdGenerator CreateGeneratorFor(string tag)
         {
-            return new SingleNodeAsyncMultiTypeHiLoIdGenerator(Store, dbName);
+            return new SingleNodeAsyncHiLoIdGenerator(tag, Store, DbName, Conventions.IdentityPartsSeparator);
         }
 
-        public class SingleNodeAsyncMultiTypeHiLoIdGenerator : AsyncMultiTypeHiLoIdGenerator
+        public class SingleNodeAsyncHiLoIdGenerator : AsyncHiLoIdGenerator
         {
-            public SingleNodeAsyncMultiTypeHiLoIdGenerator(DocumentStore store, string dbName) : base(store, dbName)
+            public SingleNodeAsyncHiLoIdGenerator(string tag, DocumentStore store, string dbName, char identityPartsSeparator)
+                : base(tag, store, dbName, identityPartsSeparator)
             {
             }
 
-            protected override AsyncHiLoIdGenerator CreateGeneratorFor(string tag)
+            protected override string GetDocumentIdFromId(long nextId)
             {
-                return new SingleNodeAsyncHiLoIdGenerator(tag, Store, DbName, Conventions.IdentityPartsSeparator);
-            }
-
-            public class SingleNodeAsyncHiLoIdGenerator : AsyncHiLoIdGenerator
-            {
-                public SingleNodeAsyncHiLoIdGenerator(string tag, DocumentStore store, string dbName, char identityPartsSeparator) : base(tag, store, dbName,
-                    identityPartsSeparator)
-                {
-                }
-
-                protected override string GetDocumentIdFromId(long nextId)
-                {
-                    return $"{Prefix}{nextId}";
-                }
+                return $"{Prefix}{nextId}";
             }
         }
     }
