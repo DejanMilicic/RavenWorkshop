@@ -28,13 +28,6 @@ public class Orders_ByTopManager : AbstractIndexCreationTask<Order, Orders_ByTop
                         x => LoadDocument<Employee>(x.ReportsTo))
                         .First(),
 
-
-                BottomManager = 
-                    Recurse(
-                        LoadDocument<Employee>(order.Employee), 
-                        x => LoadDocument<Employee>(x.ReportsTo))
-                        .LastOrDefault(),
-
                 Managers = 
                     Recurse(
                         LoadDocument<Employee>(order.Employee), 
