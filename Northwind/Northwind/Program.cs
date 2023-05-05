@@ -60,6 +60,7 @@ using Northwind.Features.SearchBasic;
 using Northwind.Features.InnerJoin;
 using Northwind.Features.BulkInsert.RawJson;
 using Northwind.Features.Query;
+using Northwind.Features.Customizations;
 
 namespace Northwind
 {
