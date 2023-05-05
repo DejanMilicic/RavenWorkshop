@@ -26,7 +26,7 @@ public class Orders_ByTopManager : AbstractIndexCreationTask<Order, Orders_ByTop
                     Recurse(
                         LoadDocument<Employee>(order.Employee), 
                         x => LoadDocument<Employee>(x.ReportsTo))
-                        .First(),
+                        .Last(),
 
                 Managers = 
                     Recurse(
