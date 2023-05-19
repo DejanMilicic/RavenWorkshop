@@ -1,4 +1,5 @@
-﻿```
+﻿# declarative
+```
 from Orders 
 update 
 {
@@ -6,4 +7,15 @@ update
 }
 ```
 
-
+# imperative
+```
+from Orders 
+update {
+	var total = 0;
+	for(var i = 0; i < this.Lines.length; i++){
+		var line = this.Lines[i];
+		total += line.Quantity * line.PricePerUnit * (1 - line.Discount);
+	}
+	this.Total = total;
+}
+```
