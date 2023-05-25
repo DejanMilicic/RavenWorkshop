@@ -98,10 +98,19 @@ namespace Northwind.Features.Events
                     }
                 };
 
-                // app-level soft delete implementation
+                // app-level multitenancy
                 store.OnBeforeQuery += (sender, e) =>
                 {
-                    if (e.QueryCustomization is IDocumentQuery<BaseAuditedEntity> qe)
+                    if (e.QueryCustomization is IDocumentQuery<MultitenantEntity> qe)
+                    {
+                        qe.AndAlso().Where(x => x.Tenant == "[current_tenant]");
+                    }
+                };
+
+                // app-level soft delete implementation 
+                store.OnBeforeQuery += (sender, e) =>
+                {
+                    if (e.QueryCustomization is IDocumentQuery<AuditedEntity> qe)
                     {
                         qe.AndAlso().Where(x => x.IsDeleted == false);
                     }
