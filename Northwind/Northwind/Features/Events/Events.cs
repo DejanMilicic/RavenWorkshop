@@ -99,11 +99,16 @@ namespace Northwind.Features.Events
                 };
 
                 // app-level multitenancy
+
+                // var http = ctx.GetRequiredService<IHttpContextAccessor>();
+                // var identity = http.HttpContext?.User.Identity;
+
                 store.OnBeforeQuery += (sender, e) =>
                 {
+                    // if (identity != null)
                     if (e.QueryCustomization is IDocumentQuery<MultitenantEntity> qe)
                     {
-                        qe.AndAlso().Where(x => x.Tenant == "[current_tenant]");
+                        qe.AndAlso().Where(x => x.Tenant == "[identity.Name]");
                     }
                 };
 
