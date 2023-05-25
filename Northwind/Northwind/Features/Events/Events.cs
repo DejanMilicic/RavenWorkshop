@@ -5,6 +5,7 @@ using Raven.Client.Documents.Session;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Northwind.Models;
 
 namespace Northwind.Features.Events
 {
@@ -94,6 +95,15 @@ namespace Northwind.Features.Events
                     if (e.QueryCustomization is IDocumentQuery<Employee> qe)
                     {
                         qe.AndAlso().WhereEquals("Address.City", "London");
+                    }
+                };
+
+                // app-level soft delete implementation
+                store.OnBeforeQuery += (sender, e) =>
+                {
+                    if (e.QueryCustomization is IDocumentQuery<BaseAuditedEntity> qe)
+                    {
+                        qe.AndAlso().Where(x => x.IsDeleted == false);
                     }
                 };
 
