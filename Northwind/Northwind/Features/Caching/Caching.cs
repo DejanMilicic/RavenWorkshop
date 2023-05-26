@@ -49,6 +49,9 @@ namespace Northwind.Features.Caching
             {
                 using (var session = store.OpenSession())
                 {
+                    //DateTime thisMinute = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month,
+                    //    DateTime.UtcNow.Day, DateTime.UtcNow.Hour, DateTime.UtcNow.Minute, 0);
+
                     session.Query<Order>()
                         .Where(x => x.OrderedAt < DateTime.Today)
                         .ToList();
