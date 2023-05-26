@@ -23,7 +23,7 @@ public static class EmailAsIdentifier
         store.Conventions.FindIdentityProperty = property =>
             typeof(PaypalUser).IsAssignableFrom(property.DeclaringType)
                 ? property.Name == "Email"
-                : defaultFindIdentityProperty(property);
+                : defaultFindIdentityProperty(property); // Id
 
         store.Initialize();
 
