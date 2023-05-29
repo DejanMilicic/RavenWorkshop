@@ -15,7 +15,7 @@
     <PackageReference Include="FluentAssertions" Version="6.8.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
     <PackageReference Include="NUlid" Version="1.7.1" />
-    <PackageReference Include="RavenDB.Client" Version="5.4.101" />
+    <PackageReference Include="RavenDB.Client" Version="5.4.104" />
     <PackageReference Include="RavenDB.TestDriver" Version="5.4.4" />
     <PackageReference Include="RT.Comb" Version="3.0.0" />
     <PackageReference Include="SpanJson" Version="4.0.0" />
