@@ -15,8 +15,8 @@ public class Employees_BySqlKeys : AbstractIndexCreationTask<Employee>
 
     public Employees_BySqlKeys()
     {
-        Map = products => from product in products
-            let value = JsonConvert.DeserializeObject<SqlKeys>(MetadataFor(product).Value<string>("@sql-keys") ?? "")
+        Map = employees => from employee in employees
+            let value = JsonConvert.DeserializeObject<SqlKeys>(MetadataFor(employee).Value<string>("@sql-keys") ?? "")
             let id = value == null ? "" : value.Id.ToString()
             select new Entry
             {
