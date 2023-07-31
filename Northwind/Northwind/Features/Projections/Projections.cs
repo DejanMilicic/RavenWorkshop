@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Northwind.Models.Entity;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Queries;
 
 namespace Northwind.Features.Projections
@@ -143,6 +144,25 @@ namespace Northwind.Features.Projections
             }
 
             Console.WriteLine($"Total number of requests: {session.Advanced.NumberOfRequests}");
+        }
+
+        public static void ProjectionWithDynamicFields()
+        {
+            using var store = (new DocumentStore
+            {
+                Urls = new[] { "http://127.0.0.1:8080" },
+                Database = "demo"
+            }).Initialize();
+
+            using var session = store.OpenSession();
+
+            var result = 
+                session.Advanced.DocumentQuery<Employee>()
+                .SelectFields<object>(
+                    new QueryData(
+                        new[] { nameof(Employee.FirstName), nameof(Employee.LastName) }, 
+                        new[] { "first", "last" }))
+                .ToList();
         }
     }
 }
