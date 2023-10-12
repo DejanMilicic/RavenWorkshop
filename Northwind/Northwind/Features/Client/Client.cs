@@ -108,7 +108,7 @@ namespace Northwind.Features.Client
             store.OnBeforeRequest += (sender, args) => Console.WriteLine(args.Url);
             store.Initialize();
 
-            string ctx = "1";
+            string ctx = "1"; // region, business unit, 
 
             while (true)
             {
