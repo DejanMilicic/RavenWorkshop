@@ -65,6 +65,8 @@ public static class NoTracking
 
         using var session = store.OpenSession();
 
+        // todo : replicate this for Load
+
         List<Employee> employeesResults = session.Query<Employee>()
             // all entities returned by Query will not be tracked for changes
             .Customize(x => x.NoTracking())
