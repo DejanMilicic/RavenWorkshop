@@ -62,6 +62,7 @@ using Northwind.Features.BulkInsert.RawJson;
 using Northwind.Features.Query;
 using Northwind.Features.Customizations;
 using Northwind.Features.Indexes.DynamicFields.AllProperties;
+using Northwind.Features.Indexes.MultipleResolutions;
 
 namespace Northwind
 {
