@@ -22,6 +22,9 @@ public static class Patching
         session.SaveChanges();
     }
 
+    /// <docs>
+    /// https://ravendb.net/docs/article-page/latest/Csharp/client-api/operations/patching/set-based#patching-how-to-perform-set-based-operations-on-documents
+    /// </docs>
     public static void PatchByQuery()
     {
         using var session = DocumentStoreHolder.Store.OpenSession();
