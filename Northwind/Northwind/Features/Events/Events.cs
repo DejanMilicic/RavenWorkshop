@@ -76,11 +76,16 @@ namespace Northwind.Features.Events
                 //};
 
                 // Hands On 1 : Add the client ID of the user before storing the user
+                // OnBeforeStore is executed immediately before session.Store(obj)
+                //
+                // var http = ctx.GetRequiredService<IHttpContextAccessor>();
+                // var identity = http.HttpContext?.User.Identity;
+                //
                 store.OnBeforeStore += (sender, e) =>
                 {
                     if (e.Session.GetChangeVectorFor(e.Entity) == null)
-                        e.DocumentMetadata["Created-By"] = "currentUser";
-                    e.DocumentMetadata["Modified-By"] = "currentUser";
+                        e.DocumentMetadata["Created-By"] = "[identity]";
+                    e.DocumentMetadata["Modified-By"] = "[identity]";
                 };
 
                 // Hands On 2 : Prevent deletion of Employees with a specific name
