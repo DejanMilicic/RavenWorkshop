@@ -118,6 +118,8 @@ namespace Northwind.Features.Projections
             public string ShippingCity { get; set; }
         }
 
+        // todo : example of projecting metadata properties
+
         public static void ProjectionWithPermissions()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
