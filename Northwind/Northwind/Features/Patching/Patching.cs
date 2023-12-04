@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Northwind.Models.Entity;
+using Raven.Client.Documents.Commands.Batches;
 using Raven.Client.Documents.Operations;
+using Raven.Client.Exceptions;
 
 namespace Northwind.Features.Patching;
 
@@ -44,5 +46,36 @@ public static class Patching
         // Wait for the operation to complete on the server side.
         // Not waiting for completion will not harm the patch process and it will continue running to completion.
         operation.WaitForCompletion();
+    }
+
+    public static void OptimisticConcurrencyPatch()
+    {
+        using var session = DocumentStoreHolder.Store.OpenSession();
+        session.Advanced.UseOptimisticConcurrency = true;
+
+        string id = "employees/8-A";
+
+        var emp = session.Load<Employee>(id);
+
+        // after loading document, you can construct patch script based on loaded document
+
+        string changeVector = session.Advanced.GetChangeVectorFor(emp);
+
+        session.Advanced.Defer(new BatchPatchCommandData(
+            new List<(string, string)>{("employees/8-A", changeVector)}, 
+            new PatchRequest
+            {
+                Script = "this.Age = 100;"
+            }, 
+            null));
+
+        try
+        {
+            session.SaveChanges();
+        }
+        catch (ConcurrencyException e)
+        {
+            // document was changed since you loaded it
+        }
     }
 }
