@@ -65,3 +65,14 @@ update {
 }
 ```
 
+```
+from "Employees" 
+update {
+    var start = new Date(this.Start);
+    var end = new Date(this.End);
+    if (start > end)
+        this.forDeletion = true;
+    else
+        this.forDeletion = false;
+}
+```
