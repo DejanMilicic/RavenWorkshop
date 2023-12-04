@@ -34,3 +34,34 @@ update {
     };
 }
 ```
+
+//==================================================
+
+// introduce new property "Resources" to all documents
+```
+from "Employees" 
+update {
+    this.Resources = {
+        "key": "value",
+        "prop_for_deletion" : {
+            "delete": true
+        },
+        "prop" : {
+            "delete": false
+        }
+    };
+}
+```
+
+// delete all properties that have "delete" : true
+```
+from "Employees" 
+update {
+    Object.keys(this.Resources).forEach(key => {
+        if (this.Resources[key].delete === true) {
+            delete this.Resources[key];
+        }
+    });
+}
+```
+
