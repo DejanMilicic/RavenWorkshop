@@ -31,7 +31,7 @@ namespace Northwind.Features.Counters
             session.SaveChanges();
         }
 
-        public void CreateCounter()
+        public static void CreateCounter()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 

@@ -5,9 +5,9 @@ using Raven.Client.Documents.BulkInsert;
 
 namespace Northwind.Features.BulkInsert
 {
-    public class BulkInsert
+    public static class BulkInsert
     {
-        public void DoViaSession()
+        public static void DoViaSession()
         {
             var timer = new Stopwatch();
             timer.Start();
@@ -30,7 +30,7 @@ namespace Northwind.Features.BulkInsert
             Console.WriteLine($"Elapsed: " + timer.Elapsed.ToString(@"m\:ss\.fff"));
         }
 
-        public void Do()
+        public static void Do()
         {
             var timer = new Stopwatch();
             timer.Start();
@@ -50,7 +50,10 @@ namespace Northwind.Features.BulkInsert
             Console.WriteLine($"Elapsed: " + timer.Elapsed.ToString(@"m\:ss\.fff"));
         }
 
-        public void DoWithIds()
+        // todo : add example of not overriding existing ones
+        // todo : read/determine size of the batch
+
+        public static void DoWithIds()
         {
             using var bulk = DocumentStoreHolder.Store.BulkInsert();
 

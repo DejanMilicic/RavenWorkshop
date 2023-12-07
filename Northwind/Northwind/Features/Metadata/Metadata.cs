@@ -13,7 +13,7 @@ namespace Northwind.Features.Metadata
         public static void Create()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
-            var emp = session.Load<Employee>("employees/8-A");
+            Employee emp = session.Load<Employee>("employees/8-A");
 
             session.Advanced.GetMetadataFor(emp)["IsDeleted"] = "true";
             
@@ -32,6 +32,9 @@ namespace Northwind.Features.Metadata
             Console.WriteLine($"{emp.FirstName}: {isDeleted}");
         }
 
+        // todo : add example of complex JSON
+        // todo : indexing metadata
+        
         public static void FetchJustMetadata()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
