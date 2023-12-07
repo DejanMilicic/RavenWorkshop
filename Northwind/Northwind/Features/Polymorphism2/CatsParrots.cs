@@ -7,6 +7,8 @@ using Raven.Client.Documents.Indexes;
 
 namespace Northwind.Features.Polymorphism2
 {
+    // buggy, correct it
+
     public class CatsParrots : AbstractMultiMapIndexCreationTask<CatsParrots.Entry>
     {
         public class Entry
