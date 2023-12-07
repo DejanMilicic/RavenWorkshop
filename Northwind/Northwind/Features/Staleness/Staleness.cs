@@ -96,6 +96,9 @@ namespace Northwind.Features.Staleness
             bool isStale = stats.IsStale; // is it stale?
             string indexUsed = stats.IndexName; // and you can also find out which index was used
 
+            // todo: command for checking staleness of the index itself <-
+            // <- ....
+
             // in most of the scenarios, you can allow query results that might be slightly out of date
             // however, sometimes you need exact and accurate results
 
