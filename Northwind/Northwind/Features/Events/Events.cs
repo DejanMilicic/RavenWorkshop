@@ -1,4 +1,4 @@
-﻿using Northwind.Models.Entity;
+using Northwind.Models.Entity;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
@@ -85,6 +85,7 @@ namespace Northwind.Features.Events
                 {
                     if (e.Session.GetChangeVectorFor(e.Entity) == null)
                         e.DocumentMetadata["Created-By"] = "[identity]";
+
                     e.DocumentMetadata["Modified-By"] = "[identity]";
                 };
 
