@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Northwind.Models.Entity;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Commands.Batches;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Operations;
@@ -76,6 +79,19 @@ namespace Northwind.Features.Query
             {
                 Console.WriteLine($"{chat.Id}");
             }
+        }
+
+        public static void ByCollectionName()
+        {
+            using IDocumentStore store = new DocumentStore
+            {
+                Urls = new[] { "http://127.0.0.1:8080" },
+                Database = "demo"
+            }.Initialize();
+
+            using var session = store.OpenSession();
+
+            List<Employee> employees = session.Query<Employee>(collectionName: "Employee").ToList();
         }
     }
 
