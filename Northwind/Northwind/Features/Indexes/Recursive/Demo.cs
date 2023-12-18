@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
@@ -17,7 +16,6 @@ public static class RecursiveIndexing
         }).Initialize();
 
         IndexCreation.CreateIndexes(new AbstractIndexCreationTask[] { new Parts_BySubparts() }, store);
-        IndexCreation.CreateIndexes(new AbstractIndexCreationTask[] { new Parts_ByUniqueSubparts() }, store);
 
         return store;
     }
@@ -52,6 +50,5 @@ public static class RecursiveIndexing
         foreach (var subpart in subparts)
             Console.WriteLine(subpart);
     }
-
 }
 

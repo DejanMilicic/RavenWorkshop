@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Northwind.Features.Indexes.Recursive;
+﻿namespace Northwind.Features.Indexes.Recursive;
 
 public class Part
 {
@@ -8,4 +6,3 @@ public class Part
 
     public string[] SubParts { get; set; }
 }
-

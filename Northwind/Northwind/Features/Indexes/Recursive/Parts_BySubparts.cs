@@ -1,5 +1,4 @@
-﻿using System;
-using Raven.Client.Documents.Indexes;
+﻿using Raven.Client.Documents.Indexes;
 using System.Collections.Generic;
 using System.Linq;
 
