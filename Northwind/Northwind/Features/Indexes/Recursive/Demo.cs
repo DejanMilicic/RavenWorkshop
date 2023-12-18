@@ -46,18 +46,24 @@ public static class RecursiveIndexing
         session.Store(new Part
         {
             Id = "parts/2.1",
-            SubParts = new string[] { }
+            SubParts = new string[] { "common/1" }
         });
 
         session.Store(new Part
         {
             Id = "parts/2.2",
-            SubParts = new string[] { "parts/2.2.1" }
+            SubParts = new string[] { "parts/2.2.1", "common/1" }
         });
 
         session.Store(new Part
         {
             Id = "parts/2.2.1",
+            SubParts = new string[] { }
+        });
+
+        session.Store(new Part
+        {
+            Id = "common/1",
             SubParts = new string[] { }
         });
 
