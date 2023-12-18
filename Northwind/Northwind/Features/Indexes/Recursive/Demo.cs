@@ -17,6 +17,7 @@ public static class RecursiveIndexing
         }).Initialize();
 
         IndexCreation.CreateIndexes(new AbstractIndexCreationTask[] { new Parts_BySubparts() }, store);
+        IndexCreation.CreateIndexes(new AbstractIndexCreationTask[] { new Parts_ByUniqueSubparts() }, store);
 
         return store;
     }
@@ -83,9 +84,28 @@ public static class RecursiveIndexing
         Console.WriteLine($"Subparts of parts/1:");
 
         foreach (var subpart in subparts)
-        {
             Console.WriteLine(subpart);
-        }
+    }
+
+    public static void Query2()
+    {
+        using var session = GetStore().OpenSession();
+
+        var subparts = session
+            .Query<Parts_ByUniqueSubparts.Entry, Parts_ByUniqueSubparts>()
+            .Where(x => x.Id == "parts/1")
+            .Select(x => x.Subparts)
+            .SingleOrDefault();
+
+        List<string> result = new List<string>();
+
+        if (subparts != null)
+            result = subparts.SelectMany(x => x.SubpartIds).ToList();
+
+        Console.WriteLine($"Subparts of parts/1:");
+
+        foreach (var r in result.Order())
+            Console.WriteLine(r);
     }
 }
 
