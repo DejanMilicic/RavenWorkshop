@@ -63,6 +63,8 @@ using Northwind.Features.Query;
 using Northwind.Features.Customizations;
 using Northwind.Features.Indexes.DynamicFields.AllProperties;
 using Northwind.Features.Indexes.MultipleResolutions;
+using Northwind.Features.Conventions;
+using Northwind.Features.Indexes.Recursive;
 
 namespace Northwind
 {
