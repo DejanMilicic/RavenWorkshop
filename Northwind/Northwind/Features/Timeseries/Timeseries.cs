@@ -77,7 +77,7 @@ namespace Northwind.Features.Timeseries
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
 
-            var res = 
+            var stocks = 
                 session
                 .TimeSeriesFor<StockPrice>("companies/55-A")
                 .Get(from: new DateTime(2020, 1, 1), to: new DateTime(2020, 6, 30))
@@ -90,7 +90,7 @@ namespace Northwind.Features.Timeseries
                 })
                 .ToList();
 
-            foreach (var item in res)
+            foreach (var item in stocks)
             {
                 Console.WriteLine($"{item.Month} \t {item.Min} \t {item.Max}");
             }
