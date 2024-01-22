@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Northwind.Models.Entity;
 using Raven.Client.Documents.Session;
 using Raven.Client.Documents.Session.TimeSeries;
@@ -53,7 +54,7 @@ namespace Northwind.Features.Timeseries
                 {
                     time = time.AddHours(random.Next(6, 24));
                     ts.Append(time, 1, "Login");
-                    
+
                     time = time.AddSeconds(random.Next(600, 10_000));
                     ts.Append(time, 0, "Logout");
                 }
@@ -63,13 +64,47 @@ namespace Northwind.Features.Timeseries
         public static void Query()
         {
             using var session = DocumentStoreHolder.Store.OpenSession();
-                TimeSeriesEntry[] val = session
-                    .TimeSeriesFor("employees/9-A", "HeartRates")
-                    .Get();
+            TimeSeriesEntry[] val = session
+                .TimeSeriesFor("employees/9-A", "HeartRates")
+                .Get();
 
-                Console.WriteLine(val[0].Values[0]);
-                Console.WriteLine(val[1].Values[0]);
-                Console.WriteLine(val[2].Values[0]);
+            Console.WriteLine(val[0].Values[0]);
+            Console.WriteLine(val[1].Values[0]);
+            Console.WriteLine(val[2].Values[0]);
+        }
+
+        public static void QueryStockPrices()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            var res = 
+                session
+                .TimeSeriesFor<StockPrice>("companies/55-A")
+                .Get(from: new DateTime(2020, 1, 1), to: new DateTime(2020, 6, 30))
+                .GroupBy(g => g.Timestamp.Month)
+                .Select(g => new
+                {
+                    Month = g.Key,
+                    Min = g.Min(x => x.Value.Close),
+                    Max = g.Max(x => x.Value.Close)
+                })
+                .ToList();
+
+            foreach (var item in res)
+            {
+                Console.WriteLine($"{item.Month} \t {item.Min} \t {item.Max}");
+            }
+
+            /*
+            from Companies
+            where id() = 'companies/55-A'
+            select timeseries(
+                from StockPrices
+                between '2020-01-01' and '2020-06-30'
+                group by '1 month'
+                select min(), max()
+            ) as StockPrices
+            */
         }
     }
 }
