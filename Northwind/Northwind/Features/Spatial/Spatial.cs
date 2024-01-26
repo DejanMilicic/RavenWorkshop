@@ -48,6 +48,24 @@ namespace Northwind.Features.Spatial
             }
         }
 
+        // Find all Employees in a 20km circle from 47.623473, -122.3060097 coordinates
+        public static void EmployeesInSeattle2()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
 
+            List<Employee> employeesInSeattle =
+                session.Query<Employee>()
+                    .Spatial(
+                factory => factory.Point(
+                        x => x.Address.Location.Latitude,
+                        x => x.Address.Location.Longitude),
+                factory => factory.WithinRadius(20, 47.623473, - 122.3060097)
+                    ).ToList();
+
+            foreach (Employee employee in employeesInSeattle)
+            {
+                Console.WriteLine($"{employee.Id}");
+            }
+        }
     }
 }
