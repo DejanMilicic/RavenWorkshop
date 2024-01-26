@@ -56,10 +56,10 @@ namespace Northwind.Features.Spatial
             List<Employee> employeesInSeattle =
                 session.Query<Employee>()
                     .Spatial(
-                factory => factory.Point(
-                        x => x.Address.Location.Latitude,
-                        x => x.Address.Location.Longitude),
-                factory => factory.WithinRadius(20, 47.623473, - 122.3060097)
+                        factory => factory.Point(
+                            x => x.Address.Location.Latitude,
+                            x => x.Address.Location.Longitude),
+                        factory => factory.WithinRadius(20, 47.623473, - 122.3060097)
                     ).ToList();
 
             foreach (Employee employee in employeesInSeattle)
