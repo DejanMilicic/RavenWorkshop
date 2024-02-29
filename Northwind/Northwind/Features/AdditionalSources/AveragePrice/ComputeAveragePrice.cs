@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Northwind.Features.AdditionalSources.AveragePrice
 {
     // todo : create JS additional source example
+    // todo : example of how to use NuGet package
 
     public static class ComputeAveragePrice
     {
