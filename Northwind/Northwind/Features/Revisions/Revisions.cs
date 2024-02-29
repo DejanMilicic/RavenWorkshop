@@ -201,7 +201,7 @@ namespace Northwind.Features.Revisions
         {
             using (var session = DocumentStoreHolder.Store.OpenSession())
             {
-                List<MetadataAsDictionary> revMetas = session.Advanced.Revisions.GetMetadataFor(id, 0, int.MaxValue);
+                List<IMetadataDictionary> revMetas = session.Advanced.Revisions.GetMetadataFor(id, 0, int.MaxValue);
                         
                 if (revMetas.Count < 2) return new List<IDictionary<string, object>>();
 
