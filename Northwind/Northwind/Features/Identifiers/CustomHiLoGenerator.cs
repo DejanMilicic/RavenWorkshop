@@ -1,6 +1,7 @@
 ﻿using System;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Identity;
+using static Raven.Client.Documents.Identity.AsyncHiLoIdGenerator;
 
 namespace Northwind.Features.Identifiers;
 
@@ -65,9 +66,9 @@ public class SingleNodeAsyncMultiDatabaseHiLoIdGenerator : AsyncMultiDatabaseHiL
             {
             }
 
-            protected override string GetDocumentIdFromId(long nextId)
+            protected override string GetDocumentIdFromId(NextId nextId)
             {
-                return $"{Prefix}{nextId}";
+                return $"{Prefix}{nextId.Id}";
             }
         }
     }
