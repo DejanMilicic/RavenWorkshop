@@ -31,7 +31,7 @@ namespace Northwind.Features.Paging
                 .Take(pageSize)
                 .ToList();
 
-            int totalResults = stats.TotalResults;
+            long totalResults = stats.TotalResults;
 
             Console.WriteLine("OrderId \tFreight \tDestination");
             Console.WriteLine("--------\t--------\t-----------");
