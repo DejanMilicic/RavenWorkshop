@@ -6,6 +6,8 @@ using Raven.Client.Documents.Indexes;
 
 namespace Northwind.Features.Indexes.IndexingAttachments
 {
+    // todo : find example with word, excel, pdf
+
     public class Library_Search : AbstractMultiMapIndexCreationTask
     {
         public class Entry
@@ -15,6 +17,7 @@ namespace Northwind.Features.Indexes.IndexingAttachments
 
         public Library_Search()
         {
+            // todo : rename to books
             AddMap<Book>(employees =>
                 from emp in employees
                 let txts = AttachmentsFor(emp)
