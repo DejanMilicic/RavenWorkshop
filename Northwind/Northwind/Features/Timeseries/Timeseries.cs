@@ -108,3 +108,5 @@ namespace Northwind.Features.Timeseries
         }
     }
 }
+
+// todo : write some indexes for timeseries
