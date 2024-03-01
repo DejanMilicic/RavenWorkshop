@@ -21,19 +21,19 @@ namespace Northwind.Features.Operations
 
         public static void InsertJson()
         {
+            using var store = new DocumentStore
+            {
+                Urls = new[] { "http://127.0.0.1:8080" },
+                Database = "demo"
+            }.Initialize();
+
             string id = "test/1";
             var json = @"{'Name':'John','Age':30}";
 
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
             using var context = JsonOperationContext.ShortTermSingleUse();
             BlittableJsonReaderObject bjro = context.ReadForMemoryAsync(stream, id).Result;
-            var c = new PutDocumentCommand(id, "", bjro);
-
-            using var store = new DocumentStore
-            {
-                Urls = new[] { "http://127.0.0.1:8080" },
-                Database = "demo"
-            }.Initialize();
+            var c = new PutDocumentCommand(store.Conventions, id, "", bjro); // or store.GetRequestExecutor().Conventions
 
             store.GetRequestExecutor().Execute(c, context);
         }
