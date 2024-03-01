@@ -61,8 +61,3 @@ namespace Northwind.Features.Indexes.DynamicFields.ProductAttributes
         }
     }
 }
-
-// Timezone causes index to crsh
-// TimeZone WestEurope not found exception
-// 
-
