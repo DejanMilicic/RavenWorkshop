@@ -467,12 +467,27 @@ namespace Northwind.Features.Client
                 Console.WriteLine(emp.FirstName);
             }
         }
-    }
 
-    public class User
-    {
-        public string Id { get; set; }
-        public string Email { get; set; }
+        public static void IgnoredProperty()
+        {
+            using var store = new DocumentStore
+            {
+                Urls = new[] { "http://127.0.0.1:8080" },
+                Database = "demo"
+            }.Initialize();
+
+            using var session = store.OpenSession();
+
+            Worker john = new Worker
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                City = "London"
+            };
+
+            session.Store(john);
+            session.SaveChanges();
+        }
     }
 
     public class Worker
@@ -485,5 +500,11 @@ namespace Northwind.Features.Client
 
         [JsonIgnore]
         public string Identifier => $"Worker/{City}/{LastName}";
+    }
+
+    public class User
+    {
+        public string Id { get; set; }
+        public string Email { get; set; }
     }
 }
