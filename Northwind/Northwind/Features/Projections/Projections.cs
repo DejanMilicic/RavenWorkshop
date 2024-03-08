@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Northwind.Models.Entity;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Queries;
 
 namespace Northwind.Features.Projections
@@ -37,15 +38,15 @@ namespace Northwind.Features.Projections
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             var projectionResults = from order in session.Query<Order>()
-                where order.ShipTo.City == "London"
-                let company = RavenQuery.Load<Company>(order.Company)
-                let employee = RavenQuery.Load<Employee>(order.Employee)
-                select new
-                {
-                    company.Name,
-                    order.ShipTo.City,
-                    employee.FirstName
-                };
+                                    where order.ShipTo.City == "London"
+                                    let company = RavenQuery.Load<Company>(order.Company)
+                                    let employee = RavenQuery.Load<Employee>(order.Employee)
+                                    select new
+                                    {
+                                        company.Name,
+                                        order.ShipTo.City,
+                                        employee.FirstName
+                                    };
 
             var results = projectionResults.ToList();
 
@@ -62,15 +63,15 @@ namespace Northwind.Features.Projections
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             var projectionResults = from order in session.Query<Order>()
-                where order.ShipTo.City == "London"
-                let company = RavenQuery.Load<Company>(order.Company)
-                let employee = RavenQuery.Load<Employee>(order.Employee)
-                select new
-                {
-                    company.Name,
-                    order.ShipTo.City,
-                    EmployeeName = employee.FirstName + " " + employee.LastName
-                };
+                                    where order.ShipTo.City == "London"
+                                    let company = RavenQuery.Load<Company>(order.Company)
+                                    let employee = RavenQuery.Load<Employee>(order.Employee)
+                                    select new
+                                    {
+                                        company.Name,
+                                        order.ShipTo.City,
+                                        EmployeeName = employee.FirstName + " " + employee.LastName
+                                    };
 
             var results = projectionResults.ToList();
 
@@ -87,17 +88,17 @@ namespace Northwind.Features.Projections
             using var session = DocumentStoreHolder.Store.OpenSession();
 
             var projectionResults = from order in session.Query<Order>()
-                where order.ShipTo.City == "London"
-                let company = RavenQuery.Load<Company>(order.Company)
-                let employee = RavenQuery.Load<Employee>(order.Employee)
-                let fullName =
-                    new Func<Employee, string>(e => e.FirstName + " " + e.LastName)
-                select new
-                {
-                    company.Name,
-                    order.ShipTo.City,
-                    Employee = fullName(employee)
-                };
+                                    where order.ShipTo.City == "London"
+                                    let company = RavenQuery.Load<Company>(order.Company)
+                                    let employee = RavenQuery.Load<Employee>(order.Employee)
+                                    let fullName =
+                                        new Func<Employee, string>(e => e.FirstName + " " + e.LastName)
+                                    select new
+                                    {
+                                        company.Name,
+                                        order.ShipTo.City,
+                                        Employee = fullName(employee)
+                                    };
 
 
             var results = projectionResults.ToList();
@@ -158,13 +159,29 @@ namespace Northwind.Features.Projections
 
             using var session = store.OpenSession();
 
-            var result = 
+            var result =
                 session.Advanced.DocumentQuery<Employee>()
                 .SelectFields<object>(
                     new QueryData(
-                        new[] { nameof(Employee.FirstName), nameof(Employee.LastName) }, 
+                        new[] { nameof(Employee.FirstName), nameof(Employee.LastName) },
                         new[] { "first", "last" }))
                 .ToList();
+        }
+
+        public static void LoadWithProjection()
+        {
+            using var session = DocumentStoreHolder.Store.OpenSession();
+
+            var emps = 
+                session.Query<Employee>()
+                    .Where(x => x.Id.In("employees/1-A", "employees/2-A"))
+                    .Select(x =>
+                        new
+                        {
+                            First = x.FirstName,
+                            Last = x.LastName
+                        })
+                    .ToList();
         }
     }
 }
