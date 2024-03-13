@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Northwind.Models.Entity;
 using Raven.Client.Documents.Session;
 using Raven.Client.Documents.Session.TimeSeries;
 using static Northwind.Models.Entity.Company;
+
+// todo
+// create examples for configuring rollup, retention, etc
 
 namespace Northwind.Features.Timeseries
 {
