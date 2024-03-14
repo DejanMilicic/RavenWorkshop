@@ -78,22 +78,4 @@ public static class Patching
             // document was changed since you loaded it
         }
     }
-
-    public static void PatchExpires()
-    {
-        using var session = DocumentStoreHolder.Store.OpenSession();
-
-        string timestamp = DateTime.UtcNow.AddMinutes(1).ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
-
-        DocumentStoreHolder.Store
-            .Operations
-            .Send(new PatchByQueryOperation($@"
-                from Employees
-                where id() = 'employees/9-A'
-                update
-                {{
-                    this['@metadata']['@expires'] = '{timestamp}';
-                }}
-            "));
-    }
 }
