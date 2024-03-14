@@ -9,7 +9,11 @@ public static class PatchExpires
 {
     /// <summary>
     /// Query will be executed on the server side and will update all documents that match the query.
+    ///
     /// You can either use QueryParameters or construct query directly with string interpolation.
+    /// However, whenever you can, use QueryParameters since such parametrized queries
+    /// are being cached and reused by the server.
+    ///
     /// This operation will be executed immediately, and you do not have to wait for it to complete.
     /// </summary>
     public static void PatchByQuery()
