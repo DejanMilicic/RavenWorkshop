@@ -47,7 +47,7 @@ public static class PatchExpires
     /// This is recommended approach for patching individual documents.
     /// Multiple patches can be deferred and executed in a single request.
     /// </summary>
-    public static void DeferredPatch()
+    public static void DeferredInterpolatedPatch()
     {
         using var session = DocumentStoreHolder.Store.OpenSession();
 
@@ -66,4 +66,44 @@ public static class PatchExpires
 
         session.SaveChanges();
     }
+
+    /// <summary>
+    /// Parametrized deferred patch is always better, since it is being cached and reused by the server.
+    /// </summary>
+    public static void DeferredParametrizedPatch()
+    {
+        using var session = DocumentStoreHolder.Store.OpenSession();
+
+        session.Store(new User { Email = "soon.to.be@deleted.com" }, "users/1");
+        session.SaveChanges();
+
+        session.Advanced.Defer(
+            new PatchCommandData(
+                "users/1",
+                null,
+                new PatchRequest
+                {
+                    Script = "this['@metadata']['@expires'] = args.expires;", // args is Values collection
+                    Values =
+                    {
+                        ["expires"] = DateTime.UtcNow.AddMinutes(1).ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")
+                    }
+
+                    // alternative syntax
+                    // Values = { { "comment1", comment } }
+
+                    // one more alternative syntax
+                    // Script = "this.LastName = args.newUser.LastName;",
+                    // Values =
+                    // {
+                    //    {"newUser", new { LastName = "Yitzchaki" }}
+                    // }
+                }
+            )
+        );
+
+        session.SaveChanges();
+    }
+
+    // todo : check JsonPatchOperation if possible, it is much faster than JS patch
 }
