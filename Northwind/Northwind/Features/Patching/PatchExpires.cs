@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.JsonPatch;
 using Raven.Client.Documents.Commands.Batches;
 using Raven.Client.Documents.Operations;
 using Raven.Client.Documents.Queries;
@@ -105,5 +106,20 @@ public static class PatchExpires
         session.SaveChanges();
     }
 
-    // todo : check JsonPatchOperation if possible, it is much faster than JS patch
+    /// <summary>
+    /// JSON Patch Syntax - https://ravendb.net/docs/article-page/latest/csharp/client-api/operations/patching/json-patch-syntax
+    ///
+    /// This is fastest of all options
+    /// </summary>
+    public static void JsonPatch()
+    {
+        using var session = DocumentStoreHolder.Store.OpenSession();
+
+        session.Store(new User { Email = "soon.to.be@deleted.com" }, "users/1");
+        session.SaveChanges();
+
+        var patchesDocument = new JsonPatchDocument();
+        patchesDocument.Add("/@metadata/@expires", DateTime.UtcNow.AddMinutes(1).ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
+        DocumentStoreHolder.Store.Operations.Send(new JsonPatchOperation("users/1", patchesDocument));
+    }
 }
