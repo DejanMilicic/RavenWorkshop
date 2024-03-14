@@ -109,7 +109,9 @@ public static class PatchExpires
     /// <summary>
     /// JSON Patch Syntax - https://ravendb.net/docs/article-page/latest/csharp/client-api/operations/patching/json-patch-syntax
     ///
-    /// This is fastest of all options
+    /// This is fastest of all options.
+    /// JS patch needs to convert JSON to JS object, execute JS and rebuild JSON again.
+    /// JSON Patch can traverse JSON directly, which is much more efficient.
     /// </summary>
     public static void JsonPatch()
     {
