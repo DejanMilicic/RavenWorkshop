@@ -68,6 +68,7 @@ using Northwind.Features.Indexes.Recursive;
 using Northwind.Features.InnerJoin.DepartmentEmployees;
 using Northwind.Features.Indexes.IndexingAttachments;
 using Northwind.Features.Indexes.DynamicFields.ProductAttributes;
+using Northwind.Features.RawJson;
 
 namespace Northwind
 {
