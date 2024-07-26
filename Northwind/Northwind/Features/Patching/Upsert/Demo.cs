@@ -113,5 +113,90 @@ namespace Northwind.Features.Patching.Upsert
                 // final outcome of this is both patients saved - [ Bob, Alice ]
             }
         }
+
+        public static void DemoLastWriteWins()
+        {
+            Appointment app1 = new Appointment
+            {
+                Id = "Appointment/1",
+                Doctor = "Udo Brinkmann",
+                Time = new DateTime(2023, 1, 1),
+                Patients = new List<Patient>()
+            };
+
+            Appointment app2 = new Appointment
+            {
+                Id = "Appointment/1",
+                Doctor = "Fritz Lang",
+                Time = new DateTime(2023, 1, 1),
+                Patients = new List<Patient>()
+            };
+
+            var store = GertStore();
+
+            using (var session = store.OpenSession())
+            {
+                session.Store(app1);
+                session.SaveChanges();
+            }
+
+            using (var session = store.OpenSession())
+            {
+                session.Store(app2);
+                session.SaveChanges();
+            }
+
+            // one more example of last write wins
+            // final outcome of this is just a single appointment saved - app2
+            // app1 is overwritten by app2, since they have the same ID
+
+            // hence, with this approach, if document does not exist, it will be created
+            // and if it exists, it will be overwritten/updated
+        }
+
+        public static void DemoPreventOverriding()
+        {
+            Appointment app1 = new Appointment
+            {
+                Id = "Appointment/1",
+                Doctor = "Udo Brinkmann",
+                Time = new DateTime(2023, 1, 1),
+                Patients = new List<Patient>()
+            };
+
+            Appointment app2 = new Appointment
+            {
+                Id = "Appointment/1",
+                Doctor = "Fritz Lang",
+                Time = new DateTime(2023, 1, 1),
+                Patients = new List<Patient>()
+            };
+
+            var store = GertStore();
+
+            using (var session = store.OpenSession())
+            {
+                session.Store(app1);
+                session.SaveChanges();
+            }
+
+            try
+            {
+                using (var session = store.OpenSession())
+                {
+                    session.Store(app2, changeVector: "", id: "Appointment/1");
+                    session.SaveChanges();
+                }
+            }
+            catch (ConcurrencyException _)
+            {
+                Console.WriteLine("Document was not saved, because it would override existing document");
+            }
+
+            // final outcome of this is just a single appointment saved - app1
+            // app2 is not saved, because it would override app1
+            // passing empty string as a change vector ensures document will be saved
+            // only if it does not exist yet
+        }
     }
 }
