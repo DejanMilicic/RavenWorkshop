@@ -124,7 +124,6 @@ public static class RawJson
     public static void Demo2(IDocumentSession session, string id, string collection, string json)
     {
         JObject parsedJson = JObject.Parse(json);
-        Dictionary<string, object> dictionary = JsonHelper.ConvertJObjectToDictionary(parsedJson);
 
         DynamicJsonValue djv = JsonHelper.ConvertToDynamicJsonValue(parsedJson);
         djv["@metadata"] = new DynamicJsonValue { ["@collection"] = collection };
