@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Raven.Client.Documents.Commands.Batches;
 using Raven.Client.Documents.Session;
 using Sparrow.Json.Parsing;
@@ -8,9 +7,9 @@ namespace Northwind.Features.RawJson;
 
 public class JsonHelper
 {
-    public static Dictionary<string, object> ConvertJObjectToDictionary(JObject jObject)
+    public static DynamicJsonValue ConvertJObjectToDynamicJsonValue(JObject jObject)
     {
-        var dictionary = new Dictionary<string, object>();
+        var djv = new DynamicJsonValue();
 
         foreach (var property in jObject.Properties())
         {
@@ -18,104 +17,42 @@ public class JsonHelper
 
             if (value is JObject)
             {
-                // Recursively convert nested JObject to Dictionary<string, object>
-                dictionary[property.Name] = ConvertJObjectToDictionary((JObject)value);
+                djv[property.Name] = ConvertJObjectToDynamicJsonValue((JObject)value);
             }
             else if (value is JArray)
             {
-                // Convert JArray to List<object>
-                dictionary[property.Name] = ConvertJArrayToList((JArray)value);
+                djv[property.Name] = ConvertJArrayToDynamicJsonArray((JArray)value);
             }
             else
             {
-                // Add the value as is for simple types
-                dictionary[property.Name] = value.ToObject<object>();
+                djv[property.Name] = value.ToObject<object>();
             }
         }
 
-        return dictionary;
+        return djv;
     }
 
-    private static List<object> ConvertJArrayToList(JArray jArray)
+    private static DynamicJsonArray ConvertJArrayToDynamicJsonArray(JArray jArray)
     {
-        var list = new List<object>();
+        DynamicJsonArray dja = new DynamicJsonArray();
 
         foreach (var item in jArray)
         {
             if (item is JObject)
             {
-                // Recursively convert nested JObject to Dictionary<string, object>
-                list.Add(ConvertJObjectToDictionary((JObject)item));
+                dja.Add(ConvertJObjectToDynamicJsonValue((JObject)item));
             }
             else if (item is JArray)
             {
-                // Recursively convert nested JArray to List<object>
-                list.Add(ConvertJArrayToList((JArray)item));
+                dja.Add(ConvertJArrayToDynamicJsonArray((JArray)item));
             }
             else
             {
-                // Add the item as is for simple types
-                list.Add(item.ToObject<object>());
+                dja.Add(item.ToObject<object>());
             }
         }
 
-        return list;
-    }
-
-    public static DynamicJsonValue ConvertToDynamicJsonValue(JObject jObject)
-    {
-        var dynamicJson = new DynamicJsonValue();
-
-        foreach (var property in jObject.Properties())
-        {
-            var value = property.Value;
-
-            if (value is JObject)
-            {
-                // Recursively convert nested JObject to DynamicJsonValue
-                dynamicJson[property.Name] = ConvertToDynamicJsonValue((JObject)value);
-            }
-            else if (value is JArray)
-            {
-                // Convert JArray to object[]
-                dynamicJson[property.Name] = ConvertJArrayToObjectArray((JArray)value);
-            }
-            else
-            {
-                // Add the value as is for simple types
-                dynamicJson[property.Name] = value.ToObject<object>();
-            }
-        }
-
-        return dynamicJson;
-    }
-
-    static object[] ConvertJArrayToObjectArray(JArray jArray)
-    {
-        var list = new object[jArray.Count];
-
-        for (int i = 0; i < jArray.Count; i++)
-        {
-            var item = jArray[i];
-
-            if (item is JObject)
-            {
-                // Recursively convert nested JObject to DynamicJsonValue
-                list[i] = ConvertToDynamicJsonValue((JObject)item);
-            }
-            else if (item is JArray)
-            {
-                // Recursively convert nested JArray to object[]
-                list[i] = ConvertJArrayToObjectArray((JArray)item);
-            }
-            else
-            {
-                // Add the item as is for simple types
-                list[i] = item.ToObject<object>();
-            }
-        }
-
-        return list;
+        return dja;
     }
 }
 
@@ -125,7 +62,7 @@ public static class RawJson
     {
         JObject parsedJson = JObject.Parse(json);
 
-        DynamicJsonValue djv = JsonHelper.ConvertToDynamicJsonValue(parsedJson);
+        DynamicJsonValue djv = JsonHelper.ConvertJObjectToDynamicJsonValue(parsedJson);
         djv["@metadata"] = new DynamicJsonValue { ["@collection"] = collection };
         
         session.Advanced.Defer(new PutCommandData(id, null, djv));
