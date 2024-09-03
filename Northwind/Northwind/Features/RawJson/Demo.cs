@@ -16,17 +16,11 @@ public class JsonHelper
             var value = property.Value;
 
             if (value is JObject)
-            {
                 djv[property.Name] = ConvertJObjectToDynamicJsonValue((JObject)value);
-            }
             else if (value is JArray)
-            {
                 djv[property.Name] = ConvertJArrayToDynamicJsonArray((JArray)value);
-            }
             else
-            {
                 djv[property.Name] = value.ToObject<object>();
-            }
         }
 
         return djv;
@@ -39,17 +33,11 @@ public class JsonHelper
         foreach (var item in jArray)
         {
             if (item is JObject)
-            {
                 dja.Add(ConvertJObjectToDynamicJsonValue((JObject)item));
-            }
             else if (item is JArray)
-            {
                 dja.Add(ConvertJArrayToDynamicJsonArray((JArray)item));
-            }
             else
-            {
                 dja.Add(item.ToObject<object>());
-            }
         }
 
         return dja;
