@@ -1,7 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Commands.Batches;
 using Raven.Client.Documents.Session;
 using Sparrow.Json.Parsing;
+using System.Threading.Tasks;
+using Raven.Client.Documents.Commands;
+using Newtonsoft.Json;
 
 namespace Northwind.Features.RawJson;
 
@@ -54,5 +58,10 @@ public static class RawJson
         djv["@metadata"] = new DynamicJsonValue { ["@collection"] = collection };
         
         session.Advanced.Defer(new PutCommandData(id, null, djv));
+    }
+
+    public static string GetRawJsonDoc(IDocumentSession session, string id)
+    {
+        return session.Load<JObject>(id).ToString(Formatting.None);
     }
 }
