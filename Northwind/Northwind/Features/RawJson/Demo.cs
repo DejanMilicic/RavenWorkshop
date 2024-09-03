@@ -2,7 +2,6 @@
 using System.Text;
 using Raven.Client.Documents.Commands.Batches;
 using Raven.Client.Documents.Session;
-using SpanJson;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
 
@@ -43,8 +42,6 @@ public static class RawJson
 
     public static void Demo2(IDocumentSession session, string id, string collection, string json)
     {
-        //JObject jobject = JObject.Parse(json);
-
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
         using var context = JsonOperationContext.ShortTermSingleUse();
         BlittableJsonReaderObject bjro = context.ReadForMemoryAsync(stream, id).Result;
