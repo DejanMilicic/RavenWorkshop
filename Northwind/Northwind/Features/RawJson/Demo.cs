@@ -50,7 +50,7 @@ public static class RawJson
         BlittableJsonReaderObject bjro = context.ReadForMemoryAsync(stream, id).Result;
 
         var djv = new DynamicJsonValue(bjro);
-        djv["@metadata"] = new DynamicJsonValue { ["@collection"] = "Products" };
+        djv["@metadata"] = new DynamicJsonValue { ["@collection"] = collection };
         session.Advanced.Defer(new PutCommandData(id, null, djv));
 
         session.SaveChanges();
