@@ -1,6 +1,7 @@
-﻿using Northwind.Features.ArtificialDocuments.DailyProductSales;
-using Raven.Client.Documents.Indexes;
+﻿using Raven.Client.Documents.Indexes;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Northwind.Features.Indexes.SalesStats;
@@ -38,14 +39,39 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
 
         AddMap<SalesRecord>(
             salesRecords => from sr in salesRecords
-                            select new Entry
-                            {
-                                User = sr.User,
-                                Timeframe = "YearMonth",
-                                Timestamp = $"{sr.Timestamp.Year}-{sr.Timestamp.Month}",
-                                Receivables = sr.RecievedAmount,
-                                Payables = sr.PaidAmount
-                            }
+                select new Entry
+                {
+                    User = sr.User,
+                    Timeframe = "Month",
+                    Timestamp = $"{sr.Timestamp.Year}-{sr.Timestamp.Month.ToString("D2")}",
+                    Receivables = sr.RecievedAmount,
+                    Payables = sr.PaidAmount
+                }
+            );
+
+        AddMap<SalesRecord>(
+            salesRecords => from sr in salesRecords
+                select new Entry
+                {
+                    User = sr.User,
+                    Timeframe = "Week",
+                    Timestamp = $"{sr.Timestamp.Year}-{DateHelper.GetIso8601WeekNumber(sr.Timestamp).ToString("D2")}",
+                    Receivables = sr.RecievedAmount,
+                    Payables = sr.PaidAmount
+                }
+            );
+
+
+        AddMap<SalesRecord>(
+            salesRecords => from sr in salesRecords
+                select new Entry
+                {
+                    User = sr.User,
+                    Timeframe = "Quarter",
+                    Timestamp = $"{sr.Timestamp.Year}-{DateHelper.GetQuarterNumber(sr.Timestamp)}",
+                    Receivables = sr.RecievedAmount,
+                    Payables = sr.PaidAmount
+                }
             );
 
         Reduce = results => 
@@ -59,5 +85,12 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
                 Receivables = g.Sum(x => x.Receivables),
                 Payables = g.Sum(x => x.Payables)
             };
+
+        AdditionalSources = new Dictionary<string, string>
+        {
+            ["DateHelper.cs"] =
+                File.ReadAllText(Path.Combine(new[]
+                    { AppContext.BaseDirectory, "..", "..", "..", "Features", "Indexes", "SalesStats", "DateHelper.cs" }))
+        };
     }
 }
