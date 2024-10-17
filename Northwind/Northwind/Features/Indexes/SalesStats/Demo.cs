@@ -61,6 +61,15 @@ public static class SalesStats
             LoadStatus = "Done"
         });
 
+        session.Store(new SalesRecord
+        {
+            User = "Greg",
+            Timestamp = new DateTime(2024, 10, 15, 5, 1, 1),
+            RecievedAmount = 0,
+            PaidAmount = 333,
+            LoadStatus = "Done"
+        });
+
         session.SaveChanges();
     }
 
@@ -70,7 +79,7 @@ public static class SalesStats
 
         foreach (var result in results)
         {
-            Console.WriteLine($"User: {result.User}, Timeframe: {result.Timeframe}, Timestamp: {result.Timestamp}, Receivables: {result.Receivables}, Payables: {result.Payables}, Balance: {result.Balance}");
+            Console.WriteLine($"User: {result.User}, Timeframe: {result.Timeframe}, Timestamp: {result.Timestamp}, Receivables: {result.Receivables}, Payables: {result.Payables}, Balance: {result.Balance}, Margin: {result.Margin}%");
         }
     }
 

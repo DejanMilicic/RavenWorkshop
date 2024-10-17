@@ -23,6 +23,8 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
         public decimal Payables { get; set; }
 
         public decimal Balance { get; set; }
+
+        public decimal Margin { get; set; }
     }
 
     public Sales_Aggregations()
@@ -37,7 +39,8 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
                     Timestamp = $"{sr.Timestamp.Year}",
                     Receivables = sr.RecievedAmount,
                     Payables = sr.PaidAmount,
-                    Balance = 0
+                    Balance = 0,
+                    Margin = 0
                 }
             );
 
@@ -51,7 +54,8 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
                     Timestamp = $"{sr.Timestamp.Year}-{sr.Timestamp.Month.ToString("D2")}",
                     Receivables = sr.RecievedAmount,
                     Payables = sr.PaidAmount,
-                    Balance = 0
+                    Balance = 0,
+                    Margin = 0
                 }
             );
 
@@ -62,10 +66,11 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
                 {
                     User = sr.User,
                     Timeframe = "Week",
-                    Timestamp = $"{sr.Timestamp.Year}-{DateHelper.GetIso8601WeekNumber(sr.Timestamp).ToString("D2")}",
+                    Timestamp = $"{sr.Timestamp.Year}-{Helper.GetIso8601WeekNumber(sr.Timestamp).ToString("D2")}",
                     Receivables = sr.RecievedAmount,
                     Payables = sr.PaidAmount,
-                    Balance = 0
+                    Balance = 0,
+                    Margin = 0
                 }
             );
 
@@ -77,10 +82,11 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
                 {
                     User = sr.User,
                     Timeframe = "Quarter",
-                    Timestamp = $"{sr.Timestamp.Year}-{DateHelper.GetQuarterNumber(sr.Timestamp)}",
+                    Timestamp = $"{sr.Timestamp.Year}-{Helper.GetQuarterNumber(sr.Timestamp)}",
                     Receivables = sr.RecievedAmount,
                     Payables = sr.PaidAmount,
-                    Balance = 0
+                    Balance = 0,
+                    Margin = 0
                 }
             );
 
@@ -96,14 +102,15 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
                 g.Key.Timestamp,
                 Receivables = receivables,
                 Payables = payables,
-                Balance = receivables - payables
+                Balance = receivables - payables,
+                Margin = Helper.CalculateMargin(receivables, payables)
             };
 
         AdditionalSources = new Dictionary<string, string>
         {
-            ["DateHelper.cs"] =
+            ["Helper.cs"] =
                 File.ReadAllText(Path.Combine(new[]
-                    { AppContext.BaseDirectory, "..", "..", "..", "Features", "Indexes", "SalesStats", "DateHelper.cs" }))
+                    { AppContext.BaseDirectory, "..", "..", "..", "Features", "Indexes", "SalesStats", "Helper.cs" }))
         };
     }
 }

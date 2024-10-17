@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Northwind.Features.Indexes.SalesStats;
 
-public static class DateHelper
+public static class Helper
 {
     public static int GetIso8601WeekNumber(DateTime date)
     {
@@ -27,5 +27,15 @@ public static class DateHelper
     {
         // Calculate the quarter number from the month
         return (date.Month + 2) / 3;
+    }
+
+    public static decimal CalculateMargin(decimal receivables, decimal payables)
+    {
+        if (receivables == 0)
+        {
+            return -100;
+        }
+        decimal margin = ((receivables - payables) / receivables) * 100;
+        return Math.Round(margin, 2);
     }
 }
