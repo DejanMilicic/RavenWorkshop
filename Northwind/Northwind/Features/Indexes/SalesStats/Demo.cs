@@ -36,10 +36,19 @@ public static class SalesStats
         session.Store(new SalesRecord
         {
             User = "Georg",
+            Timestamp = new DateTime(2024, 10, 15, 5, 1, 1),
+            RecievedAmount = 0,
+            PaidAmount = 78,
+            LoadStatus = "Done"
+        });
+
+        session.Store(new SalesRecord
+        {
+            User = "Georg",
             Timestamp = new DateTime(2024, 11, 15, 1, 1, 1),
             RecievedAmount = 110,
             PaidAmount = 0,
-            LoadStatus = "Done"
+            LoadStatus = "In Progress"
         });
 
         session.SaveChanges();

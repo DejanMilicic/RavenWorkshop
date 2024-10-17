@@ -21,69 +21,82 @@ public class Sales_Aggregations : AbstractMultiMapIndexCreationTask<Sales_Aggreg
         public decimal Receivables { get; set; }
 
         public decimal Payables { get; set; }
+
+        public decimal Balance { get; set; }
     }
 
     public Sales_Aggregations()
     {
         AddMap<SalesRecord>(
             salesRecords => from sr in salesRecords
+                where sr.LoadStatus == "Done"
                 select new Entry
                 {
                     User = sr.User,
                     Timeframe = "Year",
                     Timestamp = $"{sr.Timestamp.Year}",
                     Receivables = sr.RecievedAmount,
-                    Payables = sr.PaidAmount
+                    Payables = sr.PaidAmount,
+                    Balance = 0
                 }
             );
 
         AddMap<SalesRecord>(
             salesRecords => from sr in salesRecords
+                where sr.LoadStatus == "Done"
                 select new Entry
                 {
                     User = sr.User,
                     Timeframe = "Month",
                     Timestamp = $"{sr.Timestamp.Year}-{sr.Timestamp.Month.ToString("D2")}",
                     Receivables = sr.RecievedAmount,
-                    Payables = sr.PaidAmount
+                    Payables = sr.PaidAmount,
+                    Balance = 0
                 }
             );
 
         AddMap<SalesRecord>(
             salesRecords => from sr in salesRecords
+                where sr.LoadStatus == "Done"
                 select new Entry
                 {
                     User = sr.User,
                     Timeframe = "Week",
                     Timestamp = $"{sr.Timestamp.Year}-{DateHelper.GetIso8601WeekNumber(sr.Timestamp).ToString("D2")}",
                     Receivables = sr.RecievedAmount,
-                    Payables = sr.PaidAmount
+                    Payables = sr.PaidAmount,
+                    Balance = 0
                 }
             );
 
 
         AddMap<SalesRecord>(
             salesRecords => from sr in salesRecords
+                where sr.LoadStatus == "Done"
                 select new Entry
                 {
                     User = sr.User,
                     Timeframe = "Quarter",
                     Timestamp = $"{sr.Timestamp.Year}-{DateHelper.GetQuarterNumber(sr.Timestamp)}",
                     Receivables = sr.RecievedAmount,
-                    Payables = sr.PaidAmount
+                    Payables = sr.PaidAmount,
+                    Balance = 0
                 }
             );
 
         Reduce = results => 
             from r in results
             group r by new { r.User, r.Timeframe, r.Timestamp } into g
+            let receivables = g.Sum(x => x.Receivables)
+            let payables = g.Sum(x => x.Payables)
             select new
             {
                 g.Key.User,
                 g.Key.Timeframe,
                 g.Key.Timestamp,
-                Receivables = g.Sum(x => x.Receivables),
-                Payables = g.Sum(x => x.Payables)
+                Receivables = receivables,
+                Payables = payables,
+                Balance = receivables - payables
             };
 
         AdditionalSources = new Dictionary<string, string>
